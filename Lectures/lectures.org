@@ -1,0 +1,1121 @@
+#+TITLE: Lecture Notes for CBE 60547
+#+AUTHOR: William F. Schneider
+#+EMAIL: wschneider@nd.edu
+#+ADDRESS: University of Notre Dame
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+LATEX_HEADER:\usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+#+LATEX_HEADER:\geometry{letterpaper}
+#+LATEX_HEADER:\usepackage{outline}
+#+LATEX_HEADER:\usepackage{amsmath}
+#+LATEX_HEADER:\usepackage{graphicx}
+#+LATEX_HEADER:\usepackage{epstopdf}
+#+LATEX_HEADER:\usepackage{parskip}
+#+LATEX_HEADER:\usepackage[version=3]{mhchem}
+#+LATEX_HEADER:\usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER:\usepackage{hyperref}
+#+LATEX_HEADER:\hypersetup{colorlinks=true,urlcolor=blue}
+#+LATEX_HEADER:\setlength{\headheight}{15.2pt}
+
+#+LATEX_HEADER:\def\dbar{{\mathchar'26\mkern-12mu d}}
+
+#+OPTIONS: toc:1
+* COMMENT Course agenda
+
+** Desk reserve
+
+*** Cramer book
+
+*** DFT book
+
+** TODO CRC accounts for all
+
+** TODO afs access for all
+
+** Laboratories
+
+*** Lab 1: Intro to computing and fda code (Jan 22)
+
+**** Before HW 2 (Jan 20?)
+
+*** Lab 2: Intro to Avogadro and GAMESS calculations (Feb 5)
+
+**** Before HW 3 (
+
+*** Lab 3: Intro to ASE and Vasp (Feb 26)
+
+*** Lab 4: Intro to surface calculations (Mar )
+** Homework
+
+*** Homework 1 (Jan 20)
+
+**** The context of Computational Chemistry
+
+*** Homework 2 (Jan 27)
+
+**** QM review
+
+**** FDA calculations
+
+*** Homework 3 (Feb 12)
+
+**** GAMESS calculations
+
+*** Homework 4 (Feb 26)
+**** PES calculation
+*** Project 1 (Mar 5)
+*** Homework 5 (Mar 17)
+**** First Vasp calculations
+
+*** Homework 6 (Mar 31)
+**** Second Vasp calculations
+*** Project 2 (Apr 7)
+*** Project Final (Apr 28)
+* Introduction
+** What do we care about?
+
+Things chemistry/materials-related:
+
+- What are the properties of atoms?
+- What molecules do they make?  What other substances do they make?
+- What are the shapes of those molecules?  Structures of those solids?  Properties of them?
+- How do those substances react with each other?
+- What are the energies of those reactions?
+- What are the rates of those reactions?
+- What is the strongest substance?
+- How do we make a substance to do....?
+- add your own questions....
+
+Things that relate to the /chemical/ properties of substances.
+
+** How are we going to figure these out?  With only a computer?
+- 1926 :: Erwin Schr\ouml{}dinger equation: $\hat{H}\Psi=E\Psi$
+- 1929 :: Paul Dirac, British physicist
+
+#+BEGIN_QUOTE
+  The fundamental laws necessary for the mathematical treatment of a
+  large part of physics and the whole of chemistry are thus /completely
+  known/, and the difficulty lies only in the fact that application of
+  these laws leads to equations that are /too complex to be solved/.
+
+  It therefore becomes desirable that /approximate practical methods/ of
+  applying quantum mechanics should be developed, which can lead to an
+  explanation of the main features of complex atomic systems without
+  too much computation.
+#+END_QUOTE
+
+- 1930's-1950's :: Elaboration, analytical applications
+
+- 1950's :: Computers start to appear for technical applications
+
+- 1960's-1970's :: Numerical solutions of Schr\ouml{}dinger equation for atoms/molecules---expert users
+
+- 1980's :: ``Supercomputer'' era---routine use of computational chemistry software becomes possible
+#+CAPTION: Ohio State Cray Y-MP supercomputer, ca. 1989.  World's fastest computer at the time.  333 MFlop top speed, 512 Mb RAM
+#+ATTR_LATEX: :width 0.2\textwidth
+[[./Images/CrayYMPb.jpg]]
+
+- 1990's :: ``Chemical accuracy'' era---very precise solutions routinely available, for a cost!  See [[http://www.crc.nd.edu/~wschnei1/courses/CBE_547/Resources/1994_WFS_JPC.pdf][Schneider, /J. Phys. Chem./, *1994*]].
+
+- 1990's :: Density functional theory (DFT) allows applications to solids/surfaces/liquids to become common. See [[http://www.crc.nd.edu/~wschnei1/courses/CBE_547/Resources/1998_Hass_Science.pdf][Hass, /Science/, *1998*]]
+
+- 1990's :: Visualization moves to the desktop
+
+- 2000's :: Computational ``screening'', materials ``discovery.'' See [[http://www.crc.nd.edu/~wschnei1/courses/CBE_547/Resources/2009_Greeley_JPCC.pdf][Greeley, /J. Phys. Chem. C/, *2009*]].  Also see [[http://www.crc.nd.edu/~wschnei1/courses/CBE_547/Resources/2010_Gurkan_JPCL.pdf][Gurkan, /J. Phys. Chem. Lett./, *2010*]].
+
+- Today :: Computational ``chemistry'' widely integrated into all aspects of chemical, materials, biological research
+
+``Computational chemistry'' is now so vast it is impossible to cover
+everything completely.  We limit ourselves to quantum-mechanics-based
+calculations.
+
+
+** Our goals
+
+1. Understand when it is appropriate to use quantum-mechanics
+  methods.
+2. Be able to state the basic theoretical, mathematical, and numerical
+  concepts behind quantum mechanical ``wavefunction theory'' (WFT) and
+  ``density functional theory,'' (DFT) calculations.
+3. Understand the terminology and practical issues associated with doing quantum chemical simulations.
+4. Get hands-on experience with these concepts using popular
+  computational tools of today, including GAMESS for molecular
+  systems and Vasp for condensed phase systems.
+5. Learn how to apply the results of quantum chemical
+  simulations to calculate
+  things you care about.
+6. Demonstrate an ability to formulate a problem and apply QM
+  methods to it.
+7. Develop the skills to understand a literature paper in the area.
+
+** Reading resources
+- These notes
+- Chris Cramer, /Essentials of Computational Chemistry/, Wiley, 2004
+- Sholl and Steckel, /Density Functional Theory: A Practical
+  Introduction/, Wiley, 2009
+- Kitchin book, [[http://kitchingroup.cheme.cmu.edu/dft-book/]]
+
+** Software tools
+
+*** Molecular methods
+- Avogadro environment [[http://avogadro.cc/wiki/Main_Page]]
+- GAMESS code [[http://www.msg.ameslab.gov/GAMESS/GAMESS.html]]
+
+*** Supercell methods
+- ASE environment [[https://wiki.fysik.dtu.dk/ase/]]
+- Vasp code [[http://www.vasp.at/]]
+
+*** Great for getting started
+- Webmo [[http://www.webmo.net/]]
+\newpage
+
+* Refresher on Quantum Mechanics
+** Why quantum mechanics?
+Want to describe ``mechanics'' (equations of motion) of atomic-scale things,
+like electrons in atoms and molecules
+
+Why? These ultimately determine the energy, the shape, and all the properties
+of matter.
+
+/de Broglie wavelength/ (1924)
+\begin{equation}
+\lambda  = h/p = h/mv
+\end{equation}
+\begin{equation}
+h  = 6.626 \times 10^{-34}~\text{J s (Planck's constant)}
+\end{equation}
+
+|--------------------+----------------------------------+--------------------------------|
+|                    | Car                              | Electron                       |
+|--------------------+----------------------------------+--------------------------------|
+| mass $m$           | 1000 kg                          | 9.1\times 10^{-31} kg          |
+| velocity $v$       | 100 km/hr                        | $0.01 c$                       |
+|                    | typical value on the highway     | typical value in an atom       |
+| momentum $p$       | 2.8\times 10^{-4} kg m/s         | 2.7 \times 10^{-24} kg m/s     |
+| wavelength \lambda | 2.4 \times 10^{-38} m            | 2.4 \times 10^{-10} m          |
+|                    | too small to detect.  Classical! | Comparable to size of an atom. |
+|                    |                                  | /Must/ treat with QM!          |
+|--------------------+----------------------------------+--------------------------------|
+
+How to describe wave properties of an electron?  Schr\ouml{}dinger equation (1926)
+
+#+BEGIN_CENTER
+Kinetic energy + Potential energy = Total Energy
+#+END_CENTER
+
+Expressed as differential equation (Single particle, non-relativistic):
+\begin{equation}
+-\frac{\hbar^2}{2m}\nabla^2 \Psi(\mathbf{r},t) + V(\mathbf{r},t)  \Psi(\mathbf{r},t) = -i \hbar \frac{\partial}{\partial t}  \Psi(\mathbf{r},t)
+\end{equation}
+
+If the potential \(V\) is time-invariant, can use separation of variables to
+show that the steady-state, time-independent solutions are characterized by an
+energy \(E\) and described by:
+\begin{eqnarray}
+-\frac{\hbar^2}{2m}\nabla^2 \psi(\mathbf{r}) + V(\mathbf{r})  \psi(\mathbf{r}) = E \psi(\mathbf{r}) \\
+\Psi(\mathbf{r},t) = \psi(\mathbf{r})e^{-iEt/\hbar}
+\end{eqnarray}
+
+** Postulates of Non-relativistic quantum mechanics
+See table
+\begin{table}
+\begin{center}
+    \caption{\large{Postulates of Non-relativistic Quantum Mechanics}}
+   \begin{description}
+    \item[Postulate 1:] {{\bf The physical state of a system is completely described by
+        its wavefunction $\Psi$.}  In general, $\Psi$ is a complex function of the spatial
+      coordinates and time.  $\Psi$ is required to be:}
+    \begin{outline}
+      \item{Single-valued}
+      \item {continuous and twice differentiable}
+      \item {square-integrable ($\int \Psi^*\Psi d\tau$ is defined over all finite domains)}
+      \item {For bound systems, $\Psi$ can always be normalized such that $\int \Psi^*\Psi d\tau=1$}
+    \end{outline}
+
+  \item[Postulate 2:]  To every physical observable quantity $M$ there corresponds a
+    Hermitian operator $\hat{M}$.  {\bf The only observable values of $M$ are the
+      eignevalues of $\hat{M}$.}
+    \begin{center}
+    \begin{tabular}[h]{ccc}
+      \hline
+{\bf Physical quantity} & {\bf Operator} & {\bf Expression} \\
+\hline
+Position $x,y,z$ & $\hat{x},\hat{y},\hat{z}$ & $x\cdot, y\cdot, z\cdot$ \\ \\
+Linear momentum $p_x, \ldots$ & $\hat{p}_x,\ldots $ & $\displaystyle -i\hbar\frac{\partial}{\partial
+  x},\ldots $\\
+Angular momentum $l_x, \ldots$ & $\hat{p}_x,\ldots $ & $\displaystyle -i\hbar \left
+  (y\frac{\partial}{\partial z}-z\frac{\partial}{\partial y}\right ), \ldots $ \\
+Kinetic energy $T$ & $\hat{T}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2$ \\
+Potential energy $V$ & $\hat{V}$ & $V({\bf r},t)$ \\
+Total energy $E$ & $\hat{H}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2+V({\bf r},t)$\\ \\
+\hline
+    \end{tabular}
+  \end{center}
+    \item[Postulate 3:] {If a particular observable $M$ is measured many times on many
+      identical systems is a state $\Psi$, the average resuts with be the expectation
+      value of the operator $\hat{M}$:
+      \begin{equation*}
+        \langle M \rangle = \int \Psi^* (\hat{M}\Psi)d{\bf\tau}
+      \end{equation*}}
+    \item[Postulate 4:] {The energy-invariant states of a system are solutions of the equation
+        \begin{eqnarray*}
+          \hat{H}\Psi({\bf r},t) & = & i\hbar\frac{\partial}{\partial t}\Psi({\bf r},t) \\
+          \hat{H} & = & \hat{T}+\hat{V}
+        \end{eqnarray*}
+      The time-independent, stationary states of the system are solutions to the equation
+      \begin{equation*}
+        \hat{H}\Psi({\bf r}) = E\Psi(\bf{r})
+      \end{equation*}
+}
+    \item[Postulate 5:] (The {\bf uncertainty principle}.)  Operators that do not commute
+      $(\hat{A}(\hat{B}\Psi)\neq\hat{B}(\hat{A}\Psi))$ are called /conjugate/.
+      Conjugate observables cannot be determined simultaneously to arbitrary accuracy.
+      For example, the standard deviation in the measured positions and momenta of
+      particles all described by the same $\Psi$ must satisfy $\Delta x\Delta p_x \geq \hbar/2$.
+    \end{description}
+\end{center}
+\end{table}
+
+** Notes on constants and units
+Resource on physical constants: [[http://physics.nist.gov/cuu/Constants/]]
+Resource for unit conversions: [[http://www.digitaldutch.com/unitconverter/]]
+
+Unit converter available in Calc mode of Gnu emacs *highly recommended*
+
+#+CAPTION: Atomic units common for quantum mechanical calculations (see [[http://en.wikipedia.org/wiki/Atomic_units]])
+|---------------------+--------------------------+---------------------------------------+-----------------|
+|                     | Atomic unit              | SI unit                               | Common unit     |
+|---------------------+--------------------------+---------------------------------------+-----------------|
+| Charge              | $e = 1$                  | $1.6021 \times 10^{-19}$ C            |                 |
+| Length              | $a_0 = 1$ (bohr)         | $5.29177 \times 10^{-11}$ m           | 0.529177 \AA    |
+| Mass                | $m_e = 1$                | $9.10938 \times 10^{-31}$ kg          |                 |
+| Angular momentum    | $\hbar = 1$              | $1.054 572 \times 10^{-34}$ J s       |                 |
+| Energy              | $E_h = 1$ (hartree)      | $4.359744 \times 10^{-18}$ J          | 27.2114 eV      |
+| Electrostatic force | $1/(4\pi\epsilon_0) = 1$ | $8.987552 \times 10^9$ C$^{-2}$ N m^2 |                 |
+| Boltzmann constant  |                          | $1.38065 \times 10^{-23}$ J K$^{-1}$  | 8.31447 J/mol K |
+|---------------------+--------------------------+---------------------------------------+-----------------|
+
+
+#+BEGIN_CENTER
+Energy units
+1 eV = 1.60218\times 10^{-19} J = 96.485 kJ/mol = 8065.5 cm^{-1} = 11064 K kB
+#+END_CENTER
+
+** Example: Energy states of an electron in a box
+System defined by potential experienced by particle:
+
+$V(\mathbf{r}) = 0,\qquad 0 < x,y,z < L$
+
+$V(\mathbf{r}) = \infty,\qquad x,y,z \leq 0,\ x,y,z \geq L$
+
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width 0.3\textwidth
+[[./Images/Cube.png]]
+#+END_CENTER
+
+3D box \rightarrow 3 degrees of freedom/coordinates
+
+*Schr\ouml{}dinger equation*
+\begin{equation}
+-\frac{\hbar^2}{2m_e} \left ( \frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} + \frac{\partial^2 }{\partial z^2} \right ) \psi(x,y,z) = E \psi(x,y,z)
+\end{equation}
+\begin{equation}
+\psi(x,y,z) = 0, \quad x,y,z \leq 0,\ x,y,z \geq L
+\end{equation}
+
+A second-order, linear, partial differential equation.  Boundary value problem.
+Solve by separation of variables.  Postulate $\psi(x,y,z) = X(x)Y(y)Z(z)$.
+Substituting and rearrange to get
+
+\begin{equation}
+-\frac{\hbar^2}{2m_e} \left (\frac{1}{X(x)}\frac{\partial^2 X(x)}{\partial x^2} + \frac{1}{Y(y)}\frac{\partial^2 Y(y)}{\partial y^2} + \frac{1}{Z(z)}\frac{\partial^2 Z(z)}{\partial z^2} \right ) = E \qquad 0 < x,y,z <L
+\end{equation}
+
+ftn x + ftn y + ftn z = constant \rightarrow each term must be constant.
+
+*Equation for each dimension*
+\begin{equation}
+-\frac{\hbar^2}{2m_e}\frac{\partial^2 X(x)}{\partial x^2} = E_x X(x), \qquad X(0)=X(L) = 0
+\end{equation}
+
+Seek function that twice differentiated returns itself and satisfies
+boundary conditions.
+\begin{equation}
+X(x) = \sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
+\end{equation}
+
+\begin{equation}
+E_{n_x} = \frac{n_x^2\pi^2\hbar^2}{2 m_e L^2}
+\end{equation}
+
+Solutions called /eigenfunctions/ (or /wavefunctions/) and /eigenvalues/.  Characterized
+by /quantum numbers/, one for each degree of freedom.  These (and all QM) solutions have certain
+special properties, including that they are orthonormal and form a complete set.
+
+*Normalization*
+
+Seek a constant such that the inner eigenfunction product is unity.
+\begin{eqnarray}
+C^2 \int_0^L \sin^2 \frac{n_x\pi x}{L} dx = C^2 L/2 = 1 \rightarrow C=\pm\sqrt{\frac{2}{L}}\\
+X(x) = \pm\sqrt{\frac{2}{L}}\sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
+\end{eqnarray}
+
+*Orthonormal*
+\begin{equation}
+\langle X_{n_x} | X_{n^\prime_x} \rangle = \delta_{n_{x},n_x^\prime}\qquad
+\text{Dirac notation}
+\end{equation}
+
+#+begin_src python :results file
+  import matplotlib, numpy
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
+  fig=plt.figure(figsize=(4,2))
+  x=numpy.linspace(-15,15)
+  plt.plot(numpy.sin(x))
+  fig.tight_layout()
+  plt.savefig('images/python-matplot-fig.png')
+  return 'images/python-matplot-fig.png' # return filename to org-mode
+#+end_src
+
+#+RESULTS:
+[[file:images/python-matplot-fig.png]]
+
+# #+RESULTS:
+#  [[file:images/python-matplot-fig.png]]
+
+
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/SineWave.png]]
+
+- Energy increase with number of /nodes/.
+
+- $E\propto n^2, \Delta E \propto n, \Delta E/E \propto 1/n$.  /Relative/ spacing decreases with $n$.
+
+- Is this real?  See [[http://dx.doi.org/10.1021/jp053496l][Ho, /J. Phys. Chem. B/ *2005*, /109/, 20657]].
+
+*Three-dimensional solutions*
+\begin{equation}
+\psi(x,y,z) = X(x)Y(y)Z(z) = \left ( \frac{2}{L} \right )^{3/2} \sin\frac{n_x\pi x}{L}\sin\frac{n_y\pi y}{L}\sin\frac{n_z\pi z}{L},\qquad n_{x},n_{y},n_{z}=1,2,3,\ldots
+\end{equation}
+\begin{equation}
+\label{eq:2}
+E = E_{x}+E_{y}+E_{z}=\frac{(n_{x}^{2}+n_{y}^{2}+n_{z}^{2}) \pi^{2}\hbar^{2}}{2 m L^{2}}
+\end{equation}
+
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/2DSine1.png]]
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/2DSine2.png]]
+
+
+#+CAPTION: Energy sates of 3D Particle in a box
+[[./Images/3DEnergyStates.png]]
+
+Properties of solutions:
+- Symmetry of system introduces degeneracy in solutions
+- Energy depends on volume \rightarrow pressure!
+
+\newpage
+
+* Hydrogen atom
+** Hydrogen atom solutions
+** Variational principle
+** Basis functions
+** Secular equations
+** Spin
+\newpage
+
+* Many electrons
+** What's the problem?
+** The Hartree atom
+** The Pauli principle
+** Slater determinants and exchange
+** Hartree-Fock equation
+*** Basis of wavefunction theory (WFT)
+** Hartree-Fock-Slater
+*** Basis of density functional theory (DFT)
+\newpage
+* Practical electronic structure
+** Born-Oppenheimer approximation
+In principle all nuclei and electrons should be described quantum mechanically.  For \ce{H2},
+for instance, true wavefunction would be a function of the positions of nuclei and
+electrons, $\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{1},\mathbf{R}_{2})$.
+
+Nuclei much heavier than electrons and move much more slowly.  Assume nuclei are fixed in
+space ("clamped") and electrons move in static field of those electrons. Equivalent to
+assuming that nuclear kinetic energy is decoupled from electron dynamics.
+Schr\ouml{}dinger equation becomes parameteric in nuclear positions; solutions
+$E(\mathbf{R}_{1},\mathbf{R}_{2})$ define a potential energy surface (PES).
+** Model chemistry
+Essentially always start with
+\begin{equation}
+\left \{ \hat{h} +v_{\text{Coulomb}}[\rho] + v_\text{exchange}[\psi_{i}] + v_\text{correlation}[\psi_{i}]\right\}\psi_i(\mathbf{r}) =\epsilon_i \psi_i(\mathbf{r})
+\end{equation}
+
+Standard models of today all treat the one-electron and Coulomb pieces exactly and treat
+the electron-electron interactions at various levels of approximation.
+|------------------------------------+-----------------------+--------------------------+---------------------------|
+|                                    | $v_{\text{exchange}}$ | $v_{\text{correlation}}$ |                           |
+|------------------------------------+-----------------------+--------------------------+---------------------------|
+| *Wave function theory* (WFT)       |                       |                          |                           |
+| Hartree                            | self-interaction      | neglect                  | historic                  |
+| Hartree-Fock                       | exact                 | neglect                  | superceded                |
+| MPn, CC                            | exact                 | perturbative             | state-of-the-art          |
+| CI                                 | exact                 | variational              | specialized               |
+|------------------------------------+-----------------------+--------------------------+---------------------------|
+| *Density functional theory* (DFT)  |                       |                          |                           |
+| Hartree-Fock-Slater                | $[\rho^{{4/3}}]$      | neglect                  | historic                  |
+| Local density approximation        | $[\rho]$              | $[\rho]$                 | general purpose solids    |
+| (LDA)                              |                       |                          |                           |
+| Generalized gradient approximation | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose           |
+| (GGA)                              |                       |                          |                           |
+| Hybrid                             | $\approx$ exact       | $[\rho,\nabla\rho]$      | general purpose molecules |
+|------------------------------------+-----------------------+--------------------------+---------------------------|
+
+The choice of the electronic structure model is the most fundamental approximation in
+applying these methods.  Determined from experience and need.
+
+Specification in GAMESS is a bit arcane.  Default is Hartree-Fock. To specify DFT model, use
+#+BEGIN_EXAMPLE
+ $CONTRL DFTTYP =   Slater (HFS), SVWN (LDA), PBE (GGA), B3LYP (Hybrid)
+#+END_EXAMPLE
+
+** Open-shell systems
+Model has to be generalized somewhat to deal with systems with unpaired electrons.
+
+** Bring back the basis sets
+The one-electron HF or HFS equations give us defining equations for
+the energy-optimal orbitals, but they aren't convenient to solve for
+anything more complicated than an atom. What to do? Reintroduce idea
+of a basis set.
+
+** Semi-empirical methods
+** Examples
+*** H2
+*** HF
+** Symmetry
+** Population analysis
+** Molecular orbital (MO) diagrams
+** Gaussian basis sets
+Gaussian functions ($e^{-\zeta|\mathbf{r}|^2}$) are the most popular choice for atom-centered basis sets.  They do not efficiently represent molecular wavefunctions, but one- and two-electron integrals in  WFT  can be solved analytically over Gaussians.
+
+Other choices, like Slater functions ($e^{-\zeta|\mathbf{r}|}$) are possible but require numerical quadrature.
+
+Gaussian basis sets have to be created for any given atom and must be used consistently within a set of calculations.
+
+- _Primitive_ is a single Gaussian function, possibly multipled by a polynomial to look like
+  /s/, /p/, \ldots.  Defined by an exponent $\zeta$ that determines how extensive (small $\zeta$) or compact
+  the function is.
+- _Contraction_ is a pre-set linear combination of several primitive Gaussians.
+- _Basis set_ is a predefined set of exponents and contraction coefficients appropriate
+  for some specific atom.
+
+Common notation
+- _Minimal basis_ contains one contracted function for every atomic orbital
+
+** Electron cores
+
+** Performance details of SCF methods
+Basis is often /orthonormalized/ to eliminate overlap from H-F-R equation; allows equations to be solved by matrix diagonalization.
+
+Initial density matrix *P* are obtained by solving an approximate Hamiltonian (like
+extended H\uuml{}ckel). Always beware! Initial guess can influence final converged state.
+
+Because the number of 2-electron integrals grows as $N^4$, they are sometimes calculated as needed "on-the-fly", so-called direct SCF.
+
+The SCF procedure is an optimization problem: find set of coefficients that minimizes the total energy. As discussed above, success depends on a reasonable initial guess for density matrix and judicious updating. Various strategies can be used to speed and stabilize convergence, like damped mixing of previous cycles.
+
+Second-order SCF is a convergence acceleration method that requires calculation or estimation of the first- and second-derivatives of the energy with respect to the orbital coefficients. See e.g. Chaban et al., /Theor. Chem. Accts./ *1997*, /97/, 88-95.
+
+Pulay's "direct inversion in the iterative subspace," or "DIIS," is a popular and powerful acceleration procedure that extrapolates from several previous Fock matrices to predict optimal next Fock to diagonalize.
+
+Controlled in GAMESS using the =$SCF= group.
+
+#+BEGIN_EXAMPLE
+ $SCF DIRSCF=   .T./.F. controls direct scf
+      SOSCF=    .T./.F. second-order scf
+      DIIS=     .F./.T. direct inversion in the iterative subspace
+      DAMP=     .T./.F. damping, on for initial iterations
+ $END
+#+END_EXAMPLE
+\newpage
+* Potential energy surfaces
+The potential energy surface ("PES") is the sum of the repulsive energy of the nuclei and the kinetic and potential energies of all the electrons:
+#+BEGIN_CENTER
+\begin{equation}
+E_\text{PES}(\mathbf{R_\alpha},\mathbf{R_\beta},\ldots) =E_\text{elec} +\sum_{\alpha=1}^N \sum_{\beta =\alpha +1}^N \frac{Z_\alpha Z_\beta e^2}{R_{\alpha \beta}}
+\end{equation}
+#+END_CENTER
+
+** Specifying atomic positions
+
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/Internals.pdf]]
+#+END_CENTER
+
+*** Cartesian
+Computationally straightforward but don't correspond with our physical notion of bonds,
+bends, etc.  Easiest to get out of a piece of software.  A molecule has \(3 N-6 \) internal degrees of freedom (\(3N-5\) if linear), but Cartesians specify \(3N\).  The extra values correspond to the location of the center of mass and molecular oriendation.  Codes will typically center and reorient the Cartesions.
+
+In Gamess, would specify Cartesian coordinates for \ce{FCH2CH2F} like this:
+#+BEGIN_EXAMPLE
+ $CONTRL COORD=CART $END
+ $DATA
+FCH2CH2F drag calculation
+C1
+C     6.0    -3.76764     0.33879     0.03727
+C     6.0    -2.35246     0.34495     0.03689
+F     9.0    -4.72277     0.58147    -1.18012
+F     9.0    -1.59909    -0.68487    -0.83662
+H     1.0    -4.04387     1.08375     0.75395
+H     1.0    -3.92958    -0.71060     0.16941
+H     1.0    -2.03786     0.18875     1.04760
+H     1.0    -2.09983     1.28759    -0.40187
+ $END
+#+END_EXAMPLE
+*** Internal coordinates
+These provide a more intuitive representation and can be convenient when building molecules by hand.  In codes like =GAMESS=, most commonly defined using "z-matrix" notation. Specify  each atom in terms of its distance, angle, and dihedral angle with three previous atoms.
+
+In Gamess, would specify z-matrix for \ce{FCH2CH2F} like this:
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=ENERGY COORD=ZMT $END
+$DATA
+FCH2CH2F drag calculation
+C1
+C
+C   1   r1
+F   2   r2   1   A1
+H   2   r3   1   A2   3   D1
+H   2   r4   1   A3   3   D2
+F   1   r2   2   A1   3   D3
+H   1   r3   2   A2   6   D1
+H   1   r4   2   A3   6   D2
+
+r1=1.5386
+r2=1.39462
+r3=1.11456
+r4=1.12
+A1=109.54214
+A2=111.
+A3=110.
+D1=120.
+D2=-120.5
+D3=50.
+$END
+#+END_EXAMPLE
+Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.
+
+** Features of potential energy surfaces
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/PES.pdf]]
+#+END_CENTER
+
+*** Gradients
+
+*** Hessians
+
+*** Minima
+
+**** Local
+
+**** Global
+
+*** Saddle points
+
+**** First-order
+
+**** Higher order
+
+*** Minimum energy paths
+
+** Energy gradients and second derivatives
+
+** Optimization algorithms
+*** Steepest descent
+
+*** Conjugate gradient
+
+*** Quasi-Newton Raphson
+
+
+*** Direct inversion in the iterative subspace (DIIS)
+*** Trudge
+*** Genetic algorithm
+*** Convergence criteria
+
+** Geometry optimization algorithms
+
+** Efficient coordinate systems
+** Performance of models
+** Vibrational frequencies
+** Transition states
+** Intrinsic reaction coordinates
+\newpage
+
+
+* =GAMESS= Cheat Sheet
+** Specifying electronic configuration
+*** Closed shell (default)
+#+BEGIN_EXAMPLE
+ $CONTRL RHFTYP=RHF MULT=1 $END
+#+END_EXAMPLE
+
+*** Open-shell (n = spin-multiplicity = # unpaired electrons + 1)
+#+BEGIN_EXAMPLE
+ $CONTRL RHFTYP=UHF MULT=n $END
+#+END_EXAMPLE
+** Specifying electronic structure method
+*** Hartree-Fock (default)
+*** DFT
+#+BEGIN_EXAMPLE
+ $CONTRL DFTTYP=xxx $END
+#+END_EXAMPLE
+=Gamess= supports _many_ DFT functionals.  See the $DFT section of the manual for a full set.  Common DFT methods include:
+|-----------------------------+--------|
+| method                      | xxx    |
+|-----------------------------+--------|
+| Slater                      | Slater |
+| Local density approx        | SVN    |
+| Generalized gradient approx | PBE    |
+| Hybrid DFT                  | B3LYP  |
+| "Minnesota" optimized       | M06    |
+|                             | M11    |
+|-----------------------------+--------|
+*** Beyond Hartree-Fock
+Many methods available.  See manual for full description.  Most common is second-order perturbation theory, "MP2," :
+#+BEGIN_EXAMPLE
+ $CONTRL MPLEVL=2 $END
+#+END_EXAMPLE
+
+If you want a very high quality number, have a big computer and time to wait, try "coupled cluster,":
+#+BEGIN_EXAMPLE
+ $CONTRL CCTYP=CCSD(T) $END
+#+END_EXAMPLE
+
+** Specifying basis sets
+Gamess uses atom-centered basis functions.  A "basis set" is a set of such functions for many atoms, all constructed (hopefully) at a consistent level of accuracy. Many such basis sets exist and are coded into Gamess, and for the daring new basis sets can be input by hand.  Choice of basis set is always a compromise between accuracy and computational cost.  In general should always check sensitivity of property of interest to basis set.
+
+Specified in $BASIS group.  Some common choices, in increasing level of sophistication:
+
+|--------------+--------------------------------+----------------------------------------|
+| Name         | Type                           | Flags                                  |
+|--------------+--------------------------------+----------------------------------------|
+|              | *Pople type*                   | *The most venerable and widely used*   |
+| STO-3G       | Minimal                        | GBASIS=STO  NGAUSS = 3                 |
+| 3-21G        | Split valence                  | GBASIS=N21  NGAUSS=3                   |
+| 6-31G(d)     | Split valence polarized        | GBASIS=N31 NGAUSS =6 NDFUNC=1          |
+| 6-311+G(d,p) | Triple-split valence           | GBASIS=N311 NGAUSS=6 NDFUNC=1 NPFUNC=1 |
+|              | polarized and augmented        |      DIFFSP=1                          |
+|              |                                |                                        |
+|              | *Polarization-consistent*      | *Good for DFT*                         |
+| PC0          | Minimal                        | GBASIS=PC0                             |
+| PC1          | Split valence polarized        | GBASIS=PC1                             |
+| PC2          | Triple split double polarized  | GBASIS=PC2                             |
+|              |                                |                                        |
+|              | *Correlation-consistent*       | *Good for MP2 and beyond*              |
+| cc-pVDZ      | Split valence polarized        | GBASIS=CC2                             |
+| cc-pVTZ      | Triple split double polarized  | GBASIS=CC3                             |
+|              |                                |                                        |
+|              | *Effective core potentials*    | *Good for treating heavy atoms*        |
+| SBKJC        | Split valence + core potential | GBASIS=SBKJC                           |
+| Hay-Wadt     | Split valence + core potential | GBASIS=HW                              |
+|--------------+--------------------------------+----------------------------------------|
+
+** Specifying geometry
+Again =GAMESS= has a number of options, several of which are arcane and seldom used.  Most common are Cartesian and z-matrix.  Here I give examples ignoring any symmetry the molecule might have.
+*** Cartesian
+Specify an atom name, atomic number, and cartesian positions in \AA.  Over-specified, so code will typically center and reorient.  Following is for gauche difluoroethane, \ce{FCH2CH2F}.
+#+BEGIN_EXAMPLE
+ $CONTRL COORD=CART $END
+ $DATA
+FCH2CH2F drag calculation
+C1
+C     6.0    -3.76764     0.33879     0.03727
+C     6.0    -2.35246     0.34495     0.03689
+F     9.0    -4.72277     0.58147    -1.18012
+F     9.0    -1.59909    -0.68487    -0.83662
+H     1.0    -4.04387     1.08375     0.75395
+H     1.0    -3.92958    -0.71060     0.16941
+H     1.0    -2.03786     0.18875     1.04760
+H     1.0    -2.09983     1.28759    -0.40187
+ $END
+#+END_EXAMPLE
+
+*** Z-matrix
+Specify atom name, number of atom it is connected to, distance to that atom, number of atom it makes an angle with, value of the angle, number of the atom it makes a dihedral with, and value of the dihedral angle.  Values may be given directly or as variables, followed by list of variable specifications.  In =Gamess=, would specify z-matrix for \ce{FCH2CH2F} like this:
+#+BEGIN_EXAMPLE
+$CONTRL COORD=ZMT $END
+$DATA
+FCH2CH2F drag calculation
+C1
+C
+C   1   r1
+F   2   r2   1   A1
+H   2   r3   1   A2   3   D1
+H   2   r4   1   A3   3   D2
+F   1   r2   2   A1   3   D3
+H   1   r3   2   A2   6   D1
+H   1   r4   2   A3   6   D2
+
+r1=1.5386
+r2=1.39462
+r3=1.11456
+r4=1.12
+A1=109.54214
+A2=111.
+A3=110.
+D1=120.
+D2=-120.5
+D3=50.
+$END
+#+END_EXAMPLE
+Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.  In general, though, variables should not be reused.
+
+** Specify calculation type
+Specified in $CONTRL group by RUNTYP flag:
+
+| Calculation                   | RUNTYP=  |
+|-------------------------------+----------|
+| Single-point energy           | Energy   |
+| Single-point energy + force   | Gradient |
+| Geometry optimization         | Optimize |
+| Frequency calculation         | Hessian  |
+| Transition state search       | Sadpoint |
+| Intrinisc reaction coordinate | IRC      |
+
+Note too that specifying EXETYP=CHECK will check your input without actually running the job.
+** Geometry optimization coordinate system
+By default, =GAMESS= performs optimizations in Cartesian coordinates.
+
+To use z-matrix coordinates, specify
+#+BEGIN_EXAMPLE
+ $CONTRL COORDS=ZMT NZVAR=xx $END
+#+END_EXAMPLE
+where NZVAR = 3N-6.
+
+To have =Gamess= automatically create a set of appropriate "delocalized" internal coordinates, specify
+#+BEGIN_EXAMPLE
+ $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
+#+END_EXAMPLE
+** Performing a transition state search
+Transition states are always more challenging to find than optimal geometries.  Always ~at least~ a three-step procedure:
+
+1. Guess a transition state structure and compute Hessian matrix (RUNTYP = HESSIAN).  Check to be sure there is one imaginary mode approximating desired TS.
+2. Perform the transition state search.  Must supply computed Hessian matrix, copied from .dat file, as $HESS group.  Also should specify $STATPT HESS=READ $END.
+3. Check the result!  Assuming the transition state search converges, run another frequency calculation to confirm that there is one and only one imaginary mode, and that it corresponds to desired TS.
+
+
+
+* Plane waves and core potentials
+
+** Hydrogen atom in a box
+
+** Periodic boundary conditions
+
+** Supercells - Cartesian and fractional coordinates
+
+** Gaussian vs. Vasp
+
+** Vasp POSCAR
+
+** Vasp INCAR
+
+** Core electron treatment
+
+*** OPW
+
+*** PP
+
+*** PAW
+
+** Comparing energies between calculations
+
+** Wavefunctions and charge densities
+
+** Exploring potential energy surfaces
+\newpage
+* Periodic electronic structure
+** Isolated vs. periodic systems
+** Bloch's theorem and qualitative band structure
+** Band folding
+** Multi-dimensional periodicity
+** Density of statues
+** Bravais lattices
+** Quantitative supercell calculations
+** Brillouin zone integration
+*** k-point sampling
+*** Fermi smearing
+\newpage
+* Practical supercell calculations
+\newpage
+* Surfaces
+** Surface planes
+** Slab models
+** Surface energy
+** Surface potentials and Fermi energies
+** Surface adsorption
+** Coverage-dependent adsorption
+** Reaction barriers
+
+\newpage
+* First-principles thermodynamics
+** Connection Between QM and Thermodynamics
+We have focused to this point on the many approaches and details of calculating
+the /internal electronic energy/ of a single molecule, that is, the energy
+associated with taking infinitely separated constituent nuclei and electrons at
+rest and forming a molecule:
+\begin{equation}
+2~\mathrm{H}^+ + 8~\mathrm{O}^{8+} + 10~\mathrm{e}^- \rightarrow
+\mathrm{H_2O}\qquad E^\mathrm{elec}
+\end{equation}
+$E^\mathrm{elec}$ is typically calculated within the Born-Oppenheimer
+approximation, i.e.\ within the approximation that the nuclei are fixed in space
+at the minimum energy configuration.  Even at 0~K, by quantum mechanics the
+atoms must vibrate about this minimum, and this intrinsic vibration imparts a
+/zero-point vibrational energy/ (ZPVE) to the molecule, and the 0~K
+internal energy of a molecule is thus:
+\begin{equation}
+  E^0=E^\mathrm{elec} + ZPVE
+\end{equation}
+ZPVE can be calculated reliably within the harmonic approximation, according to
+\begin{equation}
+  \mathrm{ZPVE}=\frac{1}{2}h\sum_{i=1}^{3n-6}\nu_i
+\end{equation}
+where $\nu_i$ are the harmonic vibrational frequencies, obtained from a
+vibrational frequency analysis.  $E^0$ is the minimum physically meaninfful
+energy of the molecule.
+
+Energy can be deposited in a molecule in many other ways as well, e.g.\ as
+translational and rotational kinetic energy, in excited vibrational modes, in
+the interaction of a molecule with an external electric or magnetic or
+gravitational field, or ....  If we assume that the energy in these various
+degrees of freedom are separable, we can write:
+\begin{equation}
+  E_i=E^0+E^\mathrm{trans}+E^\mathrm{rot}+E^\mathrm{vib} +E^\mathrm{elec*}+E^\mathrm{ext}
+\end{equation}
+To fully describe microscopic energetic state of a molecule, would have to
+specify all of these.
+
+Typically, though, we are more interested in the collective properties of many
+molecules at equilibrium, like the internal energy $U$ or enthalpy $H$ or Gibbs
+energy $G$, under some external constraints like temperature $T$ or volu
+me $V$.  These thermodynamic quantities are averages over the energy states of
+an /ensemble/ of molecules.  The way this averaging is performed is the
+realm of /statistical thermodynamics/.
+
+Most important for us will be the /canonical ensemble/, in which the free
+variables are the number of molecules $N$, the total volume $V$, and the
+temperature $T$.  Offer without proof, in the canonical ensemble the
+probability for a molecule to be in some energy state $E_i$ above $E^0$ is
+given by the Boltzmann factor,
+\begin{equation}
+  P(E_i) \propto e^{-E_i\beta}=e^{-E_i/k_BT},\qquad\beta=1/k_BT
+\end{equation}
+Defines an exponentially decaying probability function for a state to be
+occupied at some temperature.  In a sense, /temperature/ is the property of
+a system following this distribution.
+\begin{figure}[h]
+  \centering
+  \includegraphics{./Images/boltzmann}
+  \caption{Boltzmann distribution at two different temperatures}
+  \label{fig:boltzmann}
+\end{figure}
+
+*** Averages and partition functions
+Let's use this to calculate the internal energy $U$ of a molecule at some
+temperature.
+\begin{equation}
+  U(T)=\frac{\sum_iE_iP(E_i)}{\sum_iP(E_i)}
+\end{equation}
+where the denominator ensures that the probability is normalized.
+\begin{eqnarray}
+  U(T) & =& \frac{\sum_iE_i e^{-E_i\beta}}{\sum_ie^{-E_i\beta}} \\
+  & = & \frac{\frac{\partial}{\partial\beta}\sum_ie^{-E_i\beta}}{\sum_ie^{-E_i
+      \beta}}\\
+& = & -\frac{\partial \ln \sum_i e^{-E_i\beta}}{\partial \beta}
+\end{eqnarray}
+The sum over energy states is evidently a special quantity, called the
+partition function:
+\begin{equation}
+  q=\sum_ie^{-E_i\beta}
+\end{equation}
+All thermodynamic quantities can be written in terms of the partition function!
+
+*** Harmonic oscillator example
+Harmonic oscillator is a reasonable model of a molecular vibration.  Energy
+spectrum given by
+\begin{equation}
+  E_v=(v+1/2)h\nu,\qquad v=0,1,2,...
+\end{equation}
+Let's define the energy qunatum $h\nu=\epsilon_0$ and reset the energy scale so
+that zero is at $1/2 h\nu$:
+\begin{eqnarray}
+  E_v & = & v\epsilon_0,\qquad v=0,1,2,... \\
+q(T) & = &\sum_{v=0}^\infty e^{-v\epsilon_0\beta} \\
+ & = & \frac{1}{1-e^{-\epsilon_0\beta}}
+\end{eqnarray}
+where we take advantage of the fact that the sum is a geometric series to
+evaluate it in closed form.
+
+Plot partition function vs $T$, increasing function.
+
+\noindent Internal energy:
+\begin{eqnarray}
+  U(T) &=&-\frac{\partial \ln q}{\partial \beta}\\
+   & = & \frac{\epsilon_0}{e^{\epsilon_0\beta}-1}
+\end{eqnarray}
+
+\noindent Heat capacity:
+
+\noindent Entropy
+
+** Molecular Ideal Gas
+Nice example above for a simple model.  To get thermodynamics of an ideal gas,
+in principle need to sum over all the types of energy states (translational,
+rotational, vibrational, ...) of every molecule.  Seemingly impossible task.
+One simplification is if we can write energy as sum of energies of individual
+elements (molecules) of system:
+    \begin{align}
+      E_j&=\epsilon_j(1)+\epsilon_j(2) + ... + \epsilon_j(N) \\
+      Q(N,V,T) &= \sum_j e^{-E_j\beta} \\
+      &=\sum_je^{-(\epsilon_j(1)+\epsilon_j(2) + ... + \epsilon_j(N))\beta}
+    \end{align}
+/If/ molecules/elements of system can be distinguished from each
+        other (like atoms in a fixed lattice), expression can be factored:
+      \begin{align}
+        Q(N,V,T)&=\left ( \sum_j e^{-\epsilon_j(1)\beta}\right )\cdots \left ( \sum_j
+          e^{-\epsilon_j(N)\beta}\right ) \\
+      &= q(1)\cdots q(N) \\
+      \text{Assuming all the elements are the same:}\\
+      &= q^N
+    \end{align}
+/If not/ distinguishable (like molecules in a liquid or gas, or
+      electrons in a solid), problem is difficult, because identical
+      arrangements of energy amongst elements should only be counted once.
+      Approximate solution, good almost all the time:
+    \begin{equation}
+      Q(N,V,T)=q^N/N!
+    \end{equation}
+ Sidebar: ``Correct'' factoring depends on whether individual elements
+      are fermions or bosons, leads to funny things like superconductivity and
+      superfluidity.
+
+This $q(V,T)$ is the /molecular partition function/, and is calculated by
+summing over the individual energy states of a single molecule (starting at $E_0$).
+
+Further simplified by factoring into contributions from various ($3N$) molecular
+degrees of freedom:
+\begin{eqnarray}
+  q(V,T)&=&\left(\sum_\mathrm{trans}
+    e^{-e_\mathrm{trans}\beta}\right) \left(\sum_\mathrm{rot}
+  e^{-e_\mathrm{rot}\beta}\right) \left( \sum_\mathrm{vib}
+  e^{-e_\mathrm{vib}\beta} \right) \left( \sum_\mathrm{elec}
+  e^{-e_\mathrm{elec}\beta}\right) \\
+&=& q_\mathrm{trans}q_\mathrm{rot}q_\mathrm{vib}q_\mathrm{elec} \\
+U & = & E_0 + U_\mathrm{trans}+U_\mathrm{rot}+U_\mathrm{vib}+U_\mathrm{elec}
+\end{eqnarray}
+Similarly for other thermodynamic quantities, for example,
+\begin{equation}
+  C_v=\left(\frac{\partial U}{\partial T}\right)_V = C_{v,\mathrm{trans}}+C_{v,\mathrm{rot}}+C_{v,\mathrm{vib}}+C_{v,\mathrm{elec}}
+\end{equation}
+Thermodynamic quantities are sums of contributions from indvidual degrees of
+freedom.
+
+Have to somehow /model/ these motions and have to use our quantum
+mechanical results to parameterize the models.
+
+*** Translational partition function
+Need a model molecules freely translating about in a box.  How about the
+/particle in a box/?
+\begin{equation}
+  E_n=\frac{n^2\pi^2\hbar^2}{2 m L^2},~~~~~n=1,2,3,...
+\end{equation}
+Have to construct partition function for one molecule.  For gas molecules at
+normal conditions, energy spacing is tiny.  Spare the details, but find that
+$q_\mathrm{trans}$ can be written in terms of a /thermal wavelength/
+$\Lambda$:
+\begin{eqnarray}
+  \Lambda=\frac{h}{\sqrt{2\pi m k_B T}} \\
+q_\mathrm{trans}=\frac{V^\circ}{\Lambda^3}
+\end{eqnarray}
+$\Lambda$ depends only a molecule mass (that's easy!) and is of the order the
+box dimensions at which quantization is evident.  Typically a tiny number
+(e.g. $1.7\times 10^{-11}$~m for Ar in a 1 liter volume at 298 K.
+$q_\mathrm{trans}$ is, on the other hand, enormous: lots of translational
+freedom.  $V^\circ$ defines the standard state volume.
+
+Given this, can find all translational contributions to thermodynamics.
+$S_\mathrm{trans}$ gives the Sackur-Tetrode equation, the absolute entropy of a
+monatomic gas:
+
+
+*** Rotational partition function
+Model molecule as a rigidly rotating body.  Body has three orthogonal moments
+of inertia $I$ determined by the molecular structure.
+
+*** Vibrational partition function
+See harmonic oscillator above
+
+*** Electronic partition function
+Governed by Fermi-Dirac distribution
+Electronic degeneracy
+
+
+** CO T-dependent thermo example
+\newpage
+* Implicit solvation
+* Density functional theory
+** Electron density \rho as fundamental quantity
+** Thomas-Fermi-Dirac model
+** Hartree-Fock-Slater model
+** Hohenberg-Kohn theorems
+** Kohn-Sham construction
+** Exchange-correlation functionals
+So Kohn et al. showed that the DFT approach is theoretically well-grounded and
+provided one way to practically apply it. Promise is that if we can find an
+approximation to the (unknown) true \(v_\text{xc}\) with the right balance of simplicity
+and accuracy, we will have one sweet theory. Has to incorporate both exchange,
+like Slater tried to do, and correlation.
+
+How to proceed? Lots of approaches, and jargon here is at least as bad as in
+wavefunction-based methods. Perdew 2006 describes the ``Jacob's ladder'' of
+approximations:
+*** LDA
+One well-defined limit is the homogeneous electron gas, and this is the usual
+starting point for modern approximate DFT methods. Assume exchange and
+correlation potentials at any given point depend only on the value of \rho there
+(or spin-up and spin-down \rho, if spin-polarized). We know from Slater and
+Dirac's work what the exchange potential is for this system.
+
+It is possible to determine numerically the correlation energy for a given
+density from quantum Monte Carlo calculations. Ceperley and Alder (PRL 1980,
+45, 566) did this to very high accuracy, and others (Vosko, Wilk, and Nusair,
+"VWN", and Perdew and Wang, "PW") fit these numerical results to analytical
+models in \rho. This combination of local exchange and correlation defines the LDA
+model.
+
+LDA offers modest improvement over HFS for molecules. ``Homogeneous''
+approximation pretty severe for an atom or molecule. Nonetheless, works
+surprisingly well for structures and charge distributions, but has problems in
+calculating accurate bond energies, typically overbinding. Also tends to
+underestimate the HOMO-LUMO gap in molecules and analogous band gap in solids.
+
+*** GGA
+
+*** Meta-GGA
+
+*** Hyper GGA and hybrid functionals
+
+**** ``Screened'' exchange
+
+*** Beyond hyper GGA
+
+** Implementations
+
+** Performance
+\newpage
+\newpage
+* Electron correlation methods
+\newpage

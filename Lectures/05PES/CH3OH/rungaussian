@@ -1,0 +1,20 @@
+#!/bin/csh
+#$ -N C2H4F2-opt1
+#$ -S /bin/csh
+#$ -l arch=lx24-amd64
+#$ -pe ompi4-* 4
+#$ -j y
+#
+# The job is located in the current working directory.
+#$ -cwd
+# ---------------------------
+#Don't forget to use /scratch or /tmp directory for intermediate computations (much faster) (don't modify)
+
+setenv gaussian_machines `cat $TMPDIR/gaussian_machines`
+setenv GAUSS_LFLAGS "-nodelist '$gaussian_machines' -mp 1"
+
+#g03 C2H4F2-defcart
+#g03 C2H4F2-gdiiscart
+g03 hf631g-freq
+
+

@@ -1,0 +1,151 @@
+#+TITLE:
+#+AUTHOR:
+#+DATE: Due: <2015-04-02 Thu>
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
+#+OPTIONS: toc:nil # suppress toc, so we can put it where we want
+#+OPTIONS: tex:t
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{enumerate}
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+#+LATEX_HEADER: \usepackage[version=3]{mhchem}
+
+\title{Homework 6\\Computational Chemistry\\(CBE 60547)}
+\author{Prof.\ William F.\ Schneider}
+\maketitle
+
+The goal of this assignment is to study bonding behavior of adsorbates on transition metal surfaces.
+
+- You will work in randomly generated groups of two for this homework. 
+
+- Each group will be work on three transition metals and submit one assignment.
+
+- All (7) groups will work in a directory on Prof. Schneider's afs space. This directory can accessed by typing ~cd $HW6~ on your terminal.
+
+- Within this directory you will see sub-directories for each group. Please work in the directory assigned for your group.
+
+- To ensure that we can compare trends across all your results, you will follow a strict naming convention for your directories. 
+  - The naming convention for each calculation has been provided in the appropriate section.
+  - Deviations from the naming convention will be reflected on your grade.
+
+- For all calculations, a planewave cutoff of 400 eV and the PBE exchange-correlation functional should be used.
+
+Here is some code adapted from https://docs.python.org/2/library/itertools.html that randomly creates the groups.
+
+#+BEGIN_SRC python :results raw
+import random
+
+students = ['candrew3',
+            'gavelarb',
+            'mhumbert',
+            'sli12',
+            'mlubben',
+            'ylv',
+            'hma',
+            'xmu',
+            'skucera',
+            'knewcomb',
+            'soh3',
+            'hsidky',
+            'twu2',
+            'yzhang33']
+
+fcc_metals = ['Ni', 'Cu', 'Rh', 'Pd', 'Ag', 'Ir', 'Pt', 'Au'] 
+
+def random_combination(iterable, r):
+    "Random selection from itertools.combinations(iterable, r)"
+    pool = tuple(iterable)
+    n = len(pool)
+    indices = sorted(random.sample(xrange(n), r))
+    return tuple(pool[i] for i in indices)
+
+print '|Group|Students|Metals|'
+print '|-'
+for i in range(1,8):
+   s1, s2 = random_combination(students, 2)
+   m1, m2, m3 = random_combination(fcc_metals, 3)
+   print '|{0}|{1}, {2}|{3}, {4}, {5}|'.format(i, s1, s2, m1, m2, m3)
+   students = [s for s in students if s not in [s1, s2]]
+#+END_SRC
+
+#+RESULTS:
+| Group | Students           | Metals     |
+|-------+--------------------+------------|
+|     1 | mhumbert, xmu      | Ag, Ir, Pt |
+|     2 | candrew3, skucera  | Pd, Ag, Au |
+|     3 | soh3, hsidky       | Ag, Ir, Au |
+|     4 | ylv, twu2          | Ni, Pd, Au |
+|     5 | knewcomb, yzhang33 | Ni, Cu, Au |
+|     6 | sli12, mlubben     | Cu, Rh, Ag |
+|     7 | gavelarb, hma      | Ni, Cu, Pd |
+
+
+* Single Metal Atoms
+
+Use =Vasp= to calculate the spin-polarized ground state energy of your atoms. Perform an scf calculation with the atom in a 8\times9\times10 \AA box. Use an plane wave cutoff of 400 eV, the PBE functional, and first order Methfessel-Paxton smearing (~ismear=1~). Let all other parameters be the defaults. What are the electronic configurations of the atoms. Are they consistent with your expectations?
+
+*Name your calculation directory as '{0}-atom'.format(metal), i.e. if your metal is Pd the calculation directory should be called =Pd-atom=.*
+
+* /k/-point convergence
+
+Now create bulk fcc structures for your metals with the experimental lattice constants. For each structure perform a /k/-point convergence study till you reach a 0.02 eV convergence in the total energy. The other =INCAR= parameters should be the same as the last question.
+
+Use a (k,k,k) grid where k is in [3, 5, 7, 9, 11].
+
+*The calculations should be in '{0}-kpt-convergence/kpt-{1}'.format(metal, k), i.e., for Pd and for k=7 it should be called your calculation should be in =Pd-kpt-convergence/kpt-7=.* 
+
+* Finding bulk metal lattice constants
+
+Now calculate the optimal PAW/PBE lattice constant for your metals by performing an Equation of State fit. For each metal, use the /k/-point grid where the energy is converged. Refer to the notes of Lab 4 for an example of how to do this. Again, use the =INCAR= parameters from the previous questions. 
+
+How do your calculated lattice constants compare to the experimental ones?
+
+*Calculations should be in '{0}-EOS/a-{1}'.format(metal, lattice)*
+
+* Cohesive Energies
+
+The cohesive energy is the energy of the reaction:
+
+M(g) \rightarrow M(s)
+
+Calculate the cohesive energy of all your metals. How do they compare with experiment?
+
+
+
+* Surfaces and Surface Energies
+
+Next you will calculate the surface energy, i.e. the energy to separate the FCC crystal to expose one of its surfaces. You will represent the fcc(111) surface as a (2,2,3) slab with 10 \AA of vacuum. Use the optimized lattice constant. Then perform a geometry optimization with ~ibrion=2~ and ~nsw=20~. 
+Use the optimized energy of the slab to calculate the surface energy in eV/\AA. The surface energy is defined as,
+
+$\gamma = \frac{E_{slab} - nE_{bulk}}{2A}$
+
+where A is the surface area of the slab, and n is the number of metal atoms in the slab divided by the number of metal atoms in the bulk. $E_{bulk}$ is the energy of the bulk metal. Note that to calculate surface energies, you need symmetric slabs, so do not use any constraints! (We will not use any constraints in this homework).
+
+*Please perform the calculations in '{0}-surface'.format(metal)*
+
+* Adsorbates and Adsorption Energies
+
+One reason to model a slab is to study adsorption at its surface.  For your metals, determine the binding energy of an O atom adsorbed at the 'fcc' site of the fcc(111) surface. 
+
+It is defined as,
+
+$E_{ads} = E_{O+surface} - E_{surface} - 0.5 E_{O_{2}}$
+
+For which metal is O binding most favorable? For which metal is it the least favorable?
+
+*Please perform the calculations in 'O-on-{0}-fcc'.format(metal).*
+
+* Density of States
+For each of your metals, plot the density of states projected onto the d-orbitals for an atom of the clean surface, and the 2p projected density of states for the adsorbate oxygen, on the same graph. Remember that you will have to perform additional SCF calculations with ~lorbit=10~ (Refer notes for lab 4). Using your three figures, explain why the O binding energy is different for different metals. Do the metal cohesive energies depend on the degree of filling of the metal d-states?
+
+This paper http://dx.doi.org/10.1038/376238a0 might be useful.
+
+ 

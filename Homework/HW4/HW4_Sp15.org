@@ -1,0 +1,184 @@
+#+TITLE:
+#+AUTHOR:
+#+DATE: Due: 2 March 2015
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
+#+OPTIONS: toc:nil # suppress toc, so we can put it where we want
+#+OPTIONS: tex:t
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{enumerate}
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+#+LATEX_HEADER: \usepackage[version=3]{mhchem}
+
+\title{Homework 4\\Lectures 5: Potential Energy Sufaces\\(CBE 60547)}
+\author{Prof.\ William F.\ Schneider}
+\maketitle
+
+In this assignment you will determine some of the properties of *acetaldehyde* (\ce{CH3CHO}), its isomer *vinyl alcohol* (\ce{H2C=CH(OH)}), and the *transtion state* (TS) that interconverts the two:
+
+#+BEGIN_CENTER
+[[file:fig1.png]]
+#+END_CENTER
+
+
+
+* Characterizing the reactant and product
+  :PROPERTIES:
+  :ORDERED:  t
+  :END:
+
+#+ATTR_LATEX: :options [(a)]
+a. First, optimize the structures of the reactant acetaldehyde and product vinyl alcohol at the Hartree-Fock level with the 6-31G(d) basis set. Make a table of the key internal coordinates in the two (note you will figure out the TS below):
+
+|---------------+--------------+------------------+---------------|
+|               | Acetaldehyde | Transition State | Vinyl alcohol |
+|---------------+--------------+------------------+---------------|
+| H_{1}–C (\AA) |              |                  |               |
+| C–C (\AA)     |              |                  |               |
+| C–O (\AA)     |              |                  |               |
+| O-H_{1} (\AA) |              |                  |               |
+|---------------+--------------+------------------+---------------|
+
+#+ATTR_LATEX: :options [(b)]
+b. Which geometry optimization method did you use in (a)? What type of coordinate system? What were the convergence criteria?
+
+#+ATTR_LATEX: :options [(c)]
+c. Calculate the vibrational spectra of the reactant and product. Confirm that both are true minima (if not, adjust and recalculate). Identify the most prominent (intense) infrared vibrational modes in the two. Could you distinguish these two by their vibrational spectra?
+
+#+ATTR_LATEX: :options [(d)]
+d. Perform single-point energy calculations on the reactant and product at the MP2/6-31G(d) level.  Use the results to complete the table below:
+
+|--------------+--------------------------------+--------------------------|
+|              | Product $-$ reactant  (kJ/mol) | TS $-$ reactant (kJ/mol) |
+|--------------+--------------------------------+--------------------------|
+| HF/6-31G(d)  |                                |                          |
+| MP2/6-31G(d) |                                |                          |
+| ZPE          |                                |                          |
+| MP2 + ZPE    |                                |                          |
+|--------------+--------------------------------+--------------------------|
+
+#+ATTR_LATEX: :options [(e)]
+e. From the frequency calculations on the reactant and product, extract \( H^{\circ}(298)-H(0) \) for each.  Combine with the MP2 + ZPE results to estimate the 298 K reaction enthalpy.
+
+* Transition state by scanning
+#+ATTR_LATEX: :options [(a)]
+a. Do a rigid scan about the H_{1}-C-C-O dihedral in acetaldehyde. It is easiest to do this using a z-matrix representation of acetaldehyde. Construct a z-matrix based on your optimized acetaldehyde structure and do a series of energy evaluations as you vary the dihedral angle. Approximately how large is the barrier to rotation about the C–C bond, in kJ/mol?
+
+
+Recall the z-matrix looks like:
+
+#+BEGIN_EXAMPLE
+C1
+C2 1 dCC
+O  1 dCO  2 aOCC
+H1 2 dCH1 1 aHCC1 3 dHCCO
+
+...
+#+END_EXAMPLE
+
+
+* Transition state optimization
+#+ATTR_LATEX: :options [(a)]
+a. Guess a structure near the transition state that connects acetaldehyde to vinyl alcohol (note I gave you some hints in the figure) and compute the Hessian at the HF/6-31G(d) level to make sure you are near a saddle point.  Once you have a satisfactory guess, search from this starting point for the transition state. Make sure your calculation converges, and calculate the vibrational spectrum again to make sure you landed at the saddle point. Add the key internal coordinates to the Table in 1(a).
+
+b. What is the magnitude of the imaginary vibrational mode at the transition state?
+
+c. Perform a single-point MP2/6-31G(d) calculations on this transition state. Add the results to the Table in 1(c).
+
+d. Use transition state theory to estimate the rate constant for this reaction at 298 K.  From the frequency calculations on the reactant and transition state, extract \(G^{\circ}(298 K)- G( K) \) for each.  Combine these results with the MP2 + ZPE energies to estimate \( \Delta G^{\ddagger}(298) \).  Evaluate the rate constant using the TST expression:
+#+BEGIN_LaTeX
+\begin{equation}
+ k(T) =\frac{k_{B} T}{h} e^{-\Delta G^{\ddagger}(T)/k_{B}T}
+#+END_LaTeX
+
+* Bronsted-Evans-Polanyi relations
+
+Your colleague wants to know if replacing one of the methyl H’s with an F will speed-up or slow down the isomerization. You know from experience that it is much easier to calculate relative rates than absolute ones.
+#+ATTR_LATEX: :options [(a)]
+a. Perform additional calculations to determine whether the reaction is more or less exothermic with the F substituent.
+
+b. Perform additional calculations to determine whether the reaction barrier is higher or lower with the F substituent.
+
+c. Do your answers to (a) and (b) conform to expectations from the BEP relationship?
+
+# * Electronic Transitions
+
+# Impressed by your ability to predict things, your colleague now wants to know which of acetaldehyde and vinyl alcohol has the lower energy first electronic transition. Perform a CIS/6- 31G(d) calculation on each to estimate the energy of the first excited state and the wavelength of light needed to excite the molecule to that state.
+
+* Useful Templates
+
+** Frequency calculation:
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=HESSIAN $END
+$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+$FORCE METHOD=ANALYTIC VIBANL=.TRUE. $END
+$GUESS GUESS=MOREAD NORB=xxx $END ! use if you have a converged SCF wavefunction to read in
+$DATA
+...
+$END
+#+END_EXAMPLE
+
+￼
+** Geometry optimization using redundant internal coordinates:
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=OPTIMIZE NZVAR=”3n-6” $END
+$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+$STATPT NSTEP=xx $END
+$ZMAT DLC=.TRUE. AUTO=.TRUE. $END
+$GUESS GUESS=MOREAD NORB=xxx $END ! use if you have a converged SCF wavefunction to read in
+$DATA
+ ...
+$END
+$VEC ! converged SCF wavefunction, if you have it
+...
+$END
+#+END_EXAMPLE
+
+
+** Transition state search:
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=SADPOINT NZVAR=”3n-6” $END
+$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+$STATPT HESS=READ NSTEP=xx $END
+$ZMAT DLC=.TRUE. AUTO=.TRUE. $END
+$GUESS GUESS=MOREAD NORB=xxx $END ! use if you have a converged SCF wavefunction to read in
+$DATA
+...
+$END
+$HESS
+...
+$END
+$VEC
+...
+$END
+#+END_EXAMPLE
+
+
+** MP2 calculation:
+
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=ENERGY MPLEVL=2 $END
+$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+$DATA !
+...
+$END
+#+END_EXAMPLE
+
+
+** CIS calculation:
+
+#+BEGIN_EXAMPLE
+$CONTRL SCFTYP=RHF RUNTYP=ENERGY CITYP=CIS $END
+$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+$DATA !
+...
+$END
+#+END_EXAMPLE

@@ -1,0 +1,87 @@
+#+TITLE: 
+#+AUTHOR: 
+#+DATE: Due: 01/29/2015
+#+LATEX_CLASS: article
+#+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
+#+OPTIONS: toc:nil # suppress toc, so we can put it where we want
+#+OPTIONS: tex:t
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry} 
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{enumerate}
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+
+\title{Homework 2\\Computational Chemistry\\(CBE 60547)}
+\author{Prof. William F.\ Schneider}
+\maketitle
+
+* Lectures 1-2: Review of quantum mechanics
+An electron is trapped in a _one-dimensional_ box described by the potential (recall 1 bohr = 0.529177 Å, is the atomic unit of length):
+
+#+BEGIN_CENTER
+    V(x)= 
+\begin{cases}
+    0, & -1  < x < 1  \text{ bohr} \\
+    \infty, & x \leq -1 \text{ or } x \geq 1  \text{ bohr}
+\end{cases}
+#+END_CENTER
+
+#+ATTR_LATEX: :options [(a)]
+a. Using the energy expression given in class, calculate the ground state (n=1) energy of the electron, in Hartree (the atomic unit of energy), in eV, and in kJ mol^{–1}.
+
+b. We found in class that the ground-state wavefunction for this electron is $\psi_{1}(x) = cos (\pi x/2)$. Sketch this wavefunction and show that it obeys the proper boundary conditions, has zero nodes, and is normalized.
+
+c. Suppose you approximate the true ground-state wavefunction by $\phi_{1}(x) = 1 - x^{2}$. Calculate the expectation value of the energy (in Hartree) for this approximation. How does your answer compare to the energy you calculated in (a)?
+
+d. Can you guess an even better approximate wavefunction? Guess a candidate, evaluate the expectation value of its energy, and compare to question (c). Did you do any better than my guess?
+
+
+* Lectures 3: Many-electron atoms
+
+Hartree’s father performed the first calculations on multi-electron atoms by
+hand. Today those same calculations (much better ones, in fact) can be done in
+the blink of an eye on a computer. In this problem you will use a code first
+developed by Herman and Skillman in the 1960’s to calculate the wavefunctions
+and energy of an atom using the Hartree-Fock-Slater (HFS) model, an early
+predecessor to DFT. The necessary software, rewritten in =C++=, is compiled and
+available at
+https://github.com/wfschneidergroup/computational-chemistry/tree/master/Lab1/FDA/fda. Look
+at the =00README= file for information about the computer program and the
+format of the input. If you are brave, glance through the various source files
+(~*.cxx~) to get a sense of what the code is doing. Note that the code uses
+atomic units, Hartree for energy and bohr for distance.
+
+#+ATTR_LATEX: :options [(a)]
+a. Run the =Ar.inp= example included in the directory (~fda Ar~). If all goes well, you should get an output file (=Ar.out=) and a dump file (=Ar.dmp=). Look at the =Ar.out= file to answer these questions:
+
+   - How many self-consistent field (SCF) iterations does the calculation take to converge?
+
+   - What is the final calculated HFS energy of the atom?
+
+   - What are the identities (1s, 2p, etc.) and energies of the occupied atomic orbitals? 
+
+b. The fda code solves the HFS equations on a radial grid. The =Ar.dmp= file contains the radial grid values and the total charge density in two columns of length 300, followed by an output of each orbital on the same grid. Plot out the charge density and each of the orbitals.
+
+c. Choose one of the d block atoms. From the periodic table, figure out its electronic configuration and create an fda input file for it (follow the instructions in =00README= for how to specify the atomic number and the orbital occupancies of your atom). Run the fda calculation on your atom.
+
+   - What is the final calculated HFS energy of the atom? How does it compare to Ar?
+
+   - What are the identities (1s, 2p, etc.) and energies of the occupied atomic orbitals?
+
+d. The orbital energies are a rough approximation of the energy to remove an electron from that orbital. Use your result to estimate the first ionization energy of your atom. How does it compare with the experimental first ionization energy? 
+
+e. You can also do calculations on anions or cations. Modify the input file for your atom by removing one of the valence electrons, to make it a cation. Rerun fda on the cation. 
+
+   - How does the HFS energy of the cation compare to the neutral metal atom?
+   - Do the energies of the orbitals go up or down from the neutral to the cation?
+   - Do the electrons get closer to or further from the nucleus in the cation compared to the neutral? Use the expectation values of the distances from the nucleus (<r>) to answer the question.
+
+f. The difference in total energy between your neutral and cation calculations is another estimate of the first ionization energy of your atom. How does this estimate compare with experiment?
+
+
+

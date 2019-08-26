@@ -1,0 +1,97 @@
+#+TITLE: 
+#+AUTHOR: 
+#+DATE: Due: 02/12/2015
+#+LATEX_CLASS: article
+#+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
+#+OPTIONS: toc:nil # suppress toc, so we can put it where we want
+#+OPTIONS: tex:t
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry} 
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{enumerate}
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+
+\title{Homework 3\\Lectures 4: Electronic Structure Models\\(CBE 60547)}
+\author{Prof. William F.\ Schneider}
+\maketitle
+
+
+Here is an example input deck for a HFS/6-31G calculation on NH_{3}. This is a good starting template for the calculations below. You can also construct an input deck in Avogadro. Refer to the GAMESS manual for more information.
+
+#+BEGIN_EXAMPLE
+!   File created by the GAMESS Input Deck Generator Plugin for Avogadro
+ $BASIS GBASIS=N31 NGAUSS=6 $END
+ $CONTRL RUNTYP=ENERGY DFTTYP=SLATER $END
+
+ $DATA 
+Title
+C1
+N     7.0    -1.03363     0.80618     0.00000
+H     1.0    -0.01363     0.80618     0.00000
+H     1.0    -1.37362     1.64340    -0.47314
+H     1.0    -1.37363     0.79732     0.96162
+ $END
+#+END_EXAMPLE
+
+
+** =GAMESS= vs. =FDA=
+
+Using =GAMESS=, perform a DFT/Hartree-Fock-Slater (~DFTTYP=SLATER~) calculation on an Ar atom using the 6-31G basis set.
+
+#+ATTR_LATEX: :options [(a)]
+a. How many primitive Gaussians are included in this calculation? How many total basis functions? How do they divide between s, p, and d?
+
+b. How many SCF iterations does the calculation take to converge?
+
+c. What is the final calculated HFS/6-31G energy of the atom?
+
+d. What are the identities (1s, 2p, etc.) and energies of the occupied atomic orbitals?
+
+e. Compare your computed total energy and atomic orbital energies with those you got from Homework 2 using the fda code for Ar.
+
+** The Generalized Gradient Approximation
+
+The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using =GAMESS=, perform a single point calculation (~RUNTYP=ENERGY~) on the bent triatomic SO_{2} using the GGA (~DFTTYP=PBE~) and PC1 basis set (~GBASIS=PC1~, ~ISPHER=1~; no ~NGAUSS~ flag needed). Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
+
+#+ATTR_LATEX: :options [(a)]
+a. What is the spin multiplicity of SO_{2}? (Recall, the spin multiplicity is 2S +1, where S = 1/2 for one unpaired electron, S = 1 for two unpaired electrons, and so on).
+
+b. How many basis functions are in this calculation?
+
+c. How many SCF cycles does it take to converge?
+
+d. What SCF algorithm does the code use?
+
+e. What is the final total energy of the molecule?
+
+f. How many occupied orbitals does the molecule have? What are the energies of the HOMO and LUMO?
+
+g. What is the final dipole moment?
+
+h. What are the Mulliken gross charges on the S and O atoms?
+
+i. Plot out the electrostatic potential of SO_{2}. Which end of the molecule is electrophilic and which is nucleophilic?
+
+** Geometry Optimization of SO_{2}
+
+#+ATTR_LATEX: :options [(a)]
+a. Do a series of calculations in which you vary the S–O distances and O–S–O angle over a regular grid of values. Approximate the combination of values that give the lowest energy.
+
+b. A geometry optimization (~RUNTYP=OPTIMIZE~) is a faster way to find the optimal geometry of a molecule. Perform a geometry optimization on SO_{2} using the same computational model as above. What are the optimal S–O distances and O–S–O angle?
+
+** Other Molecules
+
+Oxygen makes bonds with lots of things. Fill out the table below by doing an appropriate set of calculations:
+
+#+ATTR_LATEX:
+| AO_{2}  | A-O (\AA) | O-A-O (\deg) | Spin Multiplicity | Dipole Moment (e\AA) | Mulliken Charge |
+|---------+-----------+--------------+-------------------+----------------------+-----------------|
+| CO_{2}  |           |              |                   |                      |                 |
+| NO_{2}  |           |              |                   |                      |                 |
+| SiO_{2} |           |              |                   |                      |                 |
+| SO_{2}  |           |              |                   |                      |                 |

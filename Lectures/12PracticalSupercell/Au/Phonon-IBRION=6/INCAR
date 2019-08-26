@@ -1,0 +1,25 @@
+System = Au, FCC
+NWRITE = 1
+LWAVE =  .FALSE.  ! write WAVECAR?
+LCHARG = .TRUE.   ! write CHGCAR?
+LVTOT =  .FALSE.  ! write LOCPOT?
+
+Electronic relaxation
+ALGO   = Fast   ! use fast algorithm for electronic convergence
+ISMEAR = 0      ! 0: Gaussian smearing of states near Fermi level; -5: tetrahedron + Blochl
+SIGMA  = 0.1    ! smearing parameter, eV
+PREC   = normal ! set FFT mesh, cutoffs
+ENCUT  = 350    ! set plane-wave cutoff
+ISTART = 0      ! start from scratch
+EDIFF  = 1e-4   ! electronic convergence parameter
+ISPIN  = 1     ! polarization? 1, no; 2, yes
+LORBIT = 11    ! site-projection of DOS
+
+Geometry relaxation
+NSW    = 10     ! # of steps in optimization (default 0!)
+ISIF   = 2     ! 0: relax ions, 1,2:relax ions,calc stresses, 3:relax ion+cell
+IBRION = 6     ! 1: quasi-NR, 2:CG algorithm for ions, 6:symmetrized phonons
+NFREE  = 2    ! number of DIIS vectors to save, or number of dynamical matrix displacements
+POTIM  = 0.35   ! reduce trial step in optimization
+EDIFFG = -0.05   ! >0: converge on energy (eV); <0: converge on gradient (eV/Ang)
+

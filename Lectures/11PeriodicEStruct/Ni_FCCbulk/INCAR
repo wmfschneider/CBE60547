@@ -1,0 +1,15 @@
+System = Pt, FCC
+NWRITE = 1
+LWAVE =  .FALSE.  ! write WAVECAR?
+LCHARG = .FALSE.   ! write CHGCAR?
+LVTOT =  .FALSE.  ! write LOCPOT?
+
+Electronic relaxation
+ALGO   = Fast   ! use fast algorithm for electronic convergence
+ISMEAR = 0      ! 0: Gaussian smearing of states near Fermi level 
+SIGMA  = 0.1    ! smearing parameter, eV
+PREC   = med    ! set FFT mesh, cutoffs
+ENCUT  = 350    ! set plane-wave cutoff
+ISTART = 0      ! start from scratch
+EDIFF  = 1e-4   ! electronic convergence parameter
+ISPIN  = 1     ! polarization? 1, no; 2, yes

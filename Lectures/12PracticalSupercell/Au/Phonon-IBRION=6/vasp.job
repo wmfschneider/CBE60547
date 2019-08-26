@@ -1,0 +1,15 @@
+#!/bin/csh
+#$ -N vasp
+#$ -pe mpich1 4
+#$ -l arch=lx24-amd64
+#$ -M wschnei1@nd.edu
+#$ -m ae
+#$ -cwd
+# Things you must change:
+
+# for vasp 4.6: 
+#module load pathscale
+#module load mpich1/1.2.7p1-path
+# for vasp 5.2:
+module load ompi/1.3.2-path
+mpirun -np $NSLOTS -machinefile $TMPDIR/machines  /opt/crc/vasp/5.2/vasp.5.2/vasp > logfile

@@ -1,0 +1,88 @@
+#+TITLE:
+#+AUTHOR:
+#+DATE: Due: <2015-03-19 Thu>
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [11pt]
+#+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
+#+OPTIONS: toc:nil # suppress toc, so we can put it where we want
+#+OPTIONS: tex:t
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_HEADER: \usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \usepackage{hyperref}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{enumerate}
+#+LATEX_HEADER: \usepackage[parfill]{parskip}
+#+LATEX_HEADER: \usepackage[version=3]{mhchem}
+
+\title{Homework 4\\Computational Chemistry\\(CBE 60547)}
+\author{Prof.\ William F.\ Schneider}
+\maketitle
+
+
+In this homework, we will use =VASP= to perform plane wave density functional theory calculations. If you are having trouble, refer to the notes for Lab 3, or the =ase= website (https://wiki.fysik.dtu.dk/ase/index.html) or dft-book (http://kitchingroup.cheme.cmu.edu/dft-book/dft.html).
+
+* Not Ar again! [[label:sec:Ar]]
+
+As they say, there are many ways to skin a cat! You have computed the wavefunctions of Ar several different ways in homework already — using =FDA=, the descendent of Hartree’s first calculations, and using the molecular orbital =GAMESS= code — so it is only natural to do the same using =VASP=. 
+
+Create an atoms object for Ar centered in a 12 \times 12 \times 12 \AA unit cell. Perform a =VASP= calculation using the PBE exchange correlation functional, Gaussian smearing, and a small sigma value (0.01). Answer the following questions.
+
+#+ATTR_LATEX: :options [(a)]
+A. What are the total number of electrons in the calculation? (Hint: ~calc.get_number_of_electrons()~)
+
+B. What is the potential energy of the Ar atom?
+
+C. How many SCF iterations does it take to converge?
+
+D. Identify the orbitals. What are their occupancies and energies? Which orbitals are kept in the core? (Hint: ~calc.get_eigenvalues()~, ~calc.get_occupation_numbers()~)
+
+E. How many basis functions are in the calculation? (VASP doesn't always print this for bigger systems, as such there is no in-built function in ase. Look in the OUTCAR file to figure this out).
+
+
+* Sensitivity to Planewave cutoff 
+
+We will now study the effect of choosing different planewave cutoffs. Perform the calculation in problem ref:sec:Ar for different values of encut (100, 200, 300, 400, 500 eV) and plot out the potential energy. At what cutoff is the energy converged to 0.005 eV? How does the computational cost scale with the cutoff?
+
+
+* Spin polarized Calculations
+
+Now let’s try a spin-polarized atom. Create the calculation above for an O atom in the same-sized box. To turn on spin-polarization set ~ispin=2~. The POTCAR recommends a cutoff of 400 eV, so use that as your value for ~encut~. Answer the following questions:
+
+#+ATTR_LATEX: :options [(a)]
+a. What is the final potential energy of the O atom?
+
+b. What is the number of spin-up minus spin-down electrons? Does it make sense for an O atom? (Hint: ~atoms.get_magnetic_moment()~)
+
+c. Identify the orbitals, their occupancies and energies? Do the occupancies make sense? (For the expert users, MAGMOM, FERWE, and FERDO can be used to adjust all these. You could also break the symmetry of the box to converge to the lower symmetry solution).
+
+Hint: Use ~calc.get_eigenvalues(spin=n)~, ~calc.get_occupation_numbers(spin=n)~, where n=0,1, to get the spin up and spin down orbitals.
+  
+* Geometry Optimization
+
+Now let’s do an O2 molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
+
+#+ATTR_LATEX: :options [(a)]
+a. Did the geometry converge? (~calc.read_convergence()~)
+
+b. How many relaxation steps were taken? (~calc.get_number_of_ionic_steps()~)
+
+c. What is the final O_{2} energy?
+
+d. What is the magnetic moment? Does this make sense for an O_{2} molecule?
+
+e. What are the final orbital identities, energies and occupancies?
+  
+* Vibrational Frequencies and Zero Point Energies
+
+Vasp can also calculate vibrational frequencies. Set ~ibrion=6~ to turn on a finite-differences frequency calculation, ~nfree=2~ to do a step in the positive and negative direction, and ~potim=0.010~ for the step size in \AA.
+
+#+ATTR_LATEX: :options [(a)]
+a. What is the computed O_{2} frequency, in wavenumbers? (Hint: ~calc.get_vibrational_frequencies()~)
+
+b. What is its zero-point energy?
+
+c. Calculate the zero-point corrected bond energy of O_{2}. How does your answer compare to experiment?

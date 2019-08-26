@@ -1,0 +1,36 @@
+System = Ar atom
+
+Print information:
+NWRITE = 1     ! print flag
+LWAVE  =      .F.  !  write WAVECAR
+LCHARG =      .T.  !  write CHGCAR
+LVTOT  =      .F.  !  write LOCPOT, local potential
+
+Set up electronic calculation
+ENCUT  = 250   ! sets energy cutoff that defines basis set
+PREC   = normal  ! Precision parameter, typically "normal" or "accurate"
+ISPIN  = 1     ! spin polarization? 1 = no, 2 = yes
+ISMEAR = 0     ! sets how orbitals are occupied. 0: Gaussian smearing, 1: M-P -5: tetrahedron
+SIGMA  = 0.05 ! smearing paramater
+LREAL  = auto  ! how to numerically handle core potentials.  .F.: recip  auto: real space
+
+Electronic relaxation
+ALGO  = fast   ! sets SCF algorithm.  fast: combo approach
+ISTART = 0     ! start orbital calculation from scratch
+INIWAV = 1     ! random guess of initial orbitals
+ICHARG = 2     ! start charge density from atomic guess
+EDIFF  = 1e-4  ! electronic convergence
+NELM   = 30    ! maximum number of SCF cycles
+
+Ionic relaxation
+NSW    = 50    ! # of steps in optimization (default 0!)
+ISIF   = 0     ! 0: relax ions, 1,2:relax ions,calc stresses, 3:relax ion+cell
+IBRION = 2     ! 1: quasi-NR, 2:CG algorithm for ions
+NFREE  = 10    ! number of DIIS vectors to save
+POTIM  = 0.1   ! reduce trial step in optimization
+EDIFFG  = -0.03
+
+Parallelization flags
+LPLANE = .T.
+NPAR  = 2
+NSIM  = 4

@@ -1,0 +1,118 @@
+% Created 2015-03-19 Thu 18:25
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[version=3]{mhchem}
+\usepackage[numbers,super,sort&compress]{natbib}
+\usepackage{natmove}
+\usepackage{url}
+\usepackage{minted}
+\usepackage{underscore}
+\usepackage[linktocpage,pdfstartview=FitH,colorlinks,
+linkcolor=blue,anchorcolor=blue,
+citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
+\usepackage{attachfile}
+\usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage[labelfont=bf]{caption}
+\usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage[parfill]{parskip}
+\date{Due: 01/29/2015}
+\title{}
+\begin{document}
+
+\title{Homework 2\\Computational Chemistry\\(CBE 60547)}
+\author{Prof. William F.\ Schneider}
+\maketitle
+
+\section{Lectures 1-2: Review of quantum mechanics}
+\label{sec-1}
+An electron is trapped in a \uline{one-dimensional} box described by the potential (recall 1 bohr = 0.529177 Å, is the atomic unit of length):
+
+\begin{center}
+V(x)= 
+\begin{cases}
+    0, & -1  < x < 1  \text{ bohr} \\
+    \infty, & x \leq -1 \text{ or } x \geq 1  \text{ bohr}
+\end{cases}
+\end{center}
+
+\begin{enumerate}[(a)]
+\item Using the energy expression given in class, calculate the ground state (n=1) energy of the electron, in Hartree (the atomic unit of energy), in eV, and in kJ mol$^{\text{–1}}$.
+
+\item We found in class that the ground-state wavefunction for this electron is $\psi_{1}(x) = cos (\pi x/2)$. Sketch this wavefunction and show that it obeys the proper boundary conditions, has zero nodes, and is normalized.
+
+\item Suppose you approximate the true ground-state wavefunction by $\phi_{1}(x) = 1 - x^{2}$. Calculate the expectation value of the energy (in Hartree) for this approximation. How does your answer compare to the energy you calculated in (a)?
+
+\item Can you guess an even better approximate wavefunction? Guess a candidate, evaluate the expectation value of its energy, and compare to question (c). Did you do any better than my guess?
+\end{enumerate}
+
+
+\section{Lectures 3: Many-electron atoms}
+\label{sec-2}
+
+Hartree’s father performed the first calculations on multi-electron atoms by
+hand. Today those same calculations (much better ones, in fact) can be done in
+the blink of an eye on a computer. In this problem you will use a code first
+developed by Herman and Skillman in the 1960’s to calculate the wavefunctions
+and energy of an atom using the Hartree-Fock-Slater (HFS) model, an early
+predecessor to DFT. The necessary software, rewritten in \texttt{C++}, is compiled and
+available at
+\url{https://github.com/wfschneidergroup/computational-chemistry/tree/master/Lab1/FDA/fda}. Look
+at the \texttt{00README} file for information about the computer program and the
+format of the input. If you are brave, glance through the various source files
+(\verb~*.cxx~) to get a sense of what the code is doing. Note that the code uses
+atomic units, Hartree for energy and bohr for distance.
+
+\begin{enumerate}[(a)]
+\item Run the \texttt{Ar.inp} example included in the directory (\verb~fda Ar~). If all goes well, you should get an output file (\texttt{Ar.out}) and a dump file (\texttt{Ar.dmp}). Look at the \texttt{Ar.out} file to answer these questions:
+
+\begin{itemize}
+\item How many self-consistent field (SCF) iterations does the calculation take to converge?
+
+\item What is the final calculated HFS energy of the atom?
+
+\item What are the identities (1s, 2p, etc.) and energies of the occupied atomic orbitals?
+\end{itemize}
+
+\item The fda code solves the HFS equations on a radial grid. The \texttt{Ar.dmp} file contains the radial grid values and the total charge density in two columns of length 300, followed by an output of each orbital on the same grid. Plot out the charge density and each of the orbitals.
+
+\item Choose one of the d block atoms. From the periodic table, figure out its electronic configuration and create an fda input file for it (follow the instructions in \texttt{00README} for how to specify the atomic number and the orbital occupancies of your atom). Run the fda calculation on your atom.
+
+\begin{itemize}
+\item What is the final calculated HFS energy of the atom? How does it compare to Ar?
+
+\item What are the identities (1s, 2p, etc.) and energies of the occupied atomic orbitals?
+\end{itemize}
+
+\item The orbital energies are a rough approximation of the energy to remove an electron from that orbital. Use your result to estimate the first ionization energy of your atom. How does it compare with the experimental first ionization energy?
+
+\item You can also do calculations on anions or cations. Modify the input file for your atom by removing one of the valence electrons, to make it a cation. Rerun fda on the cation. 
+
+\begin{itemize}
+\item How does the HFS energy of the cation compare to the neutral metal atom?
+\item Do the energies of the orbitals go up or down from the neutral to the cation?
+\item Do the electrons get closer to or further from the nucleus in the cation compared to the neutral? Use the expectation values of the distances from the nucleus (<r>) to answer the question.
+\end{itemize}
+
+\item The difference in total energy between your neutral and cation calculations is another estimate of the first ionization energy of your atom. How does this estimate compare with experiment?
+\end{enumerate}
+% Emacs 24.4.3 (Org mode 8.2.10)
+\end{document}
