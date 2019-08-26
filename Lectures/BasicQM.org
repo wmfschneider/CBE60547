@@ -1,0 +1,249 @@
+* Refresher on Quantum Mechanics
+** Why quantum mechanics?
+Want to describe ``mechanics'' (equations of motion) of atomic-scale things,
+like electrons in atoms and molecules
+
+Why? These ultimately determine the energy, the shape, and all the properties
+of matter.
+
+/de Broglie wavelength/ (1924)
+\begin{equation}
+\lambda  = h/p = h/mv
+\end{equation}
+\begin{equation}
+h  = 6.626 \times 10^{-34}~\text{J s (Planck's constant)}
+\end{equation}
+
+|--------------------+----------------------------------+--------------------------------|
+|                    | Car                              | Electron                       |
+|--------------------+----------------------------------+--------------------------------|
+| mass $m$           | 1000 kg                          | 9.1\times 10^{-31} kg          |
+| velocity $v$       | 100 km/hr                        | $0.01 c$                       |
+|                    | typical value on the highway     | typical value in an atom       |
+| momentum $p$       | 2.8\times 10^{-4} kg m/s         | 2.7 \times 10^{-24} kg m/s     |
+| wavelength \lambda | 2.4 \times 10^{-38} m            | 2.4 \times 10^{-10} m          |
+|                    | too small to detect.  Classical! | Comparable to size of an atom. |
+|                    |                                  | /Must/ treat with QM!          |
+|--------------------+----------------------------------+--------------------------------|
+
+How to describe wave properties of an electron?  Schr\ouml{}dinger equation (1926)
+
+#+BEGIN_CENTER
+Kinetic energy + Potential energy = Total Energy
+#+END_CENTER
+
+Expressed as differential equation (Single particle, non-relativistic):
+\begin{equation}
+-\frac{\hbar^2}{2m}\nabla^2 \Psi(\mathbf{r},t) + V(\mathbf{r},t)  \Psi(\mathbf{r},t) = -i \hbar \frac{\partial}{\partial t}  \Psi(\mathbf{r},t)
+\end{equation}
+
+If the potential \(V\) is time-invariant, can use separation of variables to
+show that the steady-state, time-independent solutions are characterized by an
+energy \(E\) and described by:
+\begin{eqnarray}
+-\frac{\hbar^2}{2m}\nabla^2 \psi(\mathbf{r}) + V(\mathbf{r})  \psi(\mathbf{r}) = E \psi(\mathbf{r}) \\
+\Psi(\mathbf{r},t) = \psi(\mathbf{r})e^{-iEt/\hbar}
+\end{eqnarray}
+
+** Postulates of Non-relativistic quantum mechanics
+See table
+\begin{table}
+\begin{center}
+    \caption{\large{Postulates of Non-relativistic Quantum Mechanics}}
+   \begin{description}
+    \item[Postulate 1:] {{\bf The physical state of a system is completely described by
+        its wavefunction $\Psi$.}  In general, $\Psi$ is a complex function of the spatial
+      coordinates and time.  $\Psi$ is required to be:}
+    \begin{outline}
+      \item{Single-valued}
+      \item {continuous and twice differentiable}
+      \item {square-integrable ($\int \Psi^*\Psi d\tau$ is defined over all finite domains)}
+      \item {For bound systems, $\Psi$ can always be normalized such that $\int \Psi^*\Psi d\tau=1$}
+    \end{outline}
+
+  \item[Postulate 2:]  To every physical observable quantity $M$ there corresponds a
+    Hermitian operator $\hat{M}$.  {\bf The only observable values of $M$ are the
+      eignevalues of $\hat{M}$.}
+    \begin{center}
+    \begin{tabular}[h]{ccc}
+      \hline
+{\bf Physical quantity} & {\bf Operator} & {\bf Expression} \\
+\hline
+Position $x,y,z$ & $\hat{x},\hat{y},\hat{z}$ & $x\cdot, y\cdot, z\cdot$ \\ \\
+Linear momentum $p_x, \ldots$ & $\hat{p}_x,\ldots $ & $\displaystyle -i\hbar\frac{\partial}{\partial
+  x},\ldots $\\
+Angular momentum $l_x, \ldots$ & $\hat{p}_x,\ldots $ & $\displaystyle -i\hbar \left
+  (y\frac{\partial}{\partial z}-z\frac{\partial}{\partial y}\right ), \ldots $ \\
+Kinetic energy $T$ & $\hat{T}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2$ \\
+Potential energy $V$ & $\hat{V}$ & $V({\bf r},t)$ \\
+Total energy $E$ & $\hat{H}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2+V({\bf r},t)$\\ \\
+\hline
+    \end{tabular}
+  \end{center}
+    \item[Postulate 3:] {If a particular observable $M$ is measured many times on many
+      identical systems is a state $\Psi$, the average resuts with be the expectation
+      value of the operator $\hat{M}$:
+      \begin{equation*}
+        \langle M \rangle = \int \Psi^* (\hat{M}\Psi)d{\bf\tau}
+      \end{equation*}}
+    \item[Postulate 4:] {The energy-invariant states of a system are solutions of the equation
+        \begin{eqnarray*}
+          \hat{H}\Psi({\bf r},t) & = & i\hbar\frac{\partial}{\partial t}\Psi({\bf r},t) \\
+          \hat{H} & = & \hat{T}+\hat{V}
+        \end{eqnarray*}
+      The time-independent, stationary states of the system are solutions to the equation
+      \begin{equation*}
+        \hat{H}\Psi({\bf r}) = E\Psi(\bf{r})
+      \end{equation*}
+}
+    \item[Postulate 5:] (The {\bf uncertainty principle}.)  Operators that do not commute
+      $(\hat{A}(\hat{B}\Psi)\neq\hat{B}(\hat{A}\Psi))$ are called /conjugate/.
+      Conjugate observables cannot be determined simultaneously to arbitrary accuracy.
+      For example, the standard deviation in the measured positions and momenta of
+      particles all described by the same $\Psi$ must satisfy $\Delta x\Delta p_x \geq \hbar/2$.
+    \end{description}
+\end{center}
+\end{table}
+
+** Notes on constants and units
+Resource on physical constants: [[http://physics.nist.gov/cuu/Constants/]]
+Resource for unit conversions: [[http://www.digitaldutch.com/unitconverter/]]
+
+Unit converter available in Calc mode of Gnu emacs *highly recommended*
+
+#+CAPTION: Atomic units common for quantum mechanical calculations (see [[http://en.wikipedia.org/wiki/Atomic_units]])
+|---------------------+--------------------------+---------------------------------------+-----------------|
+|                     | Atomic unit              | SI unit                               | Common unit     |
+|---------------------+--------------------------+---------------------------------------+-----------------|
+| Charge              | $e = 1$                  | $1.6021 \times 10^{-19}$ C            |                 |
+| Length              | $a_0 = 1$ (bohr)         | $5.29177 \times 10^{-11}$ m           | 0.529177 \AA    |
+| Mass                | $m_e = 1$                | $9.10938 \times 10^{-31}$ kg          |                 |
+| Angular momentum    | $\hbar = 1$              | $1.054 572 \times 10^{-34}$ J s       |                 |
+| Energy              | $E_h = 1$ (hartree)      | $4.359744 \times 10^{-18}$ J          | 27.2114 eV      |
+| Electrostatic force | $1/(4\pi\epsilon_0) = 1$ | $8.987552 \times 10^9$ C$^{-2}$ N m^2 |                 |
+| Boltzmann constant  |                          | $1.38065 \times 10^{-23}$ J K$^{-1}$  | 8.31447 J/mol K |
+|---------------------+--------------------------+---------------------------------------+-----------------|
+
+
+#+BEGIN_CENTER
+Energy units
+1 eV = 1.60218\times 10^{-19} J = 96.485 kJ/mol = 8065.5 cm^{-1} = 11064 K kB
+#+END_CENTER
+
+** Example: Energy states of an electron in a box
+System defined by potential experienced by particle:
+
+$V(\mathbf{r}) = 0,\qquad 0 < x,y,z < L$
+
+$V(\mathbf{r}) = \infty,\qquad x,y,z \leq 0,\ x,y,z \geq L$
+
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width 0.3\textwidth
+[[./Images/Cube.png]]
+#+END_CENTER
+
+3D box \rightarrow 3 degrees of freedom/coordinates
+
+*Schr\ouml{}dinger equation*
+\begin{equation}
+-\frac{\hbar^2}{2m_e} \left ( \frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} + \frac{\partial^2 }{\partial z^2} \right ) \psi(x,y,z) = E \psi(x,y,z)
+\end{equation}
+\begin{equation}
+\psi(x,y,z) = 0, \quad x,y,z \leq 0,\ x,y,z \geq L
+\end{equation}
+
+A second-order, linear, partial differential equation.  Boundary value problem.
+Solve by separation of variables.  Postulate $\psi(x,y,z) = X(x)Y(y)Z(z)$.
+Substituting and rearrange to get
+
+\begin{equation}
+-\frac{\hbar^2}{2m_e} \left (\frac{1}{X(x)}\frac{\partial^2 X(x)}{\partial x^2} + \frac{1}{Y(y)}\frac{\partial^2 Y(y)}{\partial y^2} + \frac{1}{Z(z)}\frac{\partial^2 Z(z)}{\partial z^2} \right ) = E \qquad 0 < x,y,z <L
+\end{equation}
+
+ftn x + ftn y + ftn z = constant \rightarrow each term must be constant.
+
+*Equation for each dimension*
+\begin{equation}
+-\frac{\hbar^2}{2m_e}\frac{\partial^2 X(x)}{\partial x^2} = E_x X(x), \qquad X(0)=X(L) = 0
+\end{equation}
+
+Seek function that twice differentiated returns itself and satisfies
+boundary conditions.
+\begin{equation}
+X(x) = \sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
+\end{equation}
+
+\begin{equation}
+E_{n_x} = \frac{n_x^2\pi^2\hbar^2}{2 m_e L^2}
+\end{equation}
+
+Solutions called /eigenfunctions/ (or /wavefunctions/) and /eigenvalues/.  Characterized
+by /quantum numbers/, one for each degree of freedom.  These (and all QM) solutions have certain
+special properties, including that they are orthonormal and form a complete set.
+
+*Normalization*
+
+Seek a constant such that the inner eigenfunction product is unity.
+\begin{eqnarray}
+C^2 \int_0^L \sin^2 \frac{n_x\pi x}{L} dx = C^2 L/2 = 1 \rightarrow C=\pm\sqrt{\frac{2}{L}}\\
+X(x) = \pm\sqrt{\frac{2}{L}}\sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
+\end{eqnarray}
+
+*Orthonormal*
+\begin{equation}
+\langle X_{n_x} | X_{n^\prime_x} \rangle = \delta_{n_{x},n_x^\prime}\qquad
+\text{Dirac notation}
+\end{equation}
+
+#+begin_src python :results file
+  import matplotlib, numpy
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
+  fig=plt.figure(figsize=(4,2))
+  x=numpy.linspace(-15,15)
+  plt.plot(numpy.sin(x))
+  fig.tight_layout()
+  plt.savefig('images/python-matplot-fig.png')
+  return 'images/python-matplot-fig.png' # return filename to org-mode
+#+end_src
+
+#+RESULTS:
+[[file:images/python-matplot-fig.png]]
+
+# #+RESULTS:
+#  [[file:images/python-matplot-fig.png]]
+
+
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/SineWave.png]]
+
+- Energy increase with number of /nodes/.
+
+- $E\propto n^2, \Delta E \propto n, \Delta E/E \propto 1/n$.  /Relative/ spacing decreases with $n$.
+
+- Is this real?  See [[http://dx.doi.org/10.1021/jp053496l][Ho, /J. Phys. Chem. B/ *2005*, /109/, 20657]].
+
+*Three-dimensional solutions*
+\begin{equation}
+\psi(x,y,z) = X(x)Y(y)Z(z) = \left ( \frac{2}{L} \right )^{3/2} \sin\frac{n_x\pi x}{L}\sin\frac{n_y\pi y}{L}\sin\frac{n_z\pi z}{L},\qquad n_{x},n_{y},n_{z}=1,2,3,\ldots
+\end{equation}
+\begin{equation}
+\label{eq:2}
+E = E_{x}+E_{y}+E_{z}=\frac{(n_{x}^{2}+n_{y}^{2}+n_{z}^{2}) \pi^{2}\hbar^{2}}{2 m L^{2}}
+\end{equation}
+
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/2DSine1.png]]
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/2DSine2.png]]
+
+
+#+CAPTION: Energy sates of 3D Particle in a box
+[[./Images/3DEnergyStates.png]]
+
+Properties of solutions:
+- Symmetry of system introduces degeneracy in solutions
+- Energy depends on volume \rightarrow pressure!
+
+\newpage
+
