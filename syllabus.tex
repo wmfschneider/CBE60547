@@ -1,0 +1,129 @@
+% Created 2019-08-28 Wed 09:20
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[theorems, skins]{tcolorbox}
+\usepackage[version=3]{mhchem}
+\usepackage[numbers,super,sort&compress]{natbib}
+\usepackage{natmove}
+\usepackage{url}
+\usepackage{minted}
+\usepackage{underscore}
+\usepackage[linktocpage,pdfstartview=FitH,colorlinks,
+linkcolor=blue,anchorcolor=blue,
+citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
+\usepackage{attachfile}
+\usepackage[left=1in, right=1in, top=1in, bottom=1in, nohead]{geometry}
+\geometry{margin=1.0in}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[labelfont=bf]{caption}
+\usepackage{setspace}
+\def\dbar{{\mathchar'26\mkern-12mu d}}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\lfoot{\today}
+\cfoot{\copyright\ 2019 W.\ F.\ Schneider}
+\rfoot{\thepage}
+\title{University of Notre Dame\\Computationl Chemistry\\(CBE 40447/60547)}
+\author{Prof. William F.\ Schneider}
+\def\dbar{{\mathchar'26\mkern-12mu d}}
+\usepackage[small]{titlesec}
+\titlespacing*{\section}
+{0pt}{0.4\baselineskip}{0.0\baselineskip}
+\titlespacing*{\subsection}
+{0pt}{0.4\baselineskip}{0.0\baselineskip}
+\titlespacing*{\subsubsection}
+{0pt}{0.1\baselineskip}{0.0\baselineskip}
+\setcounter{secnumdepth}{3}
+\author{William F. Schneider}
+\date{\today}
+\title{CHE 60547 Syllabus}
+\begin{document}
+
+\begin{OPTIONS}
+\end{OPTIONS}
+
+\begin{center}
+\textsc{\Large Computational Chemistry (CBE 60547)}\\University of Notre Dame, Fall 2019
+\end{center}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l r}
+\hline
+Prof.\ Bill Schneider & Classroom: B011 DBRT\\
+Office: 370 NSH & Lecture MWF 12:50-1:40\\
+\email{wschneider@nd.edu}, phone 574-631-8754\\
+\hline
+\end{tabular*}
+
+\section{Computational Chemistry}
+\label{sec:orgabfff91}
+Atomic-scale, simulations have exploded in importance in the last twenty years, largely because of the exponential growth in computing power available to researchers. Chemists, chemical engineers, materials scientists, physicists, geochemists, environmental scientists, \ldots{}, now all use atomic scale simulations of one type or another to solve scientific and engineering problems and advance their fields. In fact, the topic is now so broad that it is impossible to capture with one name or to cover completely in one course.
+
+Our emphasis in this course will be on modern approaches to calculating chemical properties using quantum-mechanics-based atomistic simulations. The emphasis is on application rather than theory, but with the recognition that it is impossible to be an intelligent practitioner without some appreciation of underlying theory. I won’t make any assumptions about your prior knowledge beyond what is typically covered in an undergraduate Physical Chemistry course. 
+\subsection{Learning goals}
+\label{sec:orgae8d1f3}
+\begin{enumerate}
+\item Understand the basic theoretical, mathematical, and numerical concepts behind  first-principles quantum-mechanics-based calculations.
+\item Understand the terminology and practical issues associated with executing and applying these calculations.
+\item Gain hand-on experience with these concepts using popular computational tools of today, including \emph{GAMESS} for molecular systems and \emph{Vasp} for periodic systems.
+\item Learn to interface the results of quantum mechanical calculations with statistical mechanical theories to calculate thermodynamic and kinetic parameters.
+\item Propose, execute, and report out on your own computational project.
+\end{enumerate}
+
+\section{Web}
+\label{sec:org94efd2c}
+All materials for the course are shared at \url{https://github.com/wmfschneider/CBE60547}.  If you want to get your own copy of all this material and understand a bit about how git works, see \url{http://rogerdudler.github.io/git-guide/}.  Or just download files directly from the git site. The source files are written using Org Mode (\url{https://orgmode.org/}), but you can read them using a regular text editor if you want to see under the hood.
+
+\section{Useful Texts}
+\label{sec:org7096524}
+\begin{enumerate}
+\item A chemistry take on methods: Chris Cramer, \emph{Essentials of Computational Chemistry}, Wiley, 2004
+
+\item A chemical engineering take: David Sholl and Jan Steckel, \emph{Density Functional Theory: A Practical Introduction}, Wiley, 2009
+
+\item Hard-core DFT theory: Richard Martin, \emph{Electronic Structure}, Cambridge, 2004
+\end{enumerate}
+
+\section{Hands-on}
+\label{sec:orge99a845}
+You all either have or will get accounts on the Notre Dame Center for Reseach Computing (\url{http://crc.nd.edu}) computers. We will have four in-class, hands-on sessions to illustrate access and use of these resources, which will be necessary for completing the homework and independent project. 
+
+\section{Grading}
+\label{sec:orgad5451c}
+Grades will be based on homework assignments (50\%), an in-class exam (10\%), and a class project and report (40\%).  Attendance and participation is expected.
+
+\section{Academic honesty}
+\label{sec:org29f9ae5}
+Should go without saying. Any cheating or misrepresenting of work as your own will be dealt with according to the Honor Code policies of the university. I reserve the right to relocate any students during an examination at my discretion.
+
+\section{Professional courtesy}
+\label{sec:org619a5b8}
+As a courtesy to the instructor and your classmates, please refrain from
+texting, web browsing, tweeting, chatting, updating, or using your phone or laptop for any
+purpose during class time.  If you must use an electronic device, excuse
+yourself from class.
+
+\section{Office hours}
+\label{sec:org65451c7}
+The instructor is happy to answer questions by appointment, or just stop by!
+\end{document}
