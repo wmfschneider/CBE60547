@@ -1,37 +1,70 @@
-#+BEGIN_OPTIONS
-#+AUTHOR: William F. Schneider
-#+TITLE: CHE 30324 Outline
-#+EMAIL: wschneider@nd.edu
-#+LATEX_CLASS_OPTIONS: [11pt]
-#+LATEX_HEADER:\usepackage{geometry}
-#+LATEX_HEADER:\geometry{margin=1.0in}
-#+LATEX_HEADER:\usepackage{outline}
-#+LATEX_HEADER:\usepackage{amsmath}
-#+LATEX_HEADER:\usepackage{graphicx}
-#+LATEX_HEADER:\usepackage{epstopdf}
-#+LATEX_HEADER:\usepackage{siunitx}
-#+LATEX_HEADER:\usepackage{fancyhdr}
-#+LATEX_HEADER:\usepackage{hyperref}
-#+LATEX_HEADER:\usepackage[labelfont=bf]{caption}
-#+LATEX_HEADER:\setlength{\headheight}{15.2pt}
-#+LATEX_HEADER:\def\dbar{{\mathchar'26\mkern-12mu d}}
-#+LATEX_HEADER:\pagestyle{fancy}
-#+LATEX_HEADER:\fancyhf{}
-#+LATEX_HEADER:\renewcommand{\headrulewidth}{0.5pt}
-#+LATEX_HEADER:\renewcommand{\footrulewidth}{0.5pt}
-#+LATEX_HEADER:\lfoot{\today}
-#+LATEX_HEADER:\cfoot{\copyright\ 2019 W.\ F.\ Schneider}
-#+LATEX_HEADER:\rfoot{\thepage}
-#+LATEX_HEADER:\lhead{\em{Computational Chemistry}}
-#+LATEX_HEADER:\rhead{ND CHE 30324}
+% Created 2019-08-27 Tue 12:58
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[theorems, skins]{tcolorbox}
+\usepackage[version=3]{mhchem}
+\usepackage[numbers,super,sort&compress]{natbib}
+\usepackage{natmove}
+\usepackage{url}
+\usepackage{minted}
+\usepackage{underscore}
+\usepackage[linktocpage,pdfstartview=FitH,colorlinks,
+linkcolor=blue,anchorcolor=blue,
+citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
+\usepackage{attachfile}
+\usepackage{geometry}
+\geometry{margin=1.0in}
+\usepackage{outline}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{siunitx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[labelfont=bf]{caption}
+\setlength{\headheight}{15.2pt}
+\def\dbar{{\mathchar'26\mkern-12mu d}}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+\lfoot{\today}
+\cfoot{\copyright\ 2019 W.\ F.\ Schneider}
+\rfoot{\thepage}
+\lhead{\em{Computational Chemistry}}
+\rhead{ND CHE 30324}
+\setcounter{secnumdepth}{3}
+\author{William F. Schneider}
+\date{\today}
+\title{CHE 30324 Outline}
+\begin{document}
 
-#+OPTIONS: toc:2
-#+OPTIONS: H:3 num:3
-#+OPTIONS: ':t
-#+END_OPTIONS
-* Refresher on Quantum Mechanics
-** Why quantum mechanics?
-Want to describe "mechanics" (equations of motion) of atomic-scale things,
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\begin{OPTIONS}
+\end{OPTIONS}
+\section{Refresher on Quantum Mechanics}
+\label{sec:org988166c}
+\subsection{Why quantum mechanics?}
+\label{sec:org4934f2d}
+Want to describe ``mechanics'' (equations of motion) of atomic-scale things,
 like electrons in atoms and molecules
 
 Why? These ultimately determine the energy, the shape, and all the properties
@@ -39,7 +72,7 @@ of matter.
 
 \[\lambda  = h/p = h/mv\]
 
-/de Broglie wavelength/ (1924)
+\emph{de Broglie wavelength} (1924)
 \begin{equation}
 \lambda  = h/p = h/mv
 \end{equation}
@@ -47,24 +80,29 @@ of matter.
 h  = 6.626 \times 10^{-34}~\text{J s (Planck's constant)}
 \end{equation}
 
-#+CAPTION: Car vs electron as a quantum particle
-|--------------------+----------------------------------+--------------------------------|
-|                    | Car                              | Electron                       |
-|--------------------+----------------------------------+--------------------------------|
-| mass $m$           | 1000 kg                          | 9.1\times 10^{-31} kg          |
-| velocity $v$       | 100 km/hr                        | $0.01 c$                       |
-|                    | typical value on the highway     | typical value in an atom       |
-| momentum $p$       | \SI{2.8e-4}{kg.m/s}              | 2.7 \times 10^{-24} kg m/s     |
-| wavelength \lambda | 2.4 \times 10^{-38} m            | 2.4 \times 10^{-10} m          |
-|                    | too small to detect.  Classical! | Comparable to size of an atom. |
-|                    |                                  | /Must/ treat with QM!          |
-|--------------------+----------------------------------+--------------------------------|
+\begin{table}[htbp]
+\caption{Car vs electron as a quantum particle}
+\centering
+\begin{tabular}{lll}
+\hline
+ & Car & Electron\\
+\hline
+mass \(m\) & 1000 kg & 9.1\texttimes{} 10\(^{\text{-31}}\) kg\\
+velocity \(v\) & 100 km/hr & \(0.01 c\)\\
+ & typical value on the highway & typical value in an atom\\
+momentum \(p\) & \SI{2.8e-4}{kg.m/s} & 2.7 \texttimes{} 10\(^{\text{-24}}\) kg m/s\\
+wavelength \(\lambda\) & 2.4 \texttimes{} 10\(^{\text{-38}}\) m & 2.4 \texttimes{} 10\(^{\text{-10}}\) m\\
+ & too small to detect.  Classical! & Comparable to size of an atom.\\
+ &  & \emph{Must} treat with QM!\\
+\hline
+\end{tabular}
+\end{table}
 
-How to describe wave properties of an electron?  Schr\ouml{}dinger equation (1926)
+How to describe wave properties of an electron?  Schr\"{o}dinger equation (1926)
 
-#+BEGIN_CENTER
+\begin{center}
 Kinetic energy + Potential energy = Total Energy
-#+END_CENTER
+\end{center}
 
 Expressed as differential equation (Single particle, non-relativistic):
 \begin{equation}
@@ -79,7 +117,8 @@ energy \(E\) and described by:
 \Psi(\mathbf{r},t) = \psi(\mathbf{r})e^{-iEt/\hbar}
 \end{eqnarray}
 
-** Postulates of Non-relativistic quantum mechanics
+\subsection{Postulates of Non-relativistic quantum mechanics}
+\label{sec:orgeade7e1}
 See table
 \begin{table}
 \begin{center}
@@ -139,46 +178,54 @@ Total energy $E$ & $\hat{H}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2+V({\bf
 \end{center}
 \end{table}
 
-** Notes on constants and units
-Resource on physical constants: [[http://physics.nist.gov/cuu/Constants/]]
-Resource for unit conversions: [[http://www.digitaldutch.com/unitconverter/]]
+\subsection{Notes on constants and units}
+\label{sec:org3326162}
+Resource on physical constants: \url{http://physics.nist.gov/cuu/Constants/}
+Resource for unit conversions: \url{http://www.digitaldutch.com/unitconverter/}
 
-Unit converter available in Calc mode of Gnu emacs *highly recommended*
+Unit converter available in Calc mode of Gnu emacs \textbf{highly recommended}
 
-#+CAPTION: Atomic units common for quantum mechanical calculations (see [[http://en.wikipedia.org/wiki/Atomic_units]])
-|---------------------+--------------------------+---------------------------------------+-----------------|
-|                     | Atomic unit              | SI unit                               | Common unit     |
-|---------------------+--------------------------+---------------------------------------+-----------------|
-| Charge              | $e = 1$                  | $1.6021 \times 10^{-19}$ C            |                 |
-| Length              | $a_0 = 1$ (bohr)         | $5.29177 \times 10^{-11}$ m           | 0.529177 \AA    |
-| Mass                | $m_e = 1$                | $9.10938 \times 10^{-31}$ kg          |                 |
-| Angular momentum    | $\hbar = 1$              | $1.054 572 \times 10^{-34}$ J s       |                 |
-| Energy              | $E_h = 1$ (hartree)      | $4.359744 \times 10^{-18}$ J          | 27.2114 eV      |
-| Electrostatic force | $1/(4\pi\epsilon_0) = 1$ | $8.987552 \times 10^9$ C$^{-2}$ N m^2 |                 |
-| Boltzmann constant  |                          | $1.38065 \times 10^{-23}$ J K$^{-1}$  | 8.31447 J/mol K |
-|---------------------+--------------------------+---------------------------------------+-----------------|
+\begin{table}[htbp]
+\caption{Atomic units common for quantum mechanical calculations (see \url{http://en.wikipedia.org/wiki/Atomic\_units})}
+\centering
+\begin{tabular}{llll}
+\hline
+ & Atomic unit & SI unit & Common unit\\
+\hline
+Charge & \(e = 1\) & \(1.6021 \times 10^{-19}\) C & \\
+Length & \(a_0 = 1\) (bohr) & \(5.29177 \times 10^{-11}\) m & 0.529177 \AA{}\\
+Mass & \(m_e = 1\) & \(9.10938 \times 10^{-31}\) kg & \\
+Angular momentum & \(\hbar = 1\) & \(1.054 572 \times 10^{-34}\) J s & \\
+Energy & \(E_h = 1\) (hartree) & \(4.359744 \times 10^{-18}\) J & 27.2114 eV\\
+Electrostatic force & \(1/(4\pi\epsilon_0) = 1\) & \(8.987552 \times 10^9\) C\(^{-2}\) N m\^{}2 & \\
+Boltzmann constant &  & \(1.38065 \times 10^{-23}\) J K\(^{-1}\) & 8.31447 J/mol K\\
+\hline
+\end{tabular}
+\end{table}
 
 
-#+BEGIN_CENTER
+\begin{center}
 Energy units
-1 eV = 1.60218\times 10^{-19} J = 96.485 kJ/mol = 8065.5 cm^{-1} = 11064 K kB
-#+END_CENTER
+1 eV = 1.60218\texttimes{} 10\(^{\text{-19}}\) J = 96.485 kJ/mol = 8065.5 cm\(^{\text{-1}}\) = 11064 K kB
+\end{center}
 
-** Example: Energy states of an electron in a box
+\subsection{Example: Energy states of an electron in a box}
+\label{sec:orgcca0cb3}
 System defined by potential experienced by particle:
 
-$V(\mathbf{r}) = 0,\qquad 0 < x,y,z < L$
+\(V(\mathbf{r}) = 0,\qquad 0 < x,y,z < L\)
 
-$V(\mathbf{r}) = \infty,\qquad x,y,z \leq 0,\ x,y,z \geq L$
+\(V(\mathbf{r}) = \infty,\qquad x,y,z \leq 0,\ x,y,z \geq L\)
 
-#+BEGIN_CENTER
-#+ATTR_LATEX: :width 0.3\textwidth
-[[./Images/Cube.png]]
-#+END_CENTER
+\begin{center}
+\begin{center}
+\includegraphics[width=0.3\textwidth]{./Images/Cube.png}
+\end{center}
+\end{center}
 
-3D box \rightarrow 3 degrees of freedom/coordinates
+3D box \(\rightarrow\) 3 degrees of freedom/coordinates
 
-*Schr\ouml{}dinger equation*
+\textbf{Schr\"{o}dinger equation}
 \begin{equation}
 -\frac{\hbar^2}{2m_e} \left ( \frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} + \frac{\partial^2 }{\partial z^2} \right ) \psi(x,y,z) = E \psi(x,y,z)
 \end{equation}
@@ -187,16 +234,16 @@ $V(\mathbf{r}) = \infty,\qquad x,y,z \leq 0,\ x,y,z \geq L$
 \end{equation}
 
 A second-order, linear, partial differential equation.  Boundary value problem.
-Solve by separation of variables.  Postulate $\psi(x,y,z) = X(x)Y(y)Z(z)$.
+Solve by separation of variables.  Postulate \(\psi(x,y,z) = X(x)Y(y)Z(z)\).
 Substituting and rearrange to get
 
 \begin{equation}
 -\frac{\hbar^2}{2m_e} \left (\frac{1}{X(x)}\frac{\partial^2 X(x)}{\partial x^2} + \frac{1}{Y(y)}\frac{\partial^2 Y(y)}{\partial y^2} + \frac{1}{Z(z)}\frac{\partial^2 Z(z)}{\partial z^2} \right ) = E \qquad 0 < x,y,z <L
 \end{equation}
 
-ftn x + ftn y + ftn z = constant \rightarrow each term must be constant.
+ftn x + ftn y + ftn z = constant \(\rightarrow\) each term must be constant.
 
-*Equation for each dimension*
+\textbf{Equation for each dimension}
 \begin{equation}
 -\frac{\hbar^2}{2m_e}\frac{\partial^2 X(x)}{\partial x^2} = E_x X(x), \qquad X(0)=X(L) = 0
 \end{equation}
@@ -211,11 +258,11 @@ X(x) = \sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
 E_{n_x} = \frac{n_x^2\pi^2\hbar^2}{2 m_e L^2}
 \end{equation}
 
-Solutions called /eigenfunctions/ (or /wavefunctions/) and /eigenvalues/.  Characterized
-by /quantum numbers/, one for each degree of freedom.  These (and all QM) solutions have certain
+Solutions called \emph{eigenfunctions} (or \emph{wavefunctions}) and \emph{eigenvalues}.  Characterized
+by \emph{quantum numbers}, one for each degree of freedom.  These (and all QM) solutions have certain
 special properties, including that they are orthonormal and form a complete set.
 
-*Normalization*
+\textbf{Normalization}
 
 Seek a constant such that the inner eigenfunction product is unity.
 \begin{eqnarray}
@@ -223,13 +270,13 @@ C^2 \int_0^L \sin^2 \frac{n_x\pi x}{L} dx = C^2 L/2 = 1 \rightarrow C=\pm\sqrt{\
 X(x) = \pm\sqrt{\frac{2}{L}}\sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
 \end{eqnarray}
 
-*Orthonormal*
+\textbf{Orthonormal}
 \begin{equation}
 \langle X_{n_x} | X_{n^\prime_x} \rangle = \delta_{n_{x},n_x^\prime}\qquad
 \text{Dirac notation}
 \end{equation}
 
-#+begin_src python :results file
+\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
   import matplotlib, numpy
   matplotlib.use('Agg')
   import matplotlib.pyplot as plt
@@ -239,25 +286,26 @@ X(x) = \pm\sqrt{\frac{2}{L}}\sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
   fig.tight_layout()
   plt.savefig('images/python-matplot-fig.png')
   return 'images/python-matplot-fig.png' # return filename to org-mode
-#+end_src
+\end{minted}
 
-#+RESULTS:
-[[file:images/python-matplot-fig.png]]
-
-# #+RESULTS:
-#  [[file:images/python-matplot-fig.png]]
+\begin{center}
+\includegraphics[width=.9\linewidth]{images/python-matplot-fig.png}
+\end{center}
 
 
-#+ATTR_LATEX: :width 0.75\textwidth
-[[./Images/SineWave.png]]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{./Images/SineWave.png}
+\end{center}
 
-- Energy increase with number of /nodes/.
+\begin{itemize}
+\item Energy increase with number of \emph{nodes}.
 
-- $E\propto n^2, \Delta E \propto n, \Delta E/E \propto 1/n$.  /Relative/ spacing decreases with $n$.
+\item \(E\propto n^2, \Delta E \propto n, \Delta E/E \propto 1/n\).  \emph{Relative} spacing decreases with \(n\).
 
-- Is this real?  See [[http://dx.doi.org/10.1021/jp053496l][Ho, /J. Phys. Chem. B/ *2005*, /109/, 20657]].
+\item Is this real?  See \href{http://dx.doi.org/10.1021/jp053496l}{Ho, \emph{J. Phys. Chem. B} \textbf{2005}, \emph{109}, 20657}.
+\end{itemize}
 
-*Three-dimensional solutions*
+\textbf{Three-dimensional solutions}
 \begin{equation}
 \psi(x,y,z) = X(x)Y(y)Z(z) = \left ( \frac{2}{L} \right )^{3/2} \sin\frac{n_x\pi x}{L}\sin\frac{n_y\pi y}{L}\sin\frac{n_z\pi z}{L},\qquad n_{x},n_{y},n_{z}=1,2,3,\ldots
 \end{equation}
@@ -266,16 +314,23 @@ X(x) = \pm\sqrt{\frac{2}{L}}\sin\frac{n_x\pi x}{L},\qquad n_x = 1,2,3,\ldots
 E = E_{x}+E_{y}+E_{z}=\frac{(n_{x}^{2}+n_{y}^{2}+n_{z}^{2}) \pi^{2}\hbar^{2}}{2 m L^{2}}
 \end{equation}
 
-#+ATTR_LATEX: :width 0.5\textwidth
-[[./Images/2DSine1.png]]
-#+ATTR_LATEX: :width 0.5\textwidth
-[[./Images/2DSine2.png]]
+\begin{center}
+\includegraphics[width=0.5\textwidth]{./Images/2DSine1.png}
+\end{center}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{./Images/2DSine2.png}
+\end{center}
 
 
-#+CAPTION: Energy sates of 3D Particle in a box
-[[./Images/3DEnergyStates.png]]
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.9\linewidth]{./Images/3DEnergyStates.png}
+\caption{Energy sates of 3D Particle in a box}
+\end{figure}
 
 Properties of solutions:
-- Symmetry of system introduces degeneracy in solutions
-- Energy depends on volume \rightarrow pressure!
-
+\begin{itemize}
+\item Symmetry of system introduces degeneracy in solutions
+\item Energy depends on volume \(\rightarrow\) pressure!
+\end{itemize}
+\end{document}
