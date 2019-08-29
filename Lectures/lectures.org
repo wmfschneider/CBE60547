@@ -31,7 +31,7 @@
 #+LATEX_HEADER:\rhead{ND CBE 60547}
 #+LATEX_HEADER:\def\dbar{{\mathchar'26\mkern-12mu d}}
 
-#+OPTIONS: toc:2
+#+OPTIONS: toc:1
 #+OPTIONS: H:3 num:3
 #+OPTIONS: ':t
 #+END_OPTIONS
@@ -158,22 +158,22 @@ Things that relate to the /chemical/ properties of substances.
 ** Reading resources
 - These notes
 - Chris Cramer, /Essentials of Computational Chemistry/, Wiley, 2004
-- Martin, 
+- Martin, /Electronic Structure/, Cambridge, 2004
 - Sholl and Steckel, /Density Functional Theory: A Practical Introduction/, Wiley, 2009
 - Kitchin book, [[http://kitchingroup.cheme.cmu.edu/dft-book/]]
 
 ** Software tools
 *** Notebooks
-- org-mode
-- jupyter/ipython
+- [[https://jupyter.org/][jupyter]]/ipython
+- [[https://www.gnu.org/software/emacs/][emacs]]/org-mode
 
 *** Molecular methods
 - Avogadro environment [[http://avogadro.cc/wiki/Main_Page]]
 - GAMESS code [[http://www.msg.ameslab.gov/GAMESS/GAMESS.html]]
 
 *** Supercell methods
-- ASE environment [[https://wiki.fysik.dtu.dk/ase/]]
 - Vasp code [[http://www.vasp.at/]]
+- ASE environment [[https://wiki.fysik.dtu.dk/ase/]]
 
 *** Great for getting started
 - Webmo [[http://www.webmo.net/]]
@@ -289,7 +289,7 @@ Total energy $E$ & $\hat{H}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2+V({\bf
 Resource on physical constants: [[http://physics.nist.gov/cuu/Constants/]]
 Resource for unit conversions: [[http://www.digitaldutch.com/unitconverter/]]
 
-Unit converter available in Calc mode of Gnu emacs *highly recommended*
+Unit converter available in Calc mode in [[https://www.gnu.org/software/emacs/][Gnu emacs]] *highly recommended*
 
 #+CAPTION: Atomic units common for quantum mechanical calculations (see [[http://en.wikipedia.org/wiki/Atomic_units]])
 |---------------------+--------------------------+--------------------------------+-----------------------|
@@ -418,6 +418,77 @@ plt.savefig('./Images/1DPIAB.png')
 - $E\propto n^2, \Delta E \propto n, \Delta E/E \propto 1/n$.  /Relative/ spacing decreases with $n$.
 
 - Is this real?  See [[http://dx.doi.org/10.1021/jp053496l][Ho, /J. Phys. Chem. B/ *2005*, /109/, 20657]].
+
+#+BEGIN_SRC python :exports results
+# Stub to solve Schrodinger eq numerically
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+from scipy import linalg as LA
+
+hc = 1239.8      # eV nm
+c = 2.9979e8 * 1.e9   # nm/s
+kB = 8.61734e-5   # eV /K
+hckB = hc/kB       # nm K
+me = 5.685630e-30  # eV/(nm/s)^2
+hbar = 6.58212e-16 # eV s 
+mH = 1.0364269572e-26 # eV/(nm/s)^2
+
+# harmonic parameters
+k = 800.0 *  6.24150912588 # eV / nm^2
+
+
+def harmonic(k,x):
+    return 0.5 * k * x**2
+
+def Well(x):
+    n = np.size(x)
+    x = np.zeros(x-1)
+
+def Hmat(mass,V):
+    hbar2mu = -hbar*hbar/(2 * mass) # eV nm^2
+    n = np.size(V)
+#    print(n)
+#    print(V)
+
+    A = np.zeros((n-1,n-1))
+    for i in range(n-1):
+        for j in range(n-1):
+            if i==j+1 or i==j-1:
+                 A[i,j]=(3./2.)*hbar2mu
+            if i==j+2 or i==j-2:
+                 A[i,j]=-(3./20.)*hbar2mu
+            if i==j+3 or i==j-3:
+                 A[i,j]=(1./90.)*hbar2mu
+        A[i,i]=-(49./18.)*hbar2mu +V[i] 
+    return A
+
+X = np.linspace(-0.01,0.01,10)
+# print(X)
+# print(np.size(X))
+V = harmonic(k,X)
+#print(V)
+#print(np.size(V))
+H = Hmat(mH,V)
+#print(H)
+eigenE, eigenfn = LA.eigh(H)
+
+print(eigenE)
+
+#plt.figure()
+#plt.plot(X,V)
+#plt.xlabel('Distance (nm)')
+#plt.ylabel('Energy (eV)')
+#plt.show()
+# plt.savefig('./Images/harmonic.png')
+
+
+#+END_SRC
+
+#+RESULTS:
+: [ 0.00310774  0.00317043  0.02779672  0.0277972   0.07711257  0.07711257
+:   0.15108601  0.15108602  0.24971727]
+
 
 *Three-dimensional solutions*
 \begin{equation}
