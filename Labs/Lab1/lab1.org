@@ -1,6 +1,6 @@
 #+TITLE:Computational Chemistry Laboratory I (CBE 60547)
 #+AUTHOR: Prateek Mehta, William F. Schneider
-#+DATE:2015-01-22 Thu
+#+DATE:2019-08-29
 #+LATEX_CLASS: article
 #+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
 #+OPTIONS: toc:nil # suppress toc, so we can put it where we want
@@ -19,23 +19,63 @@
 
 * Introduction to Linux
 
-Much of the work in this course will involve some use of the unix terminal. Mac and Linux users can access the terminal from their applications menu. Windows users will probably need to use putty to login to the CRC machines to use a linux environment.
+All computers are run by an =operating system=.  What you see, on your phone, tablet, or
+laptop, is a =graphical user interface= that runs on top of that operating system.  Far
+and away the most common operating systems are based on Unix.  MacOS is a variant of Unix,
+for instance. Web serves, computational servers, ..., run another variant named [[https://www.linux.org/][Linux]].
+Serious computational work, such as computational chemistry, is done essentially
+exclusively on Linux computers.
+
+The =command line= is the lowest level that one commonly interacts with a computer at.
+Phones and laptops hide the command line from us. On your Mac laptop, you can get to it
+through the =terminal=.
 
 ** Logging onto the CRC
+For consistency, we will use the Linux computers hosted by the Notre Dame [[http://crc.nd.edu][Center for
+Research Computing]] (CRC) for our computational work. The CRC hosts a number of "front-end"
+computers that we can access and interact with directly, through the internet.  Hinding
+behind those front-ends are racks and racks of computers ("nodes"), lashed together with
+high-speed connections, that are access through a queue and are used for really serious
+calculations.  The front-ends and the nodes all share the same, network-based file system
+("afs", [[https://www.openafs.org/]]), so your files are the same every.  Every user has a
+home directory.  For instance, mine is /afs/crc.nd.edu/user/w/wschnei1.  
 
-Windows Users: Open putty, login. 
-
-Mac/Linux Users: Open the terminal and type: 
+One way to access the CRC is through a terminal window on your computer (=putty= on a
+Windows computer, =terminal= on Mac/Linux User) and login using your regular ND
+credentials.
 
 #+BEGIN_SRC sh
-ssh -Y username@crcfe01.crc.nd.edu
+ssh -Y wschnei1@crcfe01.crc.nd.edu
 #+END_SRC
 
+#+RESULTS:
+
+This method works but gives relatively limited functionality.  An alternative approach
+provided by the CRC and that is a bit more feature rich is to use [[https://www.starnet.com/fastx/][fastX]] through a browser
+window.  Go to [[https://crcfe01.crc.nd.edu]] and log in using your ND credentials.  Then
+choose a single xterm session to get started.
 
 ** Common Linux Commands
-   
-Here is a list of common linux commands, along with an example of their output. Try typing these in your terminal window.
+At the Linux command line you will be working interactively with a ==shell==. The shell
+provides a lot of built-in features, is programmable, and gives access to There are many
+different shells, but the most popular today is [[https://www.gnu.org/software/bash/manual/][bash]].  Here is a list of common linux
+commands, along with an example of their output. Try typing these in your xterm window.
 
+ - ~echo $SHELL~: Figure out what shell you are using
+#+BEGIN_SRC sh
+echo $SHELL
+#+END_SRC
+
+#+RESULTS:
+: /bin/bash
+
+==$SHELL== is an example of an environment variable. There are lots of them. To see the ones that are set, type
+ - ~printenv~: write out all the environment variables that are set. 
+#+BEGIN_SRC sh
+printenv
+#+END_SRC
+
+Files are saved in a tree structure of directories and sub-directories. 
  - ~ls~: List the contents of a directory
 
 #+BEGIN_SRC sh
@@ -43,12 +83,6 @@ ls
 #+END_SRC
 
 #+RESULTS:
-: FDA
-: images
-: lab1.org
-: lab1.pdf
-: Lab1.png
-: lab1.tex
 
  - ~pwd~: Get the path of the current directory
 
@@ -57,7 +91,7 @@ pwd
 #+END_SRC
 
 #+RESULTS:
-: /afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1
+: /Users/wschnei1/Documents/Courses/CBE60547/Labs/Lab1
 
  - ~mkdir~: Create a directory
 
@@ -67,26 +101,15 @@ ls
 #+END_SRC
 
 #+RESULTS:
-: example-directory
-: FDA
-: images
-: lab1.org
-: lab1.pdf
-: Lab1.png
-: lab1.tex
 
  - ~cd~: Change directory
 
 #+BEGIN_SRC sh
-cd example-directory
-pwd
-cd .. # move 1 directory up
-pwd
+cd example-directory; pwd; cd .. # move 1 directory up pwd
 #+END_SRC
 
 #+RESULTS:
-: /afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1/example-directory
-: /afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1
+: /Users/wschnei1/Documents/Courses/CBE60547/Labs/Lab1/example-directory
 
 - ~cp~ Copy files
 #+BEGIN_SRC sh
@@ -116,63 +139,108 @@ quota
 : Volume Name                   Quota      Used %Used   Partition
 : u.pmehta1                    100 GB     55 GB   55%         87%
 
+- ~printenv~: Show the ENVIRONMENT VARIABLES that control how t
 
 ** Obtaining lab notes
 
 The lab notes and homeworks can be obtained from the course website. They are also conveniently stored in a git repository. To obtain the files just type in
 
 #+BEGIN_SRC sh
-git clone https://github.com/wfschneidergroup/computational-chemistry
+git clone https://github.com/wmfschneider/CBE60547
 #+END_SRC
+
+#+RESULTS:
 
 You can periodically update your copy of the notes by changing into the course directory and running the command ~git pull~, i.e.,
 
 #+BEGIN_SRC sh
-cd computational-chemistry
+cd CBE60547
 git pull
 #+END_SRC
 
+** Editors
+At some point you will want to create, edit, and save files.  That job falls to a file
+editor.  ~vi~ is the most venerable editor, available on all Unix systems, but not so easy
+to use.  ~gedit~ is your best bet for a simple editor on the CRC machines.  [[https://www.gnu.org/software/emacs/][GNU emacs]]
+holds a special place in my heart, and is what I use to type all these notes.  It can be
+challenging to set up and does have a steep learning curve.  Below are some notes on emacs
+usage, but if you are going to use it, plan on investing some time.
 
-* The very least you have to know about GNU Emacs
+** The very least you have to know about GNU Emacs
+ For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
 
-For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
+  Here are a few things to get started.
 
- Here are a few things to get started.
+ - Starting Emacs. To start emacs type ~emacs &~ on the command line. This will launch emacs with the jmax starter kit (https://github.com/jkitchin/jmax). You can add your own customizations when you start learning more.
 
-- Starting Emacs. To start emacs type ~emacs &~ on the command line. This will launch emacs with the jmax starter kit (https://github.com/jkitchin/jmax). You can add your own customizations when you start learning more.
+ - The first screen you will see is called the scratch buffer. It is mainly for doing temporary things that are not generally required to be saved.
 
-- The first screen you will see is called the scratch buffer. It is mainly for doing temporary things that are not generally required to be saved.
+ - Emacs is built around modifier keys, e.g., <Control>, <Alt>, <Shift>, <Esc>. These keys allow you to give instructions to emacs, e.g. keyboard shortcuts to open a file, close a file, run a command, etc. The commands are usually are in the form of <modifier key><some letter>.
 
-- Emacs is built around modifier keys, e.g., <Control>, <Alt>, <Shift>, <Esc>. These keys allow you to give instructions to emacs, e.g. keyboard shortcuts to open a file, close a file, run a command, etc. The commands are usually are in the form of <modifier key><some letter>.
+ - To create a new file, click on the file menu and select =visit new file=. This will prompt you to enter the filename at the small window at bottom of the screen. This small window is called the mini-buffer. Create a file =test.org=. 
 
-- To create a new file, click on the file menu and select =visit new file=. This will prompt you to enter the filename at the small window at bottom of the screen. This small window is called the mini-buffer. Create a file =test.org=. 
+ - An alternate way to open a file (or create a new file if it does not exist) is to type ~Control-x Control-f~ (or ~C-x C-f~ in Emacs notation). It should bring up the same prompt to enter the filename in your mini-buffer. 
 
-- An alternate way to open a file (or create a new file if it does not exist) is to type ~Control-x Control-f~ (or ~C-x C-f~ in Emacs notation). It should bring up the same prompt to enter the filename in your mini-buffer. 
+ - Once your file is open, you can try typing something in it. Now save your file. You can do this from the file menu or using the command, ~C-x C-s~.
 
-- Once your file is open, you can try typing something in it. Now save your file. You can do this from the file menu or using the command, ~C-x C-s~.
+ - Cut/Copy/Paste. The biggest difference between Emacs and other text editors is how to cut, copy and paste text. We can use the edit menu to do this, or use the short cuts,
 
-- Cut/Copy/Paste. The biggest difference between Emacs and other text editors is how to cut, copy and paste text. We can use the edit menu to do this, or use the short cuts,
+   - ~C-w~. Cut selected text.
+   - ~M-x~. Copy selected text. (Here M is the =Alt= key for windows/linux users, the =Command= key for Mac users)
+   - ~C-y~. Paste cut/copied text.
 
-  - ~C-w~. Cut selected text.
-  - ~M-x~. Copy selected text. (Here M is the =Alt= key for windows/linux users, the =Command= key for Mac users)
-  - ~C-y~. Paste cut/copied text.
-
-- To close emacs, you can click on the 'X' sign on the corner of your screen or type, ~C-x C-c~.
+ - To close emacs, you can click on the 'X' sign on the corner of your screen or type, ~C-x C-c~.
   
-- Now that you are back at your terminal, use emacs to open the notes for today's lab. Change into the the directory you just cloned, and type ~emacs lab1.org &~. This is the org-mode file that was used to create the pdf. All the commands that you just ran in the terminal were run inside this document!
+ - Now that you are back at your terminal, use emacs to open the notes for today's lab. Change into the the directory you just cloned, and type ~emacs lab1.org &~. This is the org-mode file that was used to create the pdf. All the commands that you just ran in the terminal were run inside this document!
 
-- Press <TAB> to expand the headings and see what they contain. Navigate to this section of the document. 
+ - Press <TAB> to expand the headings and see what they contain. Navigate to this section of the document. 
 
-- Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type ~M-x~. Now type ~org-toggle-latex-overlays~. Alternately, you can click on this link, elisp:org-toggle-latex-overlays. You should be able to see the Schrodinger equation below.
+ - Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type ~M-x~. Now type ~org-toggle-latex-overlays~. Alternately, you can click on this link, elisp:org-toggle-latex-overlays. You should be able to see the Schrodinger equation below.
 
-- $H\psi = E\psi$
+ - $H\psi = E\psi$
 
-- *Tip:* If you find yourself stuck somewhere, type <ESC> four times or type ~C-g~.
+ - *Tip:* If you find yourself stuck somewhere, type <ESC> four times or type ~C-g~.
 
+
+** Shell scripts
+We usually interact with the shell interactively, one command at a time.  It is possible
+to put a set of commands into a file, and that file then becomes a computer program.
+Here's a super simple one:
+
+#+BEGIN_SRC sh
+#/bin/bash
+echo "Hello world"
+#+END_SRC
+
+#+RESULTS:
+: Hello world
+
+* Notebooks
+We'll often have occassion to write little programs to set up, execute, or analyze our
+calculations.  A relatively recent innovation in the computational world is the popularity
+of =notebooks=. A notebook is much like a shell, in that it allows you to execute programs
+interactively, but it can also be saved, editted, debugged, repurposed, ....  [[https://orgmode.org/][org-mode]] is
+a notebook for use in emacs, and again a favorite of mine.  Much easier to use and very
+popular today is [[https://jupyter.org/][jupyter]], which is browser-based and very user friendly.  You can install
+jupyter locally from [[https://www.anaconda.com/distribution/][anaconda]], again something that takes a little bit of expertise (not
+too much though, so if you are game, give it a try).
+
+CRC has our backs again, however.  If you point your browser to [[https://jupyter.crc.nd.edu]]
+and log in, you will see a listing of your afs files.  From there, you can open a file or
+start a new file in one of the several programming languages supported.  We will in
+particular interest in [[https://python.org][python]], a particular popular and powerful language.  Python
+notebooks have the extension .ipynb and are readily created and run within a jupyter notebook.
 
 * Introduction to Python
   
-Python is a programming language which we will use to solve many of the homework problems, especially density functional theory calculations using VASP (homeworks 5, homework 6, and probably your class project). It is therefore important that you familiarize yourself with using it. The numerical and plotting features in python are mostly similar to =MATLAB=, with a few subtle differences. I would recommend that you try to solve the first problem in homework 2 using python. A few examples are below, adapted (a fancy way of saying pretty much copied) from John Kitchin's example files. We won't cover all of these, but you can use them for reference. To execute a code block type ~C-c C-c~.
+Python is a programming language which we will use to solve many of the homework problems,
+especially density functional theory calculations using VASP (homeworks 5, homework 6, and
+probably your class project). It is therefore important that you familiarize yourself with
+using it. The numerical and plotting features in python are mostly similar to =MATLAB=,
+with a few subtle differences. I would recommend that you try to solve the first problem
+in homework 2 using python. A few examples are below, adapted (a fancy way of saying
+pretty much copied) from John Kitchin's example files. We won't cover all of these, but
+you can use them for reference. To execute code in a jupyter notebook, use Ctrl-enter.
 
 ** Simple calculations
 
@@ -826,7 +894,8 @@ plt.show()
 
 * FDA
   
-Now let us run our first computational chemistry code. Change into the ~computational-chemistry/Lab1/FDA/fda~ directory and run the command,
+Now let us run our first computational chemistry code. Change into the
+~computational-chemistry/Lab1/FDA/fda~ directory and run the command,
 
 #+BEGIN_SRC sh
 ./fda Ar

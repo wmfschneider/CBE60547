@@ -1,0 +1,48 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{matplotlib.pyplot} \PYG{k+kn}{as} \PYG{n+nn}{plt}
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k+kn}{as} \PYG{n+nn}{np}
+
+\PYG{c+c1}{\PYGZsh{} Lets open the file in read mode}
+\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}FDA/fda/Ar.dmp\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{f}\PYG{p}{:}
+
+    \PYG{c+c1}{\PYGZsh{} Reading all the lines in the file}
+    \PYG{c+c1}{\PYGZsh{} Each line is stored as an element of a list}
+    \PYG{n}{lines} \PYG{o}{=} \PYG{n}{f}\PYG{o}{.}\PYG{n}{readlines}\PYG{p}{()}
+
+    \PYG{c+c1}{\PYGZsh{} First we read the grid points and the total charge densities}
+    \PYG{n}{grid\PYGZus{}points} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{total\PYGZus{}charge\PYGZus{}densities} \PYG{o}{=} \PYG{p}{[]}
+
+    \PYG{k}{for} \PYG{n}{line} \PYG{o+ow}{in} \PYG{n}{lines}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{:}\PYG{l+m+mi}{303}\PYG{p}{]:}
+
+        \PYG{c+c1}{\PYGZsh{} Each is a string with two columns}
+        \PYG{n}{grid\PYGZus{}point}\PYG{p}{,} \PYG{n}{tot\PYGZus{}charge\PYGZus{}density} \PYG{o}{=} \PYG{n}{line}\PYG{o}{.}\PYG{n}{split}\PYG{p}{()}
+
+        \PYG{c+c1}{\PYGZsh{} We need to convert each line to a float add it to our lists}
+        \PYG{n}{grid\PYGZus{}points}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{grid\PYGZus{}point}\PYG{p}{))}
+        \PYG{n}{total\PYGZus{}charge\PYGZus{}densities}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{tot\PYGZus{}charge\PYGZus{}density}\PYG{p}{))}
+
+    \PYG{c+c1}{\PYGZsh{} Now for the 1s orbital}
+    \PYG{n}{one\PYGZus{}s\PYGZus{}charge\PYGZus{}density} \PYG{o}{=} \PYG{p}{[]}
+
+    \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{lines}\PYG{p}{[}\PYG{l+m+mi}{304}\PYG{p}{:}\PYG{l+m+mi}{604}\PYG{p}{]:}
+        \PYG{n}{one\PYGZus{}s\PYGZus{}charge\PYGZus{}density}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{x}\PYG{p}{))}
+
+    \PYG{c+c1}{\PYGZsh{} Alternately,}
+    \PYG{n}{one\PYGZus{}s\PYGZus{}charge\PYGZus{}density\PYGZus{}alt} \PYG{o}{=} \PYG{p}{[}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{lines}\PYG{p}{[}\PYG{l+m+mi}{304}\PYG{p}{:}\PYG{l+m+mi}{604}\PYG{p}{]]}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogx}\PYG{p}{(}\PYG{n}{grid\PYGZus{}points}\PYG{p}{,} \PYG{n}{total\PYGZus{}charge\PYGZus{}densities}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Grid Points\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Charge Density\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Overall\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}images/Ar\PYGZhy{}overall\PYGZhy{}charge\PYGZhy{}density.png\PYGZsq{}}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{semilogx}\PYG{p}{(}\PYG{n}{grid\PYGZus{}points}\PYG{p}{,} \PYG{n}{one\PYGZus{}s\PYGZus{}charge\PYGZus{}density}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Grid Points\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Charge Density\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}1s orbital\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}images/Ar\PYGZhy{}1s\PYGZhy{}charge\PYGZhy{}density.png\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+\end{Verbatim}

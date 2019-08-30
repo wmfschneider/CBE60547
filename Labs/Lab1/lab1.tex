@@ -1,4 +1,5 @@
-% Created 2015-03-19 Thu 18:27
+% Created 2019-08-29 Thu 19:09
+% Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -16,6 +17,7 @@
 \usepackage{wasysym}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage[theorems, skins]{tcolorbox}
 \usepackage[version=3]{mhchem}
 \usepackage[numbers,super,sort&compress]{natbib}
 \usepackage{natmove}
@@ -41,58 +43,68 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \maketitle
 
 \section{Introduction to Linux}
-\label{sec-1}
+\label{sec:org6513e17}
 
-Much of the work in this course will involve some use of the unix terminal. Mac and Linux users can access the terminal from their applications menu. Windows users will probably need to use putty to login to the CRC machines to use a linux environment.
+All computers are run by an \texttt{operating system}.  What you see, on your phone, tablet, or
+laptop, is a \texttt{graphical user interface} that runs on top of that operating system.  Far
+and away the most common operating systems are based on Unix.  MacOS is a variant of Unix,
+for instance. Web serves, computational servers, \ldots{}, run another variant named \href{https://www.linux.org/}{Linux}.
+Serious computational work, such as computational chemistry, is done essentially
+exclusively on Linux computers.
+
+The \texttt{command line} is the lowest level that one commonly interacts with a computer at.
+Phones and laptops hide the command line from us. On your Mac laptop, you can get to it
+through the \texttt{terminal}.
 
 \subsection{Logging onto the CRC}
-\label{sec-1-1}
+\label{sec:orgaa1f0f7}
+For consistency, we will use the Linux computers hosted by the Notre Dame \href{http://crc.nd.edu}{Center for
+Research Computing} (CRC) for our computational work. The CRC hosts a number of "front-end"
+computers that we can access and interact with directly, through the internet.  Hinding
+behind those front-ends are racks and racks of computers ("nodes"), lashed together with
+high-speed connections, that are access through a queue and are used for really serious
+calculations.  The front-ends and the nodes all share the same, network-based file system
+("afs", \url{https://www.openafs.org/}), so your files are the same every.  Every user has a
+home directory.  For instance, mine is /afs/crc.nd.edu/user/w/wschnei1.  
 
-Windows Users: Open putty, login. 
-
-Mac/Linux Users: Open the terminal and type: 
+One way to access the CRC is through a terminal window on your computer (\texttt{putty} on a
+Windows computer, \texttt{terminal} on Mac/Linux User) and login using your regular ND
+credentials.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
-ssh -Y username@crcfe01.crc.nd.edu
+ssh -Y wschnei1@crcfe01.crc.nd.edu
 \end{minted}
 
+This method works but gives relatively limited functionality.  An alternative approach
+provided by the CRC and that is a bit more feature rich is to use \href{https://www.starnet.com/fastx/}{fastX} through a browser
+window.  Go to \url{https://crcfe01.crc.nd.edu} and log in using your ND credentials.  Then
+choose a single xterm session to get started.
 
 \subsection{Common Linux Commands}
-\label{sec-1-2}
-
-Here is a list of common linux commands, along with an example of their output. Try typing these in your terminal window.
+\label{sec:org7e82643}
+At the Linux command line you will be working interactively with a \texttt{=shell=}. The shell
+provides a lot of built-in features, is programmable, and gives access to There are many different shells, but the most
+popular today is \href{https://www.gnu.org/software/bash/manual/}{bash}.  Here is a list of common linux commands, along with an example of
+their output. Try typing these in your xterm window.
 
 \begin{itemize}
-\item \verb~ls~: List the contents of a directory
+\item \texttt{ls}: List the contents of a directory
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 ls
 \end{minted}
 
-\begin{verbatim}
-FDA
-images
-lab1.org
-lab1.pdf
-Lab1.png
-lab1.tex
-\end{verbatim}
-
 \begin{itemize}
-\item \verb~pwd~: Get the path of the current directory
+\item \texttt{pwd}: Get the path of the current directory
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 pwd
 \end{minted}
 
-\begin{verbatim}
-/afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1
-\end{verbatim}
-
 \begin{itemize}
-\item \verb~mkdir~: Create a directory
+\item \texttt{mkdir}: Create a directory
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
@@ -100,34 +112,16 @@ mkdir example-directory
 ls
 \end{minted}
 
-\begin{verbatim}
-example-directory
-FDA
-images
-lab1.org
-lab1.pdf
-Lab1.png
-lab1.tex
-\end{verbatim}
-
 \begin{itemize}
-\item \verb~cd~: Change directory
+\item \texttt{cd}: Change directory
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
-cd example-directory
-pwd
-cd .. # move 1 directory up
-pwd
+cd example-directory pwd cd .. # move 1 directory up pwd
 \end{minted}
 
-\begin{verbatim}
-/afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1/example-directory
-/afs/crc.nd.edu/user/p/pmehta1/computational-chemistry/Lab1
-\end{verbatim}
-
 \begin{itemize}
-\item \verb~cp~ Copy files
+\item \texttt{cp} Copy files
 \end{itemize}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 cp file1 file2
@@ -135,37 +129,33 @@ cp file1 file2
 
 
 \begin{itemize}
-\item \verb~mv~: Move files
+\item \texttt{mv}: Move files
 \end{itemize}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 mv file1 file2
 \end{minted}
 
 \begin{itemize}
-\item \verb~rm~: Remove files
+\item \texttt{rm}: Remove files
 \end{itemize}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 rm filename
 \end{minted}
 
 \begin{itemize}
-\item \verb~quota~: Check the amount of space allocated to you by the CRC.
+\item \texttt{quota}: Check the amount of space allocated to you by the CRC.
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 quota
 \end{minted}
 
-\begin{verbatim}
-AFS quota using values reported by vos server for partition
-Quota for /afs/crc.nd.edu/user/p/pmehta1 
-Volume Name                   Quota      Used %Used   Partition
-u.pmehta1                    100 GB     55 GB   55%         87%
-\end{verbatim}
-
+\begin{itemize}
+\item \texttt{printenv}: Show the ENVIRONMENT VARIABLES that control how t
+\end{itemize}
 
 \subsection{Obtaining lab notes}
-\label{sec-1-3}
+\label{sec:org2f50f7e}
 
 The lab notes and homeworks can be obtained from the course website. They are also conveniently stored in a git repository. To obtain the files just type in
 
@@ -173,7 +163,7 @@ The lab notes and homeworks can be obtained from the course website. They are al
 git clone https://github.com/wfschneidergroup/computational-chemistry
 \end{minted}
 
-You can periodically update your copy of the notes by changing into the course directory and running the command \verb~git pull~, i.e.,
+You can periodically update your copy of the notes by changing into the course directory and running the command \texttt{git pull}, i.e.,
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 cd computational-chemistry
@@ -182,14 +172,13 @@ git pull
 
 
 \section{The very least you have to know about GNU Emacs}
-\label{sec-2}
-
+\label{sec:org22e70c7}
 For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
 
 Here are a few things to get started.
 
 \begin{itemize}
-\item Starting Emacs. To start emacs type \verb~emacs &~ on the command line. This will launch emacs with the jmax starter kit (\url{https://github.com/jkitchin/jmax}). You can add your own customizations when you start learning more.
+\item Starting Emacs. To start emacs type \texttt{emacs \&} on the command line. This will launch emacs with the jmax starter kit (\url{https://github.com/jkitchin/jmax}). You can add your own customizations when you start learning more.
 
 \item The first screen you will see is called the scratch buffer. It is mainly for doing temporary things that are not generally required to be saved.
 
@@ -197,41 +186,41 @@ Here are a few things to get started.
 
 \item To create a new file, click on the file menu and select \texttt{visit new file}. This will prompt you to enter the filename at the small window at bottom of the screen. This small window is called the mini-buffer. Create a file \texttt{test.org}.
 
-\item An alternate way to open a file (or create a new file if it does not exist) is to type \verb~Control-x Control-f~ (or \verb~C-x C-f~ in Emacs notation). It should bring up the same prompt to enter the filename in your mini-buffer.
+\item An alternate way to open a file (or create a new file if it does not exist) is to type \texttt{Control-x Control-f} (or \texttt{C-x C-f} in Emacs notation). It should bring up the same prompt to enter the filename in your mini-buffer.
 
-\item Once your file is open, you can try typing something in it. Now save your file. You can do this from the file menu or using the command, \verb~C-x C-s~.
+\item Once your file is open, you can try typing something in it. Now save your file. You can do this from the file menu or using the command, \texttt{C-x C-s}.
 
 \item Cut/Copy/Paste. The biggest difference between Emacs and other text editors is how to cut, copy and paste text. We can use the edit menu to do this, or use the short cuts,
 
 \begin{itemize}
-\item \verb~C-w~. Cut selected text.
-\item \verb~M-x~. Copy selected text. (Here M is the \texttt{Alt} key for windows/linux users, the \texttt{Command} key for Mac users)
-\item \verb~C-y~. Paste cut/copied text.
+\item \texttt{C-w}. Cut selected text.
+\item \texttt{M-x}. Copy selected text. (Here M is the \texttt{Alt} key for windows/linux users, the \texttt{Command} key for Mac users)
+\item \texttt{C-y}. Paste cut/copied text.
 \end{itemize}
 
-\item To close emacs, you can click on the 'X' sign on the corner of your screen or type, \verb~C-x C-c~.
+\item To close emacs, you can click on the 'X' sign on the corner of your screen or type, \texttt{C-x C-c}.
 
-\item Now that you are back at your terminal, use emacs to open the notes for today's lab. Change into the the directory you just cloned, and type \verb~emacs lab1.org &~. This is the org-mode file that was used to create the pdf. All the commands that you just ran in the terminal were run inside this document!
+\item Now that you are back at your terminal, use emacs to open the notes for today's lab. Change into the the directory you just cloned, and type \texttt{emacs lab1.org \&}. This is the org-mode file that was used to create the pdf. All the commands that you just ran in the terminal were run inside this document!
 
 \item Press <TAB> to expand the headings and see what they contain. Navigate to this section of the document.
 
-\item Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type \verb~M-x~. Now type \verb~org-toggle-latex-overlays~. Alternately, you can click on this link, \url{org-toggle-latex-overlays}. You should be able to see the Schrodinger equation below.
+\item Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type \texttt{M-x}. Now type \texttt{org-toggle-latex-overlays}. Alternately, you can click on this link, \url{org-toggle-latex-overlays}. You should be able to see the Schrodinger equation below.
 
-\item $H\psi = E\psi$
+\item \(H\psi = E\psi\)
 
-\item \textbf{Tip:} If you find yourself stuck somewhere, type <ESC> four times or type \verb~C-g~.
+\item \textbf{Tip:} If you find yourself stuck somewhere, type <ESC> four times or type \texttt{C-g}.
 \end{itemize}
 
 
 \section{Introduction to Python}
-\label{sec-3}
+\label{sec:org43093c8}
 
-Python is a programming language which we will use to solve many of the homework problems, especially density functional theory calculations using VASP (homeworks 5, homework 6, and probably your class project). It is therefore important that you familiarize yourself with using it. The numerical and plotting features in python are mostly similar to \texttt{MATLAB}, with a few subtle differences. I would recommend that you try to solve the first problem in homework 2 using python. A few examples are below, adapted (a fancy way of saying pretty much copied) from John Kitchin's example files. We won't cover all of these, but you can use them for reference. To execute a code block type \verb~C-c C-c~.
+Python is a programming language which we will use to solve many of the homework problems, especially density functional theory calculations using VASP (homeworks 5, homework 6, and probably your class project). It is therefore important that you familiarize yourself with using it. The numerical and plotting features in python are mostly similar to \texttt{MATLAB}, with a few subtle differences. I would recommend that you try to solve the first problem in homework 2 using python. A few examples are below, adapted (a fancy way of saying pretty much copied) from John Kitchin's example files. We won't cover all of these, but you can use them for reference. To execute a code block type \texttt{C-c C-c}.
 
 \subsection{Simple calculations}
-\label{sec-3-1}
+\label{sec:org161e542}
 
-A good overview of basic python operators can be found at \url{http://www.tutorialspoint.com/python/python_basic_operators.htm}
+A good overview of basic python operators can be found at \url{http://www.tutorialspoint.com/python/python\_basic\_operators.htm}
 
 Here are some simple examples
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -303,8 +292,8 @@ print 5. % 4.
 
 
 \subsection{Formatted printing}
-\label{sec-3-2}
-\url{http://docs.python.org/library/stdtypes.html#string-formatting-operations}
+\label{sec:org0bfa3de}
+\url{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}
 
 We will usually want to print more than a number, e.g. some descriptive text and the number. We also will want to format numbers so we do not see 9 decimal places all the time. We use string formatting for that. Here are some typical examples.
 
@@ -343,7 +332,7 @@ print 'a = {ans0} and b = {ans1}'.format(ans0=a,
 a = 125 and b = 23
 \end{verbatim}
 
-To do formatting, we need additional syntax. We use \{i:format\} to specify how the value should be formatted. Here we show how to specify only three decimal places on a results. See \href{http://docs.python.org/library/stdtypes.html#string-formatting-operations}{this link} for a lot more details of formatting strings.
+To do formatting, we need additional syntax. We use \{i:format\} to specify how the value should be formatted. Here we show how to specify only three decimal places on a results. See \href{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}{this link} for a lot more details of formatting strings.
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = 2./3.
 print 'a = {0}'.format(a)
@@ -357,14 +346,14 @@ a = 0.667
 
 
 \subsection{Data types}
-\label{sec-3-3}
-Numeric types \url{http://docs.python.org/library/stdtypes.html#numeric-types-int-float-long-complex}
+\label{sec:org1dc430d}
+Numeric types \url{http://docs.python.org/library/stdtypes.html\#numeric-types-int-float-long-complex}
 
-Strings \url{http://docs.python.org/library/stdtypes.html#string-methods}
+Strings \url{http://docs.python.org/library/stdtypes.html\#string-methods}
 
 
 \subsubsection{lists/tuples}
-\label{sec-3-3-1}
+\label{sec:orgbf405d0}
 
 Lists and tuples are similar in that they are both sets of data. A list is delimited by [] (square brackets) and a tuple is delimited by () (parentheses). The difference between them is a list can be changed after it is created (it is mutable), but a tuple cannot (it is immutable).
 
@@ -433,8 +422,8 @@ a[1] = 56 #this is not allowed!
 
 
 \subsection{Conditional statements}
-\label{sec-3-4}
-conditional operators \url{http://docs.python.org/library/stdtypes.html#comparisons}
+\label{sec:org0ea3878}
+conditional operators \url{http://docs.python.org/library/stdtypes.html\#comparisons}
 
 Python has the standard conditional operators for testing if a quantity is equal to (\texttt{=), less than (<), greater than (>), lessthan or equal to (<}) greater than or equal to (>=) and not equal (!=). These generally work on numbers and strings.
 
@@ -521,8 +510,8 @@ a is greater than or equal to b
 
 
 \subsection{Loops}
-\label{sec-3-5}
-\url{http://docs.python.org/tutorial/datastructures.html#looping-techniques}
+\label{sec:org4fc99f4}
+\url{http://docs.python.org/tutorial/datastructures.html\#looping-techniques}
 for
 while/break/continue
 enumerate, zip
@@ -549,8 +538,8 @@ for i in range(4):
 
 
 \subsection{functions}
-\label{sec-3-6}
-\url{http://docs.python.org/tutorial/controlflow.html#defining-functions}
+\label{sec:orgacf9e1f}
+\url{http://docs.python.org/tutorial/controlflow.html\#defining-functions}
 
 We can define functions with the \texttt{def} statement, and specify what they \texttt{return}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -568,12 +557,12 @@ print myfunc(x=3)
 
 
 \subsection{Classes and objects}
-\label{sec-3-7}
+\label{sec:org63ef539}
 \url{http://docs.python.org/tutorial/classes.html}
 
 
 \subsection{Modules}
-\label{sec-3-8}
+\label{sec:org681b8e7}
 \url{http://docs.python.org/tutorial/modules.html}
 
 The default Python environment has minimal functionality. We can \texttt{import} additional functionality from modules. The full standard library is documented at \url{http://docs.python.org/library/}. It is not likely you will use everything there, but it is helpful to be familiar with what is available so you do not reinvent solutions.
@@ -622,19 +611,19 @@ lab1.tex
 \end{verbatim}
 
 \subsubsection{Some common standard modules}
-\label{sec-3-8-1}
+\label{sec:orgb696872}
 \url{http://docs.python.org/tutorial/stdlib.html}
 os, sys, glob,  re
 
 
 \subsection{file I/O}
-\label{sec-3-9}
+\label{sec:org592a218}
 reading, writing files
-\url{http://docs.python.org/library/stdtypes.html#file-objects}
+\url{http://docs.python.org/library/stdtypes.html\#file-objects}
 
 
 \subsection{Error handling}
-\label{sec-3-10}
+\label{sec:org1427763}
 \url{http://docs.python.org/tutorial/errors.html}
 
 Errors happen, and when they do they usually kill your script. Sometimes that is not desirable, and it is nice to catch errors, handle them, and keep on going. When errors occur in python, an Exception is raised. We can use \texttt{try/except} code blocks to try some code, and then respond to any exceptions that occur.
@@ -654,10 +643,10 @@ an error was found
 
 
 \subsection{Numerical Python (Numpy)}
-\label{sec-3-11}
+\label{sec:org793e1be}
 
 \subsubsection{The basics}
-\label{sec-3-11-1}
+\label{sec:orge5ac040}
 \url{http://docs.scipy.org/doc/numpy/reference/}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -712,13 +701,13 @@ Below are some recipes for doing linear algebra and polynomials.
 
 
 \subsubsection{Linear algebra}
-\label{sec-3-11-2}
+\label{sec:org2883c21}
 \texttt{numpy.linalg} provides a lot of the linear algebra functionality we need. See \url{http://docs.scipy.org/doc/numpy/reference/routines.linalg.html} for details of all the things that are possible. For example, given these linear equations:
 
-$x + y = 3$, 
-$x - y = 1$
+\(x + y = 3\), 
+\(x - y = 1\)
 
-we can represent these equations in matrix form $A x = b$ and solve them.
+we can represent these equations in matrix form \(A x = b\) and solve them.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as npx
@@ -738,7 +727,7 @@ print la.solve(A, b)
 
 You might be familiar with the following solution:
 
-$x = A^{-1} b$
+\(x = A^{-1} b\)
 
 We can also compute that:
 
@@ -758,11 +747,11 @@ print np.dot(la.inv(A), b)
 
 Finally, we can do linear least squares easily. Suppose we have these three equations, and two unknowns:
 
-$x + y = 3$,
+\(x + y = 3\),
 
-$x - y = 1$,
+\(x - y = 1\),
 
-$x - y = 0.9$
+\(x - y = 0.9\)
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -783,8 +772,8 @@ print x
 
 
 \subsubsection{Polynomials}
-\label{sec-3-11-3}
-\texttt{numpy} can do polynomials too. We express polynomials by the coefficients in front of the powers of $x$, e.g. $4 x^2 + 2x - 1 = 0$ is represented by [4, 2, -1].
+\label{sec:orgb533b75}
+\texttt{numpy} can do polynomials too. We express polynomials by the coefficients in front of the powers of \(x\), e.g. \(4 x^2 + 2x - 1 = 0\) is represented by [4, 2, -1].
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -838,15 +827,15 @@ intercept = 1.0
 
 
 \subsection{Scientific Python (Scipy)}
-\label{sec-3-12}
+\label{sec:org508f3b9}
 \url{http://docs.scipy.org/doc/scipy/reference/}
 
 \texttt{scipy} provides all the functionality we need for \href{http://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html}{integration}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html}{optimization}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html}{interpolation}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html}{statistics}, and \href{http://docs.scipy.org/doc/scipy/reference/tutorial/io.html}{File I/O}. You should look up the link on integration. It might be useful for homework 2.
 
 
 \subsubsection{Solving Equations}
-\label{sec-3-12-1}
-Here is a typical usage for solving the equation $x^2 = 2$ for $x$. We have to define a function that is $f(x) = 0$, and then use the \texttt{scipy.optimize.fsolve} function to solve it with an initial guess.
+\label{sec:orgf23363e}
+Here is a typical usage for solving the equation \(x^2 = 2\) for \(x\). We have to define a function that is \(f(x) = 0\), and then use the \texttt{scipy.optimize.fsolve} function to solve it with an initial guess.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from scipy.optimize import fsolve
@@ -869,11 +858,11 @@ print type(x)
 
 
 \subsubsection{Integration Example}
-\label{sec-3-12-2}
+\label{sec:orga01aece}
 
 \begin{enumerate}
 \item Using Quad
-\label{sec-3-12-2-1}
+\label{sec:org90f4da8}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from scipy.integrate import quad
 import numpy as np
@@ -891,7 +880,7 @@ print ans
 
 
 \item Using trapz
-\label{sec-3-12-2-2}
+\label{sec:orgdf6136a}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -910,7 +899,7 @@ print np.trapz(y2, x2)
 
 
 \subsection{Plotting with Python (Matplotlib)}
-\label{sec-3-13}
+\label{sec:org1e25eac}
 \url{http://matplotlib.sourceforge.net/}
 \texttt{matplotlib} is the prime plotting module for python. The syntax is similar to Matlab. The best way to learn matplotlib is to visit the gallery (\url{http://matplotlib.sourceforge.net/gallery.html}) and look for examples that do what you want. Here is a simple example.
 
@@ -930,13 +919,16 @@ plt.savefig('images/Lab1.png')
 plt.show()
 \end{minted}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Lab1.png}
+\end{center}
 
 
 \section{FDA}
-\label{sec-4}
+\label{sec:org10a2675}
 
-Now let us run our first computational chemistry code. Change into the \verb~computational-chemistry/Lab1/FDA/fda~ directory and run the command,
+Now let us run our first computational chemistry code. Change into the
+\texttt{computational-chemistry/Lab1/FDA/fda} directory and run the command,
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 ./fda Ar
@@ -945,7 +937,7 @@ Now let us run our first computational chemistry code. Change into the \verb~com
 This will use the \texttt{Ar.inp} file as input and produce two output files, \texttt{Ar.dmp} and \texttt{Ar.out}. The \texttt{00READ.ME} file contains some information about the format of the input file. You can open these files with Emacs to read what they contain.
 
 \subsection{Parsing the dmp file}
-\label{sec-4-1}
+\label{sec:org3cc441e}
 
 In homework 2, you will need to parse the \texttt{.dmp} file to plot some data. It contains the radial grid values and total charge density in two columns, followed by the charge density of each oribital on the same grid. Here we consider an example of how to do this with python.
 
@@ -998,8 +990,11 @@ plt.savefig('images/Ar-1s-charge-density.png')
 plt.show()
 \end{minted}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Ar-overall-charge-density.png}
+\end{center}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Ar-1s-charge-density.png}
-% Emacs 24.4.3 (Org mode 8.2.10)
+\end{center}
 \end{document}

@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{from} \PYG{n+nn}{scipy.integrate} \PYG{k+kn}{import} \PYG{n}{quad}
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k+kn}{as} \PYG{n+nn}{np}
+
+\PYG{k}{def} \PYG{n+nf}{integrand}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{k}{return} \PYG{p}{(}\PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{n}{np}\PYG{o}{.}\PYG{n}{cos}\PYG{p}{(}\PYG{n}{x}\PYG{p}{))}\PYG{o}{**}\PYG{l+m+mi}{2}
+
+\PYG{n}{ans}\PYG{p}{,} \PYG{n}{err} \PYG{o}{=} \PYG{n}{quad}\PYG{p}{(}\PYG{n}{integrand}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{)}
+\PYG{k}{print} \PYG{n}{ans}
+\end{Verbatim}
