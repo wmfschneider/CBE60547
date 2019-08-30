@@ -1,4 +1,4 @@
-% Created 2019-08-29 Thu 19:09
+% Created 2019-08-30 Fri 11:50
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -36,14 +36,14 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
 \author{Prateek Mehta, William F. Schneider}
-\date{2015-01-22 Thu}
+\date{2019-08-29}
 \title{Computational Chemistry Laboratory I (CBE 60547)}
 \begin{document}
 
 \maketitle
 
 \section{Introduction to Linux}
-\label{sec:org6513e17}
+\label{sec:orgfd01c41}
 
 All computers are run by an \texttt{operating system}.  What you see, on your phone, tablet, or
 laptop, is a \texttt{graphical user interface} that runs on top of that operating system.  Far
@@ -57,7 +57,7 @@ Phones and laptops hide the command line from us. On your Mac laptop, you can ge
 through the \texttt{terminal}.
 
 \subsection{Logging onto the CRC}
-\label{sec:orgaa1f0f7}
+\label{sec:org7ada267}
 For consistency, we will use the Linux computers hosted by the Notre Dame \href{http://crc.nd.edu}{Center for
 Research Computing} (CRC) for our computational work. The CRC hosts a number of "front-end"
 computers that we can access and interact with directly, through the internet.  Hinding
@@ -81,12 +81,28 @@ window.  Go to \url{https://crcfe01.crc.nd.edu} and log in using your ND credent
 choose a single xterm session to get started.
 
 \subsection{Common Linux Commands}
-\label{sec:org7e82643}
+\label{sec:orgbe8c42b}
 At the Linux command line you will be working interactively with a \texttt{=shell=}. The shell
-provides a lot of built-in features, is programmable, and gives access to There are many different shells, but the most
-popular today is \href{https://www.gnu.org/software/bash/manual/}{bash}.  Here is a list of common linux commands, along with an example of
-their output. Try typing these in your xterm window.
+provides a lot of built-in features, is programmable, and gives access to There are many
+different shells, but the most popular today is \href{https://www.gnu.org/software/bash/manual/}{bash}.  Here is a list of common linux
+commands, along with an example of their output. Try typing these in your xterm window.
 
+\begin{itemize}
+\item \texttt{echo \$SHELL}: Figure out what shell you are using
+\end{itemize}
+\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
+echo $SHELL
+\end{minted}
+
+\texttt{=\$SHELL=} is an example of an environment variable. There are lots of them. To see the ones that are set, type
+\begin{itemize}
+\item \texttt{printenv}: write out all the environment variables that are set.
+\end{itemize}
+\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
+printenv
+\end{minted}
+
+Files are saved in a tree structure of directories and sub-directories. 
 \begin{itemize}
 \item \texttt{ls}: List the contents of a directory
 \end{itemize}
@@ -117,7 +133,7 @@ ls
 \end{itemize}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
-cd example-directory pwd cd .. # move 1 directory up pwd
+cd example-directory; pwd; cd .. # move 1 directory up pwd
 \end{minted}
 
 \begin{itemize}
@@ -155,24 +171,32 @@ quota
 \end{itemize}
 
 \subsection{Obtaining lab notes}
-\label{sec:org2f50f7e}
+\label{sec:org13c11d0}
 
 The lab notes and homeworks can be obtained from the course website. They are also conveniently stored in a git repository. To obtain the files just type in
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
-git clone https://github.com/wfschneidergroup/computational-chemistry
+git clone https://github.com/wmfschneider/CBE60547
 \end{minted}
 
 You can periodically update your copy of the notes by changing into the course directory and running the command \texttt{git pull}, i.e.,
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
-cd computational-chemistry
+cd CBE60547
 git pull
 \end{minted}
 
+\subsection{Editors}
+\label{sec:orge21a380}
+At some point you will want to create, edit, and save files.  That job falls to a file
+editor.  \texttt{vi} is the most venerable editor, available on all Unix systems, but not so easy
+to use.  \texttt{gedit} is your best bet for a simple editor on the CRC machines.  \href{https://www.gnu.org/software/emacs/}{GNU emacs}
+holds a special place in my heart, and is what I use to type all these notes.  It can be
+challenging to set up and does have a steep learning curve.  Below are some notes on emacs
+usage, but if you are going to use it, plan on investing some time.
 
-\section{The very least you have to know about GNU Emacs}
-\label{sec:org22e70c7}
+\subsection{The very least you have to know about GNU Emacs}
+\label{sec:orgf6dc2e3}
 For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
 
 Here are a few things to get started.
@@ -212,22 +236,56 @@ Here are a few things to get started.
 \end{itemize}
 
 
-\section{Introduction to Python}
-\label{sec:org43093c8}
+\subsection{Shell scripts}
+\label{sec:org384139f}
+We usually interact with the shell interactively, one command at a time.  It is possible
+to put a set of commands into a file, and that file then becomes a computer program.
+Here's a super simple one:
 
-Python is a programming language which we will use to solve many of the homework problems, especially density functional theory calculations using VASP (homeworks 5, homework 6, and probably your class project). It is therefore important that you familiarize yourself with using it. The numerical and plotting features in python are mostly similar to \texttt{MATLAB}, with a few subtle differences. I would recommend that you try to solve the first problem in homework 2 using python. A few examples are below, adapted (a fancy way of saying pretty much copied) from John Kitchin's example files. We won't cover all of these, but you can use them for reference. To execute a code block type \texttt{C-c C-c}.
+\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
+#/bin/bash
+echo "Hello world"
+\end{minted}
+
+\section{Notebooks}
+\label{sec:org848261b}
+We'll often have occassion to write little programs to set up, execute, or analyze our
+calculations.  A relatively recent innovation in the computational world is the popularity
+of \texttt{notebooks}. A notebook is much like a shell, in that it allows you to execute programs
+interactively, but it can also be saved, editted, debugged, repurposed, \ldots{}.  \href{https://orgmode.org/}{org-mode} is
+a notebook for use in emacs, and again a favorite of mine.  Much easier to use and very
+popular today is \href{https://jupyter.org/}{jupyter}, which is browser-based and very user friendly.  You can install
+jupyter locally from \href{https://www.anaconda.com/distribution/}{anaconda}, again something that takes a little bit of expertise (not
+too much though, so if you are game, give it a try).
+
+CRC has our backs again, however.  If you point your browser to \url{https://jupyter.crc.nd.edu}
+and log in, you will see a listing of your afs files.  From there, you can open a file or
+start a new file in one of the several programming languages supported.  We will in
+particular interest in \href{https://python.org}{python}, a particular popular and powerful language.  Python
+notebooks have the extension .ipynb and are readily created and run within a jupyter notebook.
+
+\section{Introduction to Python}
+\label{sec:org7acb40b}
+Python is a programming language which we will use to solve many of the homework problems,
+especially density functional theory calculations using VASP (homeworks 5, homework 6, and
+probably your class project). It is therefore important that you familiarize yourself with
+using it. The numerical and plotting features in python are mostly similar to \texttt{MATLAB},
+with a few subtle differences. I would recommend that you try to solve the first problem
+in homework 2 using python. A few examples are below, adapted (a fancy way of saying
+pretty much copied) from John Kitchin's example files. We won't cover all of these, but
+you can use them for reference. To execute code in a jupyter notebook, use Ctrl-enter.
 
 \subsection{Simple calculations}
-\label{sec:org161e542}
+\label{sec:org859d282}
 
 A good overview of basic python operators can be found at \url{http://www.tutorialspoint.com/python/python\_basic\_operators.htm}
 
 Here are some simple examples
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 2+3
-print 4-6
-print 2*7
-print 4.0 / 6.0
+print(2+3)
+print(4-6)
+print(2*7)
+print(4.0 / 6.0)
 \end{minted}
 
 \begin{verbatim}
@@ -292,7 +350,7 @@ print 5. % 4.
 
 
 \subsection{Formatted printing}
-\label{sec:org0bfa3de}
+\label{sec:orgdc7d3f4}
 \url{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}
 
 We will usually want to print more than a number, e.g. some descriptive text and the number. We also will want to format numbers so we do not see 9 decimal places all the time. We use string formatting for that. Here are some typical examples.
@@ -346,14 +404,14 @@ a = 0.667
 
 
 \subsection{Data types}
-\label{sec:org1dc430d}
+\label{sec:org29129a5}
 Numeric types \url{http://docs.python.org/library/stdtypes.html\#numeric-types-int-float-long-complex}
 
 Strings \url{http://docs.python.org/library/stdtypes.html\#string-methods}
 
 
 \subsubsection{lists/tuples}
-\label{sec:orgbf405d0}
+\label{sec:org818b8f8}
 
 Lists and tuples are similar in that they are both sets of data. A list is delimited by [] (square brackets) and a tuple is delimited by () (parentheses). The difference between them is a list can be changed after it is created (it is mutable), but a tuple cannot (it is immutable).
 
@@ -422,7 +480,7 @@ a[1] = 56 #this is not allowed!
 
 
 \subsection{Conditional statements}
-\label{sec:org0ea3878}
+\label{sec:org6b055f2}
 conditional operators \url{http://docs.python.org/library/stdtypes.html\#comparisons}
 
 Python has the standard conditional operators for testing if a quantity is equal to (\texttt{=), less than (<), greater than (>), lessthan or equal to (<}) greater than or equal to (>=) and not equal (!=). These generally work on numbers and strings.
@@ -510,7 +568,7 @@ a is greater than or equal to b
 
 
 \subsection{Loops}
-\label{sec:org4fc99f4}
+\label{sec:org401a87d}
 \url{http://docs.python.org/tutorial/datastructures.html\#looping-techniques}
 for
 while/break/continue
@@ -538,7 +596,7 @@ for i in range(4):
 
 
 \subsection{functions}
-\label{sec:orgacf9e1f}
+\label{sec:org5c1377d}
 \url{http://docs.python.org/tutorial/controlflow.html\#defining-functions}
 
 We can define functions with the \texttt{def} statement, and specify what they \texttt{return}
@@ -557,12 +615,12 @@ print myfunc(x=3)
 
 
 \subsection{Classes and objects}
-\label{sec:org63ef539}
+\label{sec:org3dc2ae2}
 \url{http://docs.python.org/tutorial/classes.html}
 
 
 \subsection{Modules}
-\label{sec:org681b8e7}
+\label{sec:org0fd5602}
 \url{http://docs.python.org/tutorial/modules.html}
 
 The default Python environment has minimal functionality. We can \texttt{import} additional functionality from modules. The full standard library is documented at \url{http://docs.python.org/library/}. It is not likely you will use everything there, but it is helpful to be familiar with what is available so you do not reinvent solutions.
@@ -611,19 +669,19 @@ lab1.tex
 \end{verbatim}
 
 \subsubsection{Some common standard modules}
-\label{sec:orgb696872}
+\label{sec:org6ba279e}
 \url{http://docs.python.org/tutorial/stdlib.html}
 os, sys, glob,  re
 
 
 \subsection{file I/O}
-\label{sec:org592a218}
+\label{sec:orgd9d7800}
 reading, writing files
 \url{http://docs.python.org/library/stdtypes.html\#file-objects}
 
 
 \subsection{Error handling}
-\label{sec:org1427763}
+\label{sec:orgaef7da1}
 \url{http://docs.python.org/tutorial/errors.html}
 
 Errors happen, and when they do they usually kill your script. Sometimes that is not desirable, and it is nice to catch errors, handle them, and keep on going. When errors occur in python, an Exception is raised. We can use \texttt{try/except} code blocks to try some code, and then respond to any exceptions that occur.
@@ -643,10 +701,10 @@ an error was found
 
 
 \subsection{Numerical Python (Numpy)}
-\label{sec:org793e1be}
+\label{sec:org14d157f}
 
 \subsubsection{The basics}
-\label{sec:orge5ac040}
+\label{sec:org517d732}
 \url{http://docs.scipy.org/doc/numpy/reference/}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -701,7 +759,7 @@ Below are some recipes for doing linear algebra and polynomials.
 
 
 \subsubsection{Linear algebra}
-\label{sec:org2883c21}
+\label{sec:org662ad0d}
 \texttt{numpy.linalg} provides a lot of the linear algebra functionality we need. See \url{http://docs.scipy.org/doc/numpy/reference/routines.linalg.html} for details of all the things that are possible. For example, given these linear equations:
 
 \(x + y = 3\), 
@@ -772,7 +830,7 @@ print x
 
 
 \subsubsection{Polynomials}
-\label{sec:orgb533b75}
+\label{sec:org008c85b}
 \texttt{numpy} can do polynomials too. We express polynomials by the coefficients in front of the powers of \(x\), e.g. \(4 x^2 + 2x - 1 = 0\) is represented by [4, 2, -1].
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -827,14 +885,14 @@ intercept = 1.0
 
 
 \subsection{Scientific Python (Scipy)}
-\label{sec:org508f3b9}
+\label{sec:org3ec3e74}
 \url{http://docs.scipy.org/doc/scipy/reference/}
 
 \texttt{scipy} provides all the functionality we need for \href{http://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html}{integration}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html}{optimization}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html}{interpolation}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html}{statistics}, and \href{http://docs.scipy.org/doc/scipy/reference/tutorial/io.html}{File I/O}. You should look up the link on integration. It might be useful for homework 2.
 
 
 \subsubsection{Solving Equations}
-\label{sec:orgf23363e}
+\label{sec:org709e27b}
 Here is a typical usage for solving the equation \(x^2 = 2\) for \(x\). We have to define a function that is \(f(x) = 0\), and then use the \texttt{scipy.optimize.fsolve} function to solve it with an initial guess.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -858,11 +916,11 @@ print type(x)
 
 
 \subsubsection{Integration Example}
-\label{sec:orga01aece}
+\label{sec:orgd3f21c2}
 
 \begin{enumerate}
 \item Using Quad
-\label{sec:org90f4da8}
+\label{sec:org42be830}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from scipy.integrate import quad
 import numpy as np
@@ -880,7 +938,7 @@ print ans
 
 
 \item Using trapz
-\label{sec:orgdf6136a}
+\label{sec:org5e5bb2f}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -899,7 +957,7 @@ print np.trapz(y2, x2)
 
 
 \subsection{Plotting with Python (Matplotlib)}
-\label{sec:org1e25eac}
+\label{sec:org18e38a7}
 \url{http://matplotlib.sourceforge.net/}
 \texttt{matplotlib} is the prime plotting module for python. The syntax is similar to Matlab. The best way to learn matplotlib is to visit the gallery (\url{http://matplotlib.sourceforge.net/gallery.html}) and look for examples that do what you want. Here is a simple example.
 
@@ -925,7 +983,7 @@ plt.show()
 
 
 \section{FDA}
-\label{sec:org10a2675}
+\label{sec:org5df804a}
 
 Now let us run our first computational chemistry code. Change into the
 \texttt{computational-chemistry/Lab1/FDA/fda} directory and run the command,
@@ -937,7 +995,7 @@ Now let us run our first computational chemistry code. Change into the
 This will use the \texttt{Ar.inp} file as input and produce two output files, \texttt{Ar.dmp} and \texttt{Ar.out}. The \texttt{00READ.ME} file contains some information about the format of the input file. You can open these files with Emacs to read what they contain.
 
 \subsection{Parsing the dmp file}
-\label{sec:org3cc441e}
+\label{sec:org84f7eca}
 
 In homework 2, you will need to parse the \texttt{.dmp} file to plot some data. It contains the radial grid values and total charge density in two columns, followed by the charge density of each oribital on the same grid. Here we consider an example of how to do this with python.
 
