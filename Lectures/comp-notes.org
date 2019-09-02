@@ -357,7 +357,7 @@ E_{n_x} = \frac{n_x^2\pi^2\hbar^2}{2 m_e L^2}
 
 Solutions called /eigenfunctions/ (or /wavefunctions/) and /eigenvalues/.  Characterized
 by /quantum numbers/, one for each degree of freedom.  These (and all QM) solutions have certain
-special properties, including that they are orthonormal and form a complete set.
+special properties, including that they /orthonormal/ and form a /complete set/.
 
 *Normalization*
 
@@ -489,6 +489,13 @@ eigenE, eigenfn = LA.eigh(H)
 
 #+RESULTS:
 
+*Complete set*
+Any function on the same domain that satisfies the same boundary conditions can be represented as a linear combination of these solutions:
+\begin{eqnarray}
+f(x) &=& \sum_i \left \{\int_0^L X_i(x) f(x) dx \right \}  X_i(x)  = \sum_i C_i X_i(x)\\
+|f\rangle &= &\sum_i |X_i\rangle\langle X_i | f\rangle\quad\text{Dirac notation}
+\end{eqnarray}
+Illustrates idea of a basis set. These functions are the basis in "plane wave" supercell methods.
 
 *Three-dimensional solutions*
 \begin{equation}
@@ -514,14 +521,18 @@ Properties of solutions:
 
 \newpage
 
-* Hydrogen atom
-Simplest chemical "thing"
+* Hydrogen atom: simplest chemical "thing"
 ** Schr\ouml{}dinger equation
 Place massive nucleus at origin and describe position of electron in spherical coordinates
 
 #+ATTR_LATEX: :width 0.3\textwidth
 [[./Images/spherical.png]]
 
+\begin{eqnarray}
+\left\{-\frac{\habar^2}{2m_e}\nabla^2 + V(r)\right\} \psi(\bm{r}) &=& E \psi(\bm{r})\\
+V(r) &=& -\frac{e^2}{4\pi\epsilon_0}\frac{1}{|\bm{r}|}
+\end{eqnarray}
+Coulomb potential---our nemesis!  Decays slowly with distance.
 #+BEGIN_EXPORT latex
 \begin{table}[]
    \begin{center}
@@ -534,6 +545,11 @@ $\displaystyle       V(r) = -\frac{e^2}{4\pi\epsilon_0}\frac{1}{r}, 0 < r< \inft
  \\
 $\displaystyle     \hat H = -\frac{\hbar^2}{2m_e}\frac{1}{r^2}\left [
   \frac{\partial}{\partial r}r^2\frac{\partial}{\partial r} + \hat L^2 \right ] +V(r)$ \\
+\\
+$\displaystyle     \hat L^2 = -\hbar^2 \left [
+  \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial \phi^2}+\frac{1}{\sin
+    \theta}\frac{\partial}{\partial \theta}\left ( \sin \theta
+    \frac{\partial}{\partial \theta}\right ) \right ] $ \\
 \\
 $\displaystyle \psi(r,\theta,\phi) = R(r)Y_{l,m_l}(\theta,\phi) $ \\
 \\
@@ -571,22 +587,19 @@ $\displaystyle \langle r \rangle = \left \{ \frac{3}{2} n^2 - \frac{1}{2} l(l+1)
 #+END_EXPORT
 
 ** Solutions
-1. $\psi(r,\theta,\phi)=R_{nl}(r)Y_{lm}(\theta,\phi)$
-   1. $Y_{lm}(\theta,\phi)$ are "spherical harmonics"
+1. Separable: $\psi(r,\theta,\phi)=R_{nl}(r)Y_{lm}(\theta,\phi)$
+   1. $Y_{lm}(\theta,\phi)$ are "spherical harmonics", describe angular motion
    2. Radial part a polynomial * exponential decay.  Exponential part
       called a /Slater/ function.  Larger the exponent, faster the
       decay.
 2. Solutions (wavefunctions, or "orbitals") are quantized:
-   1. Principle quantum number $n=1,2,\ldots$
-   2. Azimuthal quantum number $l=0,1,...,n-1$, correspond to $s$, $p$, $d$, ... orbital sub-shells
-   3. Magnetic quantum number $m_l=-l,-l+1,...,l$
+   1. Principle quantum number $n=1,2,\ldots$. Determines electron energy.
+   2. Azimuthal quantum number $l=0,1,...,n-1$, correspond to $s$, $p$, $d$, \ldots orbital sub-shells; angular "shape" and momentum of electron
+   3. Magnetic quantum number $m_l=-l,-l+1,...,l$, \ldots orientation of of orbital
    4. Spin quantum number $m_s=\pm 1/2$
-3. Energy spectrum and populations
-4. Electronic selection rules
-   1. $\Delta l=\pm 1 \quad \Delta m_s =0 \quad \Delta m_l = 0,\pm 1$
-6. Integrate out angular components to get radial probability function $P_{nl}(r)=r^2 R_{nl}^2(r)$
+3. Integrate out angular components to get radial probability function $P_{nl}(r)=r^2 R_{nl}^2(r)$
    1. $\langle r\rangle = \int r P_{nl}(r) dr = \left(\frac{3}{2}n^2-l(l+1)\right)a_0$
-7. Note darn electron doesn't want to stay in the Coulomb well!
+4. Note darn electron doesn't want to stay in the Coulomb well!
    Wavefunction extends beyond the classical region defined by $E_n =
    V(r_\text{classical})$.  This phenomenon is called /tunneling/, is
    a purely quantum mechanical effect, is pervasive in chemistry,
@@ -650,6 +663,83 @@ plt.savefig('./Images/H-P.png')
 #+CAPTION: H atom radial probability
 #+ATTR_LATEX: :width 0.5\textwidth
 [[./Images/H-P.png]] 
+
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+from matplotlib import cm, colors
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+from scipy.special import sph_harm
+
+phi = np.linspace(0, np.pi, 100)
+theta = np.linspace(0, 2*np.pi, 100)
+phi, theta = np.meshgrid(phi, theta)
+
+# The Cartesian coordinates of the unit sphere
+x = np.sin(phi) * np.cos(theta)
+y = np.sin(phi) * np.sin(theta)
+z = np.cos(phi)
+
+m, l = 0, 0
+
+# Calculate the spherical harmonic Y(l,m) and normalize to [0,1]
+fcolors = sph_harm(m, l, theta, phi).real
+fmax, fmin = fcolors.max(), fcolors.min()
+fcolors = (fcolors - fmin)/(fmax - fmin)
+
+# Set the aspect ratio to 1 so our sphere looks spherical
+sfig = plt.figure(figsize=plt.figaspect(1.))
+s = sfig.add_subplot(111, projection='3d')
+s.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.seismic(fcolors))
+# Turn off the axis planes
+s.set_axis_off()
+plt.savefig('./Images/s.png')
+
+m, l = 0, 1
+
+# Calculate the spherical harmonic Y(l,m) and normalize to [0,1]
+fcolors = sph_harm(m, l, theta, phi).real
+fmax, fmin = fcolors.max(), fcolors.min()
+fcolors = (fcolors - fmin)/(fmax - fmin)
+
+# Set the aspect ratio to 1 so our sphere looks spherical
+# fig = plt.figure(figsize=plt.figaspect(1.))
+pfig = plt.figure(figsize=plt.figaspect(1.))
+p = pfig.add_subplot(111, projection='3d')
+p.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.seismic(fcolors))
+# Turn off the axis planes
+p.set_axis_off()
+
+plt.savefig('./Images/p.png')
+
+m, l = 1, 2
+
+# Calculate the spherical harmonic Y(l,m) and normalize to [0,1]
+fcolors = sph_harm(m, l, theta, phi).real
+fmax, fmin = fcolors.max(), fcolors.min()
+fcolors = (fcolors - fmin)/(fmax - fmin)
+
+# Set the aspect ratio to 1 so our sphere looks spherical
+# fig = plt.figure(figsize=plt.figaspect(1.))
+dfig = plt.figure(figsize=plt.figaspect(1.))
+d = dfig.add_subplot(111, projection='3d')
+d.plot_surface(x, y, z,  rstride=1, cstride=1, facecolors=cm.seismic(fcolors))
+# Turn off the axis planes
+d.set_axis_off()
+
+plt.savefig('./Images/d.png')
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_EXPORT LaTeX
+\begin{figure}
+\includegraphics[scale=0.4]{./Images/s.png}
+\includegraphics[scale=0.4]{./Images/p.png}
+\includegraphics[scale=0.4]{./Images/d.png}
+\caption{Pythonic $s$ ($l = 0$), $p$ ($l=1$), and $d$ ($l=2$) spherical harmonics. Color scale from red to white to blue corresponds to positive to zero to negative sign of wavefunction.}
+\end{figure}
+#+END_EXPORT
 
 ** /Variational principle/
 1. Solutions of Schr\ouml{}dinger equation always form a complete set
