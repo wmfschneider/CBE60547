@@ -13,6 +13,8 @@
 #+LATEX_HEADER:\usepackage{epstopdf}
 #+LATEX_HEADER:\usepackage{siunitx}
 #+LATEX_HEADER:\usepackage{bm}
+#+LATEX_HEADER:\usepackage{framed,color}
+#+LATEX_HEADER:\definecolor{shadecolor}{rgb}{1.0,0.8,0.3}
 #+LATEX_HEADER:\usepackage{parskip}
 #+LATEX_HEADER:\usepackage[version=3]{mhchem}
 #+LATEX_HEADER:\usepackage[labelfont=bf]{caption}
@@ -527,7 +529,7 @@ Place massive nucleus at origin and describe position of electron in spherical c
 [[./Images/spherical.png]]
 
 \begin{eqnarray}
-\left\{-\frac{\habar^2}{2m_e}\nabla^2 + V(r)\right\} \psi(\bm{r}) &=& E \psi(\bm{r})\\
+\left\{-\frac{\hbar^2}{2m_e}\nabla^2 + V(r)\right\} \psi(\bm{r}) &=& E \psi(\bm{r})\\
 V(r) &=& -\frac{e^2}{4\pi\epsilon_0}\frac{1}{|\bm{r}|}
 \end{eqnarray}
 Coulomb potential---our nemesis!  Decays slowly with distance.  Boundary conditions?
@@ -585,25 +587,34 @@ $\displaystyle \langle r \rangle = \left \{ \frac{3}{2} n^2 - \frac{1}{2} l(l+1)
 #+END_EXPORT
 
 ** Analytical solutions
-1. Separable: $\psi(r,\theta,\phi)=R(r)\Theta(\theta,\phi)$
-2. Angular part
+1. Separate: $\psi(r,\theta,\phi)=R(r)\Theta(\theta,\phi)$
+2. Angular equation \(\hat{L}^2\Theta(\theta,\phi) = E_L\Theta(\theta,\phi)\)
    1. $\Theta=Y_{lm_l}(\theta,\phi)$ are "spherical harmonics", describe angular motion
    2. Azimuthal quantum number $l=0,1,...,n-1$, correspond to $s$, $p$, $d$, \ldots orbital sub-shells; angular "shape," number of angular nodes, angular momentum of electron
    3. Magnetic quantum number $m_l=-l,-l+1,...,l$, \ldots orientation of orbital
-3. Radial part
-   1. Radial part a polynomial * exponential decay.  Exponential part
-      called a /Slater/ function.  Larger the exponent, faster the
-      decay.
-   2. Principle quantum number $n=1,2,\ldots$. Determines electron energy.
-4. Energy expression
-5. Integrate out angular components to get radial probability function $P_{nl}(r)=r^2 R_{nl}^2(r)$
-   1. $\langle r\rangle = \int r P_{nl}(r) dr = \left(\frac{3}{2}n^2-l(l+1)\right)a_0$
-6. Note darn electron doesn't want to stay in the Coulomb well!
+3. Radial equation
+   \[\left \{ -\frac{\hbar^2}{2m_e}
+            \frac{d}{dr^2}  + \frac{\hbar^2
+              l(l+1)}{2 m_e r^2}
+          -\frac{e^2}{4\pi\epsilon_0}\frac{1}{r}\right \} r R(r) = E r R(r)\]
+
+Solutions are a polynomial * exponential decay.  Exponential part called a /Slater/ function.  Larger the exponent, faster the
+      decay.  Degree of polynomial determined by principle quantum number $n=1,2,\ldots$.
+
+Energy expression, corresponds to our conventional H atom spectrum
+     \[E_n = -\frac{1}{n^2}\left(\frac{e^2}{2 a_0}\right) = -\SI{13.6}{eV}\cdot\frac{1}{n^2},\qquad n = 1,2,\ldots \]
+
+Questions: Ionization energy of an H atom?  \(1s\rightarrow 2s\) energy?  Thermal populations?
+
+Integrate out angular components to get radial probability function $P_{nl}(r)=r^2 R_{nl}^2(r)$
+    \[\langle r\rangle = \int r P_{nl}(r) dr = \left(\frac{3}{2}n^2-l(l+1)\right)a_0\]
+
+Note darn electron doesn't want to stay in the Coulomb well!
    Wavefunction extends beyond the classical region defined by $E_n =
    V(r_\text{classical})$.  This phenomenon is called /tunneling/, is
    a purely quantum mechanical effect, is pervasive in chemistry,
    leading for instance to chemical bonding.
-7. Spin quantum number $m_s=\pm 1/2$
+
 
 #+BEGIN_SRC python :exports results
 import matplotlib.pyplot as plt
@@ -742,20 +753,148 @@ plt.savefig('./Images/d.png')
 #+END_EXPORT
 
 ** /Variational principle/
-1. Solutions of Schr\ouml{}dinger equation always form a complete set
-2. True wavefunction energy is therefore lower bound on energy of any trial wavefunction
-     \[\langle \psi_\text{trial}^\lambda | \hat{H} | \psi_\text{trial}^\lambda\rangle =E_\text{trial}^\lambda \geq E_0\]
-3. Optimize wavefunction with respect to variational parameter
-     \[ \left ( \frac{\partial \langle \psi_\text{trial}^\lambda | \hat{H} | \psi_\text{trial}^\lambda\rangle}{\partial\lambda} \right ) = 0 \rightarrow \lambda_\text{opt} \] 
+What if we don't know where to look to find the \(R(r)\)?  Or an analytical solution doesn't exist?  Solve numerically.
+
+\(l=0\) case, in atomic units:
+
+\[\left\{-\frac{1}{2}\frac{d^2}{dr^2} -\frac{1}{r}\right\} rR(r) = ErR(r),\quad 0<r\infty \]
+
+Guess something.  Must obey appropriate boundary conditions and be a well-behaved function.  For example, a /Gaussian/:
+\[g_\xi(r) = e^{-\xi r^2}\]
+Let's normalize:
+\[N = \left\{ \int_0^\infty g_\xi^2(r) r^2 dr \right\}^{-1/2} = \left(\frac{8\xi^3}{\pi}\right)^{1/4} \]
+
+\[\tilde{g}_\xi(r) = N g_\xi(r)\]
+Now evaluate energy, say for \(\xi=1\):
+\[\langle E \rangle = \langle \tilde{g}_1|\hat{H}|\tilde{g}_1\rangle = \SI{-0.096}{Hartree} \]
+Hmmm, not very good, much higher in energy than true answer of \SI{-0.5}{Hartree}. 
+
+Let's try adding two Gaussians together, with equal weight:
+\[b(r) = N_s \left(\tilde{g}_1(r) + \tilde{g}_{0.5}(r) \right )\]
+Normalize:
+\begin{eqnarray}
+\langle b(r)|b(r)\rangle & = & N_s^2 \left(\langle\tilde{g}_1 | \tilde{g}_1\rangle + \langle\tilde{g}_{0.5} | \tilde{g}_{0.5}\rangle + 2\langle\tilde{g}_1 | \tilde{g}_{0.5}\rangle\right)\\
+ &=& N_s(1+1 + 2 S) =1 \\
+N_s &= &\frac{1}{\sqrt{2(1+S)}}
+\end{eqnarray}
+
+Note appearance of "overlap integral" \(S=\langle \tilde{g}_1|\tilde{g}_{0.5}\rangle\), shows how similar or different \(g_i\) are.
+
+Re-evaluate energy
+\[\langle b(r) |\hat{H} |b(r) \rangle = \SI{-0.306}{Hartree} \]
+Much closer to the truth!  
+
+Could even weight the two Gaussians differently:
+\[c(r) = N_s^\prime \left(\tilde{g}_1(r) + 1.5 \tilde{g}_{0.5}(r) \right )\]
+\[\langle c(r) |\hat{H} |c(r) \rangle = \SI{-0.333}{Hartree} \]
+Better yet!
+
+#+BEGIN_EXPORT LaTeX
+\begin{figure}
+\centering
+\includegraphics[scale=0.8]{./Images/Hbasis.png}
+\caption{Comparison of exact and approximations to H 1s radial function.}
+\end{figure}
+#+END_EXPORT
+
+Could continue to add Gaussians of various exponents, and could vary weights, or could
+even add in any other functions that we want that are "well-behaved." Would find that no
+matter what we do, the "model" energy would be greater than the "true" value.  Basis of the /variational principle/:
+
+#+BEGIN_QUOTE
+For any system described by the Hamiltonian \(\hat{H}\) and any satisfactory trial wavefunction \(\Psi\),
+\[ E = \frac{\langle \Psi | \hat{H} | \Psi \rangle}{\langle \Psi | \rangle } \ge E_0\]
+where $E_0$ is the true ground state energy of the system.
+#+END_QUOTE
+
+Consequence of the completeness of the solutions of the Schr\ouml{}dinger equation.  Extremely important to us, because we can use the /calculus of variations/ to seek energy-optimal \(\Psi\).
 
 
 ** Basis functions
+Recognize that we are approximating
+
+\[R_{10}(r) \approx f(r) = \sum_i c_i \phi_i(r)\]
+
+\(\phi_i\) are /basis functions/ and \(c_i\) are /variational parameters/, or /coefficients/.
+
+If we find \(c_i\) that minimize energy, then we have an optimal approximation to \(E_0\) within our basis, and we are sure that \(E_0\) is an upper bound on the truth.  Adding more basis functions /must/lower energy.
+
+Common trade-offs:
+1. Want to choose \(\phi_i\) that are good approximation to the "truth"
+2. Want to choose \(\phi_i\) that are mathematically convenient
+
+| Slaters   | Gaussians             | Plane waves       | Mixed basis     |
+|-----------+-----------------------+-------------------+-----------------|
+| Accurate  | Moderate accuracy     | Poor accuracy     |                 |
+| Expensive | modest cost           | cheap!            |                 |
+| =ADF=     | =Gaussian=, =GAMESS=, | =Vasp=, =CPMD=,   | =FLAPW=, =CP2k= |
+|           | =NWChem=, =Qchem=     | =QuantumEspresso= |                 |
+
+Virtually /all/ quantum codes work on this principle, and the main
+differences are in details of implementation and ancillary
+functionality provided.
+
+There are exceptions. /GPAW/ for instance solves the QM equations by finite difference expressions on a numerical grid.  Lends itself to parallelization and may be the future\ldots remains to be seen!
 ** Secular equations
+Apply variational principle to two basis functions for the H atom:
+
+\[f(r) =c_1 \phi_1(r) + c_2\phi_2(r) \]
+
+\[\langle E \rangle = \frac{\langle f(r)|\hat{H}|f(r)\rangle}{\langlef(r)|f(r)\rangle} \]
+
+Substitute and solve \(\partial \langle E \rangle/\partial c_1 = \partial \langle E \rangle/\partial c_2 = 0\).  Each gives a linear /secular equation/ in $c_1$ and $c_2$:
+
+\[
+\left(\begin{array}{cc}
+H_{11} - E & H_{12}-S_{12}E \\
+H_{12}-S_{12}E & H_{22} 
+\end{array}\right)\left(
+\begin{array}{c} c_1 \\c_2\end{array}\right) =0
+\]
+where \(H_{ij} = \langle\phi_i|\hat{H}|\phi_j\rangle\) is a /matrix element/ and \(S_{ij}=\langle \phi_i | \rangle \phi_j \rangle\) is an /overlap/.  If \(S_{ij} = 0\), basis is /orthogonal/, problem simplifies.  If \(S_{ij}\approx 1\), basis is /redundant/, not efficient!
+
+Evaluate /secular determinant/ 
+\[ \left| \begin{array}{cc} H_{11} - E & H_{12}-S_{12}E
+\\ H_{12}-S_{12}E & H_{22} \end{array}\right| =0 \]
+Gives a quadratic in /E/.  Yields two solutions, which would be approximations to the /1s/ /and/ /2s/ orbital energies of hydrogen. Back substitution to get coeffients:
+
+| 1s: $\langle E_{1s}\rangle > E_{1s,\mathrm{true}}$ |  $c^{1s}_1$ and $c^{1s}_2$ |
+| 2s: $\langle E_{2s}\rangle > E_{2s,\mathrm{true}}$ |  $c^{2s}_1$ and $c^{2s}_2$ |
+
+Note we always get one solution for each basis function.  Secular
+matrix grows as the square of the number of basis functions, gets
+expensive to find roots. 
+
+If basis is not orthogonal, common to /orthogonalize/.  Find linear transformation that makes $\langle S_{ij} = \delta_{ij}$.  Evaluate
+\[ \bm{c}^\prime = \bm{S}^{1/2} \bm{c} \rightarrow \hat{\bm{H}}^\prime = \bm{S}^{-1/2}\bm{H}\bm{S}^{1/2}\]
+
+\[
+\left(\begin{array}{cc}
+H^\prime_{11} - E & H^\prime_{12}\\
+H^\prime_{12} & H^\prime_{22} 
+\end{array}\right)\left(
+\begin{array}{c} c^\prime_1 \\c^\prime_2\end{array}\right) =0
+\]
+
+\[\bm{H}^\prime\bm{c}^\prime = E \bm{c}^\prime \]
+
+Secular equations reduce to standard linear eigenvalue problem.  All the tricks of linear
+algebra can be applied to find the /eigenvalues/ (orbital energies) and /eigenvectors/
+(wavefunctions).  Called /diagonalizing/ the matrix.  Tricks can be used to find the
+lowest energy roots only.
+
+Same basic idea is used in virtually all calculations on atoms, molecules, \ldots.  Basis
+of /semi-empirical/ and /first principles/ methods.
+
 ** Spin
-Can't leave the H atom without mentioning electron /spin/
+Can't leave the H atom without mentioning electron /spin/.  Non-relativistic QM gives us three quantum numbers. Relativity teaches that space and time are equivalent. Relativistic H atom solutions introduce a 4th degree of freedom that, under many circumstances, decouples from other three.  Call it the electron /spin/, because it behaves like the electron has an intrinsic quantum angular momentum with magnitude \(s = 1/2\).
 
-Relativisitic model treats 
+\[m_s = +1/2, \quad\text{``spin up''},\quad\alpha\]
+\[m_s = -1/2, \quad\text{``spin down''},\quad\beta\]
 
+$m_s$ specifies $z$ component of angular momentum, \(s_z = m_s\hbar\).
+
+To fully specify state of H atom, must specify all four quantum numbers.
 \newpage
 
 * (Two is too) many electrons
