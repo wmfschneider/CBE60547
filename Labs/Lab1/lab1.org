@@ -1,5 +1,5 @@
 #+TITLE:Computational Chemistry Laboratory I (CBE 60547)
-#+AUTHOR: Prateek Mehta, William F. Schneider
+#+AUTHOR: William F. Schneider
 #+DATE:2019-08-29
 #+LATEX_CLASS: article
 #+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
@@ -263,21 +263,21 @@ print(4.0 / 6.0)
 Division is a little tricky. Python distinguishes between integer division and float division. In the first line we have integer division, where the remainder is discarded and an integer is returned. If any number is a float (indicated by a decimal or because it is converted to a float) then a float is returned.
 
 #+BEGIN_SRC python
-print 2/3
-print 2./3.
-print 2/3.
-print 2/float(3)  # the float function casts the integer to a float
+print (2//3)
+print (2./3.)
+print (2/3.)
+print (2/float(3))  # the float function casts the integer to a float
 #+END_SRC
 
 #+RESULTS:
 : 0
-: 0.666666666667
-: 0.666666666667
-: 0.666666666667
+: 0.6666666666666666
+: 0.6666666666666666
+: 0.6666666666666666
 
 #+BEGIN_SRC python
-print 2*3
-print 2*3.0
+print (2*3)
+print (2*3.0)
 #+END_SRC
 
 #+RESULTS:
@@ -287,21 +287,21 @@ print 2*3.0
 We can also do powers with =**=
 
 #+BEGIN_SRC python
-print 2**3
-print 2**0.5
-print 2^4    # Binary XOR operator!
+print (2**3)
+print (2**0.5)
+print (2^4)    # Binary XOR operator!
 #+END_SRC
 
 #+RESULTS:
 : 8
-: 1.41421356237
+: 1.4142135623730951
 : 6
 
 The modulus operator (%) divides the left hand operand by the right hand operand and returns the remainder.
 
 #+BEGIN_SRC python
-print 5 % 4
-print 5. % 4.
+print (5 % 4)
+print (5. % 4.)
 #+END_SRC
 
 #+RESULTS:
@@ -318,7 +318,7 @@ In a string we can specify where to put numbers with positional arguments like {
 
 #+BEGIN_SRC python
 a = 4.5 + 2
-print 'The answer is {0}'.format(a)
+print ('The answer is {0}'.format(a))
 #+END_SRC
 
 #+RESULTS:
@@ -329,7 +329,7 @@ We can have more than one number to format like this.
 #+BEGIN_SRC python
 a = 5**3
 b = 23
-print 'a = {1} and b = {0}'.format(b,a)
+print ('a = {1} and b = {0}'.format(b,a))
 #+END_SRC
 
 #+RESULTS:
@@ -339,8 +339,8 @@ Alternatively, we can use named arguments to specify the values. It is your choi
 #+BEGIN_SRC python
 a = 5**3
 b = 23
-print 'a = {ans0} and b = {ans1}'.format(ans0=a,
-                                         ans1=b)
+print ('a = {ans0} and b = {ans1}'.format(ans0=a,
+                                         ans1=b))
 #+END_SRC
 
 #+RESULTS:
@@ -349,12 +349,12 @@ print 'a = {ans0} and b = {ans1}'.format(ans0=a,
 To do formatting, we need additional syntax. We use {i:format} to specify how the value should be formatted. Here we show how to specify only three decimal places on a results. See [[http://docs.python.org/library/stdtypes.html#string-formatting-operations][this link]] for a lot more details of formatting strings.
 #+BEGIN_SRC python
 a = 2./3.
-print 'a = {0}'.format(a)
-print 'a = {0:1.3f}'.format(a)
+print ('a = {0}'.format(a))
+print ('a = {0:1.3f}'.format(a))
 #+END_SRC
 
 #+RESULTS:
-: a = 0.666666666667
+: a = 0.6666666666666666
 : a = 0.667
 
 
@@ -371,12 +371,12 @@ Lists and tuples are similar in that they are both sets of data. A list is delim
 #+BEGIN_SRC python
 # short list example
 a = [1, 2, 3, 4] # a list
-print a
-print len(a)
-print a[0] # first element
-print a[-1] # last element
-print a[3]  # also last element
-print 2*a   # surprise!!!
+print (a)
+print (len(a))
+print (a[0]) # first element
+print (a[-1]) # last element
+print (a[3])  # also last element
+print (2*a)   # surprise!!!
 #+END_SRC
 
 #+RESULTS:
@@ -391,27 +391,24 @@ We can create a list with the =range= command:
 
 #+BEGIN_SRC python
 a = range(4)
-print a
+print (a)
 
 b = range(4,10)
-print b
+print (b)
 
-print a + b  # surprise again!!!
+print (a + b)  # surprise again!!!
 #+END_SRC
 
 #+RESULTS:
-: [0, 1, 2, 3]
-: [4, 5, 6, 7, 8, 9]
-: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 Note that algebraic/math operations are not defined for lists the way they are for Matlab. We have to use =numpy.array= for that, which we will see later.
 
 #+BEGIN_SRC python
 # short list example
 a = [1, 2, 3, 4] # a list
-print a
+print (a)
 a[1] = 56 # change the value of 2nd element
-print a
+print (a)
 #+END_SRC
 
 #+RESULTS:
@@ -422,9 +419,9 @@ Tuples are like lists except they cannot be modified after creation.
 
 #+BEGIN_SRC python
 a = (1,2,3,4)
-print len(a)
-print a[0]
-print a[-1]
+print (len(a))
+print (a[0])
+print (a[-1])
 a[1] = 56 #this is not allowed!
 #+END_SRC
 
@@ -437,11 +434,11 @@ conditional operators http://docs.python.org/library/stdtypes.html#comparisons
 Python has the standard conditional operators for testing if a quantity is equal to (==), less than (<), greater than (>), lessthan or equal to (<=) greater than or equal to (>=) and not equal (!=). These generally work on numbers and strings.
 
 #+BEGIN_SRC python
-print 4 == 2.
-print 'a' != 'A'
-print 4 > 3
-print 4 <= 3
-print 'a' < 'b' # hmmm....
+print (4 == 2.)
+print ('a' != 'A')
+print (4 > 3)
+print (4 <= 3)
+print ('a' < 'b') # hmmm....
 #+END_SRC
 
 #+RESULTS:
@@ -458,7 +455,7 @@ a = 4
 b = 5
 
 if a < b:
-    print 'a is less than b'
+    print ('a is less than b')
 #+END_SRC
 
 #+RESULTS:
@@ -470,9 +467,9 @@ a = 14
 b = 5
 
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 #+END_SRC
 
 #+RESULTS:
@@ -483,11 +480,11 @@ Here is a more complete logic that uses =elif= to add an additional logic clause
 a = 4
 b = 4
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 elif a == b:
-    print 'a is equal to b'
+    print ('a is equal to b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 #+END_SRC
 
 #+RESULTS:
@@ -498,15 +495,15 @@ Finally, to illustrate that the first conditional statement that evaluates to Tr
 a = 4
 b = 4
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 elif a >= b:
-    print 'a is greater than or equal to b'
+    print ('a is greater than or equal to b')
 elif a == b:
-    print 'a is equal to b'
+    print ('a is equal to b')
 elif a <= b:
-    print 'a is less than or equal to b'
+    print ('a is less than or equal to b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 #+END_SRC
 
 #+RESULTS:
@@ -521,11 +518,11 @@ enumerate, zip
 
 #+BEGIN_SRC python
 for i in [0,1,2,3]:
-    print i
+    print (i)
 
 
 for i in range(4):
-    print i
+    print (i)
 #+END_SRC
 
 #+RESULTS:
@@ -545,10 +542,10 @@ http://docs.python.org/tutorial/controlflow.html#defining-functions
 We can define functions with the =def= statement, and specify what they =return=
 #+BEGIN_SRC python
 def myfunc(x):
-    return x*x
+    return (x*x)
 
-print myfunc(3)
-print myfunc(x=3)
+print (myfunc(3))
+print (myfunc(x=3))
 #+END_SRC
 
 #+RESULTS:
@@ -556,7 +553,7 @@ print myfunc(x=3)
 : 9
 
 
-** Classes and objects                                             
+** Classes and objects
 http://docs.python.org/tutorial/classes.html
 
 
@@ -571,7 +568,7 @@ We import modules, and then we can access functions inthe module with the =.= op
 # list contents of current directory
 import os
 for item in os.listdir('.'):
-    print item
+    print (item)
 #+END_SRC
 
 #+RESULTS:
@@ -584,7 +581,7 @@ You can import exactly what you need also with the =from/import= syntax
 # list contents of current directory
 from os import listdir
 for item in listdir('.'):
-    print item
+    print (item)
 #+END_SRC
 
 #+RESULTS:
@@ -597,7 +594,7 @@ Finally, you can change the name of a module. This may be done for readability, 
 # list contents of current directory
 import os as operating_system
 for item in operating_system.listdir('.'):
-    print item
+    print (item)
 #+END_SRC
 
 #+RESULTS:
@@ -623,13 +620,13 @@ Errors happen, and when they do they usually kill your script. Sometimes that is
 #+BEGIN_SRC python
 try:
     1/0
-except ZeroDivisionError, e:
-    print e
-    print 'an error was found'
+except ZeroDivisionError as e:
+    print (e)
+    print ('an error was found')
 #+END_SRC
 
 #+RESULTS:
-: integer division or modulo by zero
+: division by zero
 : an error was found
 
 
@@ -642,8 +639,8 @@ http://docs.scipy.org/doc/numpy/reference/
 import numpy as np
 a = np.array([1,2,3,8])
 
-print a*a          # element-wise operation
-print np.dot(a,a)  # linear-algebra dot product
+print (a*a)          # element-wise operation
+print (np.dot(a,a))  # linear-algebra dot product
 #+END_SRC
 
 #+RESULTS:
@@ -655,32 +652,32 @@ Numpy defines lots of functions that operate element-wise on arrays.
 #+BEGIN_SRC python
 import numpy as np
 a = np.array([1, 2, 3, 4])
-print a**2
-print np.sin(a)
-print np.exp(a)
-print np.sqrt(a)
+print (a**2)
+print (np.sin(a))
+print (np.exp(a))
+print (np.sqrt(a))
 #+END_SRC
 
 #+RESULTS:
 : [ 1  4  9 16]
 : [ 0.84147098  0.90929743  0.14112001 -0.7568025 ]
-: [  2.71828183   7.3890561   20.08553692  54.59815003]
-: [ 1.          1.41421356  1.73205081  2.        ]
+: [ 2.71828183  7.3890561  20.08553692 54.59815003]
+: [1.         1.41421356 1.73205081 2.        ]
 
 #+BEGIN_SRC python
 import numpy as np
 a = np.array([1, 2, 3, 4])
-print a.min(), a.max()
-print a.sum()  # sum of elements
-print a.mean() # average
-print a.std()  # standard deviation
+print (a.min(), a.max())
+print (a.sum())  # sum of elements
+print (a.mean()) # average
+print (a.std())  # standard deviation
 #+END_SRC
 
 #+RESULTS:
 : 1 4
 : 10
 : 2.5
-: 1.11803398875
+: 1.118033988749895
 
 
 Below are some recipes for doing linear algebra and polynomials.
@@ -695,7 +692,7 @@ $x - y = 1$
 we can represent these equations in matrix form $A x = b$ and solve them.
 
 #+BEGIN_SRC python
-import numpy as npx
+import numpy as np
 import numpy.linalg as la
 
 A = np.array([[1, 1],
@@ -703,11 +700,11 @@ A = np.array([[1, 1],
 
 b = np.array([3, 1])
 
-print la.solve(A, b)
+print (la.solve(A, b))
 #+END_SRC
 
 #+RESULTS:
-: [ 2.  1.]
+: [2. 1.]
 
 You might be familiar with the following solution:
 
@@ -722,11 +719,11 @@ import numpy.linalg as la
 A = np.array([[1, 1],[1, -1]])
 b = np.array([3, 1])
 
-print np.dot(la.inv(A), b)
+print (np.dot(la.inv(A), b))
 #+END_SRC
 
 #+RESULTS:
-: [ 2.  1.]
+: [2. 1.]
 
 Finally, we can do linear least squares easily. Suppose we have these three equations, and two unknowns:
 
@@ -746,11 +743,11 @@ A = np.array([[1, 1],
 b = np.array([3, 1, 0.9])
 
 [x, residuals, rank, s] = la.lstsq(A,b)
-print x
+print (x)
 #+END_SRC
 
 #+RESULTS:
-: [ 1.975  1.025]
+: [1.975 1.025]
 
 
 *** Polynomials
@@ -759,7 +756,7 @@ print x
 #+BEGIN_SRC python
 import numpy as np
 p = [4, 2, -1]
-print np.roots(p)
+print (np.roots(p))
 #+END_SRC
 
 #+RESULTS:
@@ -768,8 +765,8 @@ print np.roots(p)
 #+BEGIN_SRC python
 import numpy as np
 p = [4, 2, -1]
-print np.polyder(p) # coefficients of the derivative
-print np.polyint(p)
+print (np.polyder(p)) # coefficients of the derivative
+print (np.polyint(p))
 #+END_SRC
 
 #+RESULTS:
@@ -780,7 +777,7 @@ We can also readily evaluate polynomials at specific points:
 #+BEGIN_SRC python
 import numpy as np
 p = [4,2,-1]
-print np.polyval(p,[0, 1, 2])
+print (np.polyval(p,[0, 1, 2]))
 #+END_SRC
 
 #+RESULTS:
@@ -793,14 +790,14 @@ import numpy as np
 x = [0, 2, 3, 4]
 y = [1, 5, 7, 9]
 p = np.polyfit(x, y, 1)
-print 'slope = {0}\nintercept = {1}'.format(*p)
-print p
+print ('slope = {0}\nintercept = {1}'.format(*p))
+print (p)
 #+END_SRC
 
 #+RESULTS:
-: slope = 2.0
-: intercept = 1.0
-: [ 2.  1.]
+: slope = 1.9999999999999993
+: intercept = 1.0000000000000033
+: [2. 1.]
 
 
 ** Scientific Python (Scipy)
@@ -821,13 +818,13 @@ def f(x):
 
 x0 = 1.4 # Intitial Guess
 x = fsolve(f, x0)
-print x
-print type(x)
+print (x)
+print (type(x))
 #+END_SRC
 
 #+RESULTS:
-: [ 1.41421356]
-: <type 'numpy.ndarray'>
+: [1.41421356]
+: <class 'numpy.ndarray'>
 
 
 
@@ -842,11 +839,11 @@ def integrand(x):
     return (1 - np.cos(x))**2
 
 ans, err = quad(integrand, 0, 2)
-print ans
+print (ans)
 #+END_SRC
 
 #+RESULTS:
-: 0.992204522522
+: 0.9922045225216546
 
 
 **** Using trapz
@@ -858,11 +855,11 @@ import numpy as np
 x2 = np.linspace(0, 2, 100)
 y2 = x2**3
 
-print np.trapz(y2, x2)
+print (np.trapz(y2, x2))
 #+END_SRC
 
 #+RESULTS:
-: 4.00040812162
+: 4.000408121620243
 
 
 ** Plotting with Python (Matplotlib)
@@ -881,7 +878,7 @@ plt.plot(x,np.cos(x))
 plt.xlabel('X axis')
 plt.ylabel('Y axis')
 plt.legend(['sin(x)', 'cos(x)'], loc='best')
-plt.savefig('images/Lab1.png')
+#plt.savefig('images/Lab1.png')
 plt.show()
 #+END_SRC
 
@@ -889,7 +886,6 @@ plt.show()
 
 
 [[./images/Lab1.png]]
-
 
 * FDA
   

@@ -1,4 +1,4 @@
-% Created 2019-08-30 Fri 11:50
+% Created 2019-09-05 Thu 09:45
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -17,7 +17,6 @@
 \usepackage{wasysym}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage[theorems, skins]{tcolorbox}
 \usepackage[version=3]{mhchem}
 \usepackage[numbers,super,sort&compress]{natbib}
 \usepackage{natmove}
@@ -35,7 +34,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \usepackage{amsmath}
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
-\author{Prateek Mehta, William F. Schneider}
+\author{William F. Schneider}
 \date{2019-08-29}
 \title{Computational Chemistry Laboratory I (CBE 60547)}
 \begin{document}
@@ -43,7 +42,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \maketitle
 
 \section{Introduction to Linux}
-\label{sec:orgfd01c41}
+\label{sec:org53da4e4}
 
 All computers are run by an \texttt{operating system}.  What you see, on your phone, tablet, or
 laptop, is a \texttt{graphical user interface} that runs on top of that operating system.  Far
@@ -57,7 +56,7 @@ Phones and laptops hide the command line from us. On your Mac laptop, you can ge
 through the \texttt{terminal}.
 
 \subsection{Logging onto the CRC}
-\label{sec:org7ada267}
+\label{sec:org333bdc6}
 For consistency, we will use the Linux computers hosted by the Notre Dame \href{http://crc.nd.edu}{Center for
 Research Computing} (CRC) for our computational work. The CRC hosts a number of "front-end"
 computers that we can access and interact with directly, through the internet.  Hinding
@@ -81,7 +80,7 @@ window.  Go to \url{https://crcfe01.crc.nd.edu} and log in using your ND credent
 choose a single xterm session to get started.
 
 \subsection{Common Linux Commands}
-\label{sec:orgbe8c42b}
+\label{sec:org2f3710a}
 At the Linux command line you will be working interactively with a \texttt{=shell=}. The shell
 provides a lot of built-in features, is programmable, and gives access to There are many
 different shells, but the most popular today is \href{https://www.gnu.org/software/bash/manual/}{bash}.  Here is a list of common linux
@@ -171,7 +170,7 @@ quota
 \end{itemize}
 
 \subsection{Obtaining lab notes}
-\label{sec:org13c11d0}
+\label{sec:org7fab425}
 
 The lab notes and homeworks can be obtained from the course website. They are also conveniently stored in a git repository. To obtain the files just type in
 
@@ -187,7 +186,7 @@ git pull
 \end{minted}
 
 \subsection{Editors}
-\label{sec:orge21a380}
+\label{sec:orgacd108a}
 At some point you will want to create, edit, and save files.  That job falls to a file
 editor.  \texttt{vi} is the most venerable editor, available on all Unix systems, but not so easy
 to use.  \texttt{gedit} is your best bet for a simple editor on the CRC machines.  \href{https://www.gnu.org/software/emacs/}{GNU emacs}
@@ -196,7 +195,7 @@ challenging to set up and does have a steep learning curve.  Below are some note
 usage, but if you are going to use it, plan on investing some time.
 
 \subsection{The very least you have to know about GNU Emacs}
-\label{sec:orgf6dc2e3}
+\label{sec:org5adfa28}
 For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
 
 Here are a few things to get started.
@@ -237,7 +236,7 @@ Here are a few things to get started.
 
 
 \subsection{Shell scripts}
-\label{sec:org384139f}
+\label{sec:org46a7142}
 We usually interact with the shell interactively, one command at a time.  It is possible
 to put a set of commands into a file, and that file then becomes a computer program.
 Here's a super simple one:
@@ -248,7 +247,7 @@ echo "Hello world"
 \end{minted}
 
 \section{Notebooks}
-\label{sec:org848261b}
+\label{sec:orga81ac94}
 We'll often have occassion to write little programs to set up, execute, or analyze our
 calculations.  A relatively recent innovation in the computational world is the popularity
 of \texttt{notebooks}. A notebook is much like a shell, in that it allows you to execute programs
@@ -265,7 +264,7 @@ particular interest in \href{https://python.org}{python}, a particular popular a
 notebooks have the extension .ipynb and are readily created and run within a jupyter notebook.
 
 \section{Introduction to Python}
-\label{sec:org7acb40b}
+\label{sec:org94d1a80}
 Python is a programming language which we will use to solve many of the homework problems,
 especially density functional theory calculations using VASP (homeworks 5, homework 6, and
 probably your class project). It is therefore important that you familiarize yourself with
@@ -276,7 +275,7 @@ pretty much copied) from John Kitchin's example files. We won't cover all of the
 you can use them for reference. To execute code in a jupyter notebook, use Ctrl-enter.
 
 \subsection{Simple calculations}
-\label{sec:org859d282}
+\label{sec:org4330d06}
 
 A good overview of basic python operators can be found at \url{http://www.tutorialspoint.com/python/python\_basic\_operators.htm}
 
@@ -299,22 +298,22 @@ print(4.0 / 6.0)
 Division is a little tricky. Python distinguishes between integer division and float division. In the first line we have integer division, where the remainder is discarded and an integer is returned. If any number is a float (indicated by a decimal or because it is converted to a float) then a float is returned.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 2/3
-print 2./3.
-print 2/3.
-print 2/float(3)  # the float function casts the integer to a float
+print (2//3)
+print (2./3.)
+print (2/3.)
+print (2/float(3))  # the float function casts the integer to a float
 \end{minted}
 
 \begin{verbatim}
 0
-0.666666666667
-0.666666666667
-0.666666666667
+0.6666666666666666
+0.6666666666666666
+0.6666666666666666
 \end{verbatim}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 2*3
-print 2*3.0
+print (2*3)
+print (2*3.0)
 \end{minted}
 
 \begin{verbatim}
@@ -325,22 +324,22 @@ print 2*3.0
 We can also do powers with \texttt{**}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 2**3
-print 2**0.5
-print 2^4    # Binary XOR operator!
+print (2**3)
+print (2**0.5)
+print (2^4)    # Binary XOR operator!
 \end{minted}
 
 \begin{verbatim}
 8
-1.41421356237
+1.4142135623730951
 6
 \end{verbatim}
 
 The modulus operator (\%) divides the left hand operand by the right hand operand and returns the remainder.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 5 % 4
-print 5. % 4.
+print (5 % 4)
+print (5. % 4.)
 \end{minted}
 
 \begin{verbatim}
@@ -350,7 +349,7 @@ print 5. % 4.
 
 
 \subsection{Formatted printing}
-\label{sec:orgdc7d3f4}
+\label{sec:org96edea0}
 \url{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}
 
 We will usually want to print more than a number, e.g. some descriptive text and the number. We also will want to format numbers so we do not see 9 decimal places all the time. We use string formatting for that. Here are some typical examples.
@@ -359,7 +358,7 @@ In a string we can specify where to put numbers with positional arguments like \
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = 4.5 + 2
-print 'The answer is {0}'.format(a)
+print ('The answer is {0}'.format(a))
 \end{minted}
 
 \begin{verbatim}
@@ -371,7 +370,7 @@ We can have more than one number to format like this.
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = 5**3
 b = 23
-print 'a = {1} and b = {0}'.format(b,a)
+print ('a = {1} and b = {0}'.format(b,a))
 \end{minted}
 
 \begin{verbatim}
@@ -382,8 +381,8 @@ Alternatively, we can use named arguments to specify the values. It is your choi
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = 5**3
 b = 23
-print 'a = {ans0} and b = {ans1}'.format(ans0=a,
-                                         ans1=b)
+print ('a = {ans0} and b = {ans1}'.format(ans0=a,
+                                         ans1=b))
 \end{minted}
 
 \begin{verbatim}
@@ -393,37 +392,37 @@ a = 125 and b = 23
 To do formatting, we need additional syntax. We use \{i:format\} to specify how the value should be formatted. Here we show how to specify only three decimal places on a results. See \href{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}{this link} for a lot more details of formatting strings.
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = 2./3.
-print 'a = {0}'.format(a)
-print 'a = {0:1.3f}'.format(a)
+print ('a = {0}'.format(a))
+print ('a = {0:1.3f}'.format(a))
 \end{minted}
 
 \begin{verbatim}
-a = 0.666666666667
+a = 0.6666666666666666
 a = 0.667
 \end{verbatim}
 
 
 \subsection{Data types}
-\label{sec:org29129a5}
+\label{sec:orgba42d6f}
 Numeric types \url{http://docs.python.org/library/stdtypes.html\#numeric-types-int-float-long-complex}
 
 Strings \url{http://docs.python.org/library/stdtypes.html\#string-methods}
 
 
 \subsubsection{lists/tuples}
-\label{sec:org818b8f8}
+\label{sec:org316883e}
 
 Lists and tuples are similar in that they are both sets of data. A list is delimited by [] (square brackets) and a tuple is delimited by () (parentheses). The difference between them is a list can be changed after it is created (it is mutable), but a tuple cannot (it is immutable).
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 # short list example
 a = [1, 2, 3, 4] # a list
-print a
-print len(a)
-print a[0] # first element
-print a[-1] # last element
-print a[3]  # also last element
-print 2*a   # surprise!!!
+print (a)
+print (len(a))
+print (a[0]) # first element
+print (a[-1]) # last element
+print (a[3])  # also last element
+print (2*a)   # surprise!!!
 \end{minted}
 
 \begin{verbatim}
@@ -439,28 +438,22 @@ We can create a list with the \texttt{range} command:
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = range(4)
-print a
+print (a)
 
 b = range(4,10)
-print b
+print (b)
 
-print a + b  # surprise again!!!
+print (a + b)  # surprise again!!!
 \end{minted}
-
-\begin{verbatim}
-[0, 1, 2, 3]
-[4, 5, 6, 7, 8, 9]
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-\end{verbatim}
 
 Note that algebraic/math operations are not defined for lists the way they are for Matlab. We have to use \texttt{numpy.array} for that, which we will see later.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 # short list example
 a = [1, 2, 3, 4] # a list
-print a
+print (a)
 a[1] = 56 # change the value of 2nd element
-print a
+print (a)
 \end{minted}
 
 \begin{verbatim}
@@ -472,25 +465,25 @@ Tuples are like lists except they cannot be modified after creation.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 a = (1,2,3,4)
-print len(a)
-print a[0]
-print a[-1]
+print (len(a))
+print (a[0])
+print (a[-1])
 a[1] = 56 #this is not allowed!
 \end{minted}
 
 
 \subsection{Conditional statements}
-\label{sec:org6b055f2}
+\label{sec:orga6c3021}
 conditional operators \url{http://docs.python.org/library/stdtypes.html\#comparisons}
 
 Python has the standard conditional operators for testing if a quantity is equal to (\texttt{=), less than (<), greater than (>), lessthan or equal to (<}) greater than or equal to (>=) and not equal (!=). These generally work on numbers and strings.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-print 4 == 2.
-print 'a' != 'A'
-print 4 > 3
-print 4 <= 3
-print 'a' < 'b' # hmmm....
+print (4 == 2.)
+print ('a' != 'A')
+print (4 > 3)
+print (4 <= 3)
+print ('a' < 'b') # hmmm....
 \end{minted}
 
 \begin{verbatim}
@@ -508,7 +501,7 @@ a = 4
 b = 5
 
 if a < b:
-    print 'a is less than b'
+    print ('a is less than b')
 \end{minted}
 
 \begin{verbatim}
@@ -521,9 +514,9 @@ a = 14
 b = 5
 
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 \end{minted}
 
 \begin{verbatim}
@@ -535,11 +528,11 @@ Here is a more complete logic that uses \texttt{elif} to add an additional logic
 a = 4
 b = 4
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 elif a == b:
-    print 'a is equal to b'
+    print ('a is equal to b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 \end{minted}
 
 \begin{verbatim}
@@ -551,15 +544,15 @@ Finally, to illustrate that the first conditional statement that evaluates to Tr
 a = 4
 b = 4
 if a > b:
-    print 'a is greater than b'
+    print ('a is greater than b')
 elif a >= b:
-    print 'a is greater than or equal to b'
+    print ('a is greater than or equal to b')
 elif a == b:
-    print 'a is equal to b'
+    print ('a is equal to b')
 elif a <= b:
-    print 'a is less than or equal to b'
+    print ('a is less than or equal to b')
 else:
-    print 'a is less than b'
+    print ('a is less than b')
 \end{minted}
 
 \begin{verbatim}
@@ -568,7 +561,7 @@ a is greater than or equal to b
 
 
 \subsection{Loops}
-\label{sec:org401a87d}
+\label{sec:org17c6c26}
 \url{http://docs.python.org/tutorial/datastructures.html\#looping-techniques}
 for
 while/break/continue
@@ -576,11 +569,11 @@ enumerate, zip
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 for i in [0,1,2,3]:
-    print i
+    print (i)
 
 
 for i in range(4):
-    print i
+    print (i)
 \end{minted}
 
 \begin{verbatim}
@@ -596,16 +589,16 @@ for i in range(4):
 
 
 \subsection{functions}
-\label{sec:org5c1377d}
+\label{sec:org19d928d}
 \url{http://docs.python.org/tutorial/controlflow.html\#defining-functions}
 
 We can define functions with the \texttt{def} statement, and specify what they \texttt{return}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 def myfunc(x):
-    return x*x
+    return (x*x)
 
-print myfunc(3)
-print myfunc(x=3)
+print (myfunc(3))
+print (myfunc(x=3))
 \end{minted}
 
 \begin{verbatim}
@@ -615,12 +608,12 @@ print myfunc(x=3)
 
 
 \subsection{Classes and objects}
-\label{sec:org3dc2ae2}
+\label{sec:org4605665}
 \url{http://docs.python.org/tutorial/classes.html}
 
 
 \subsection{Modules}
-\label{sec:org0fd5602}
+\label{sec:org7f9d148}
 \url{http://docs.python.org/tutorial/modules.html}
 
 The default Python environment has minimal functionality. We can \texttt{import} additional functionality from modules. The full standard library is documented at \url{http://docs.python.org/library/}. It is not likely you will use everything there, but it is helpful to be familiar with what is available so you do not reinvent solutions.
@@ -631,7 +624,7 @@ We import modules, and then we can access functions inthe module with the \textt
 # list contents of current directory
 import os
 for item in os.listdir('.'):
-    print item
+    print (item)
 \end{minted}
 
 \begin{verbatim}
@@ -645,7 +638,7 @@ You can import exactly what you need also with the \texttt{from/import} syntax
 # list contents of current directory
 from os import listdir
 for item in listdir('.'):
-    print item
+    print (item)
 \end{minted}
 
 \begin{verbatim}
@@ -659,7 +652,7 @@ Finally, you can change the name of a module. This may be done for readability, 
 # list contents of current directory
 import os as operating_system
 for item in operating_system.listdir('.'):
-    print item
+    print (item)
 \end{minted}
 
 \begin{verbatim}
@@ -669,19 +662,19 @@ lab1.tex
 \end{verbatim}
 
 \subsubsection{Some common standard modules}
-\label{sec:org6ba279e}
+\label{sec:org3cebe85}
 \url{http://docs.python.org/tutorial/stdlib.html}
 os, sys, glob,  re
 
 
 \subsection{file I/O}
-\label{sec:orgd9d7800}
+\label{sec:orgd28dd6c}
 reading, writing files
 \url{http://docs.python.org/library/stdtypes.html\#file-objects}
 
 
 \subsection{Error handling}
-\label{sec:orgaef7da1}
+\label{sec:orgf9fc650}
 \url{http://docs.python.org/tutorial/errors.html}
 
 Errors happen, and when they do they usually kill your script. Sometimes that is not desirable, and it is nice to catch errors, handle them, and keep on going. When errors occur in python, an Exception is raised. We can use \texttt{try/except} code blocks to try some code, and then respond to any exceptions that occur.
@@ -689,30 +682,30 @@ Errors happen, and when they do they usually kill your script. Sometimes that is
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 try:
     1/0
-except ZeroDivisionError, e:
-    print e
-    print 'an error was found'
+except ZeroDivisionError as e:
+    print (e)
+    print ('an error was found')
 \end{minted}
 
 \begin{verbatim}
-integer division or modulo by zero
+division by zero
 an error was found
 \end{verbatim}
 
 
 \subsection{Numerical Python (Numpy)}
-\label{sec:org14d157f}
+\label{sec:org254f792}
 
 \subsubsection{The basics}
-\label{sec:org517d732}
+\label{sec:org169cc9a}
 \url{http://docs.scipy.org/doc/numpy/reference/}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 a = np.array([1,2,3,8])
 
-print a*a          # element-wise operation
-print np.dot(a,a)  # linear-algebra dot product
+print (a*a)          # element-wise operation
+print (np.dot(a,a))  # linear-algebra dot product
 \end{minted}
 
 \begin{verbatim}
@@ -725,33 +718,33 @@ Numpy defines lots of functions that operate element-wise on arrays.
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 a = np.array([1, 2, 3, 4])
-print a**2
-print np.sin(a)
-print np.exp(a)
-print np.sqrt(a)
+print (a**2)
+print (np.sin(a))
+print (np.exp(a))
+print (np.sqrt(a))
 \end{minted}
 
 \begin{verbatim}
 [ 1  4  9 16]
 [ 0.84147098  0.90929743  0.14112001 -0.7568025 ]
-[  2.71828183   7.3890561   20.08553692  54.59815003]
-[ 1.          1.41421356  1.73205081  2.        ]
+[ 2.71828183  7.3890561  20.08553692 54.59815003]
+[1.         1.41421356 1.73205081 2.        ]
 \end{verbatim}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 a = np.array([1, 2, 3, 4])
-print a.min(), a.max()
-print a.sum()  # sum of elements
-print a.mean() # average
-print a.std()  # standard deviation
+print (a.min(), a.max())
+print (a.sum())  # sum of elements
+print (a.mean()) # average
+print (a.std())  # standard deviation
 \end{minted}
 
 \begin{verbatim}
 1 4
 10
 2.5
-1.11803398875
+1.118033988749895
 \end{verbatim}
 
 
@@ -759,7 +752,7 @@ Below are some recipes for doing linear algebra and polynomials.
 
 
 \subsubsection{Linear algebra}
-\label{sec:org662ad0d}
+\label{sec:orgb3fb2b7}
 \texttt{numpy.linalg} provides a lot of the linear algebra functionality we need. See \url{http://docs.scipy.org/doc/numpy/reference/routines.linalg.html} for details of all the things that are possible. For example, given these linear equations:
 
 \(x + y = 3\), 
@@ -768,7 +761,7 @@ Below are some recipes for doing linear algebra and polynomials.
 we can represent these equations in matrix form \(A x = b\) and solve them.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-import numpy as npx
+import numpy as np
 import numpy.linalg as la
 
 A = np.array([[1, 1],
@@ -776,11 +769,11 @@ A = np.array([[1, 1],
 
 b = np.array([3, 1])
 
-print la.solve(A, b)
+print (la.solve(A, b))
 \end{minted}
 
 \begin{verbatim}
-[ 2.  1.]
+[2. 1.]
 \end{verbatim}
 
 You might be familiar with the following solution:
@@ -796,11 +789,11 @@ import numpy.linalg as la
 A = np.array([[1, 1],[1, -1]])
 b = np.array([3, 1])
 
-print np.dot(la.inv(A), b)
+print (np.dot(la.inv(A), b))
 \end{minted}
 
 \begin{verbatim}
-[ 2.  1.]
+[2. 1.]
 \end{verbatim}
 
 Finally, we can do linear least squares easily. Suppose we have these three equations, and two unknowns:
@@ -821,22 +814,22 @@ A = np.array([[1, 1],
 b = np.array([3, 1, 0.9])
 
 [x, residuals, rank, s] = la.lstsq(A,b)
-print x
+print (x)
 \end{minted}
 
 \begin{verbatim}
-[ 1.975  1.025]
+[1.975 1.025]
 \end{verbatim}
 
 
 \subsubsection{Polynomials}
-\label{sec:org008c85b}
+\label{sec:orgd22115f}
 \texttt{numpy} can do polynomials too. We express polynomials by the coefficients in front of the powers of \(x\), e.g. \(4 x^2 + 2x - 1 = 0\) is represented by [4, 2, -1].
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 p = [4, 2, -1]
-print np.roots(p)
+print (np.roots(p))
 \end{minted}
 
 \begin{verbatim}
@@ -846,8 +839,8 @@ print np.roots(p)
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 p = [4, 2, -1]
-print np.polyder(p) # coefficients of the derivative
-print np.polyint(p)
+print (np.polyder(p)) # coefficients of the derivative
+print (np.polyint(p))
 \end{minted}
 
 \begin{verbatim}
@@ -859,7 +852,7 @@ We can also readily evaluate polynomials at specific points:
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
 p = [4,2,-1]
-print np.polyval(p,[0, 1, 2])
+print (np.polyval(p,[0, 1, 2]))
 \end{minted}
 
 \begin{verbatim}
@@ -873,26 +866,26 @@ import numpy as np
 x = [0, 2, 3, 4]
 y = [1, 5, 7, 9]
 p = np.polyfit(x, y, 1)
-print 'slope = {0}\nintercept = {1}'.format(*p)
-print p
+print ('slope = {0}\nintercept = {1}'.format(*p))
+print (p)
 \end{minted}
 
 \begin{verbatim}
-slope = 2.0
-intercept = 1.0
-[ 2.  1.]
+slope = 1.9999999999999993
+intercept = 1.0000000000000033
+[2. 1.]
 \end{verbatim}
 
 
 \subsection{Scientific Python (Scipy)}
-\label{sec:org3ec3e74}
+\label{sec:org68a1623}
 \url{http://docs.scipy.org/doc/scipy/reference/}
 
 \texttt{scipy} provides all the functionality we need for \href{http://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html}{integration}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html}{optimization}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html}{interpolation}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html}{statistics}, and \href{http://docs.scipy.org/doc/scipy/reference/tutorial/io.html}{File I/O}. You should look up the link on integration. It might be useful for homework 2.
 
 
 \subsubsection{Solving Equations}
-\label{sec:org709e27b}
+\label{sec:org8a4fca9}
 Here is a typical usage for solving the equation \(x^2 = 2\) for \(x\). We have to define a function that is \(f(x) = 0\), and then use the \texttt{scipy.optimize.fsolve} function to solve it with an initial guess.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -904,23 +897,23 @@ def f(x):
 
 x0 = 1.4 # Intitial Guess
 x = fsolve(f, x0)
-print x
-print type(x)
+print (x)
+print (type(x))
 \end{minted}
 
 \begin{verbatim}
-[ 1.41421356]
-<type 'numpy.ndarray'>
+[1.41421356]
+<class 'numpy.ndarray'>
 \end{verbatim}
 
 
 
 \subsubsection{Integration Example}
-\label{sec:orgd3f21c2}
+\label{sec:org3e774d2}
 
 \begin{enumerate}
 \item Using Quad
-\label{sec:org42be830}
+\label{sec:orgd48ab52}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from scipy.integrate import quad
 import numpy as np
@@ -929,16 +922,16 @@ def integrand(x):
     return (1 - np.cos(x))**2
 
 ans, err = quad(integrand, 0, 2)
-print ans
+print (ans)
 \end{minted}
 
 \begin{verbatim}
-0.992204522522
+0.9922045225216546
 \end{verbatim}
 
 
 \item Using trapz
-\label{sec:org5e5bb2f}
+\label{sec:org86505ae}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -947,17 +940,17 @@ import numpy as np
 x2 = np.linspace(0, 2, 100)
 y2 = x2**3
 
-print np.trapz(y2, x2)
+print (np.trapz(y2, x2))
 \end{minted}
 
 \begin{verbatim}
-4.00040812162
+4.000408121620243
 \end{verbatim}
 \end{enumerate}
 
 
 \subsection{Plotting with Python (Matplotlib)}
-\label{sec:org18e38a7}
+\label{sec:org476c351}
 \url{http://matplotlib.sourceforge.net/}
 \texttt{matplotlib} is the prime plotting module for python. The syntax is similar to Matlab. The best way to learn matplotlib is to visit the gallery (\url{http://matplotlib.sourceforge.net/gallery.html}) and look for examples that do what you want. Here is a simple example.
 
@@ -973,7 +966,7 @@ plt.plot(x,np.cos(x))
 plt.xlabel('X axis')
 plt.ylabel('Y axis')
 plt.legend(['sin(x)', 'cos(x)'], loc='best')
-plt.savefig('images/Lab1.png')
+#plt.savefig('images/Lab1.png')
 plt.show()
 \end{minted}
 
@@ -983,7 +976,7 @@ plt.show()
 
 
 \section{FDA}
-\label{sec:org5df804a}
+\label{sec:org4c32db2}
 
 Now let us run our first computational chemistry code. Change into the
 \texttt{computational-chemistry/Lab1/FDA/fda} directory and run the command,
@@ -995,7 +988,7 @@ Now let us run our first computational chemistry code. Change into the
 This will use the \texttt{Ar.inp} file as input and produce two output files, \texttt{Ar.dmp} and \texttt{Ar.out}. The \texttt{00READ.ME} file contains some information about the format of the input file. You can open these files with Emacs to read what they contain.
 
 \subsection{Parsing the dmp file}
-\label{sec:org84f7eca}
+\label{sec:org6bb95e8}
 
 In homework 2, you will need to parse the \texttt{.dmp} file to plot some data. It contains the radial grid values and total charge density in two columns, followed by the charge density of each oribital on the same grid. Here we consider an example of how to do this with python.
 
