@@ -1,4 +1,4 @@
-% Created 2019-09-05 Thu 09:45
+% Created 2019-09-05 Thu 16:20
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -42,7 +42,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \maketitle
 
 \section{Introduction to Linux}
-\label{sec:org53da4e4}
+\label{sec:orgcb91b0b}
 
 All computers are run by an \texttt{operating system}.  What you see, on your phone, tablet, or
 laptop, is a \texttt{graphical user interface} that runs on top of that operating system.  Far
@@ -56,7 +56,7 @@ Phones and laptops hide the command line from us. On your Mac laptop, you can ge
 through the \texttt{terminal}.
 
 \subsection{Logging onto the CRC}
-\label{sec:org333bdc6}
+\label{sec:orgae8b5ca}
 For consistency, we will use the Linux computers hosted by the Notre Dame \href{http://crc.nd.edu}{Center for
 Research Computing} (CRC) for our computational work. The CRC hosts a number of "front-end"
 computers that we can access and interact with directly, through the internet.  Hinding
@@ -80,7 +80,7 @@ window.  Go to \url{https://crcfe01.crc.nd.edu} and log in using your ND credent
 choose a single xterm session to get started.
 
 \subsection{Common Linux Commands}
-\label{sec:org2f3710a}
+\label{sec:org44d7396}
 At the Linux command line you will be working interactively with a \texttt{=shell=}. The shell
 provides a lot of built-in features, is programmable, and gives access to There are many
 different shells, but the most popular today is \href{https://www.gnu.org/software/bash/manual/}{bash}.  Here is a list of common linux
@@ -170,7 +170,7 @@ quota
 \end{itemize}
 
 \subsection{Obtaining lab notes}
-\label{sec:org7fab425}
+\label{sec:orgd3e54aa}
 
 The lab notes and homeworks can be obtained from the course website. They are also conveniently stored in a git repository. To obtain the files just type in
 
@@ -186,7 +186,7 @@ git pull
 \end{minted}
 
 \subsection{Editors}
-\label{sec:orgacd108a}
+\label{sec:org1c3c3ba}
 At some point you will want to create, edit, and save files.  That job falls to a file
 editor.  \texttt{vi} is the most venerable editor, available on all Unix systems, but not so easy
 to use.  \texttt{gedit} is your best bet for a simple editor on the CRC machines.  \href{https://www.gnu.org/software/emacs/}{GNU emacs}
@@ -195,7 +195,7 @@ challenging to set up and does have a steep learning curve.  Below are some note
 usage, but if you are going to use it, plan on investing some time.
 
 \subsection{The very least you have to know about GNU Emacs}
-\label{sec:org5adfa28}
+\label{sec:org485ee5e}
 For the purposes of this course, we will use GNU Emacs as our text editor, and in particular Emacs org-mode. Getting started with it can be a little challenging, but learning how to use it offers many benefits, which we shall soon see. If you really, really want to use another editor, you are free to do so, but it is likely that you will lose some customized emacs features which will help you with this course.
 
 Here are a few things to get started.
@@ -217,7 +217,7 @@ Here are a few things to get started.
 
 \begin{itemize}
 \item \texttt{C-w}. Cut selected text.
-\item \texttt{M-x}. Copy selected text. (Here M is the \texttt{Alt} key for windows/linux users, the \texttt{Command} key for Mac users)
+\item \texttt{M-w}. Copy selected text. (Here M is the \texttt{Alt} key for windows/linux users, the \texttt{Command} key for Mac users)
 \item \texttt{C-y}. Paste cut/copied text.
 \end{itemize}
 
@@ -227,16 +227,15 @@ Here are a few things to get started.
 
 \item Press <TAB> to expand the headings and see what they contain. Navigate to this section of the document.
 
-\item Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type \texttt{M-x}. Now type \texttt{org-toggle-latex-overlays}. Alternately, you can click on this link, \url{org-toggle-latex-overlays}. You should be able to see the Schrodinger equation below.
+\item Finally, we will consider how to run an emacs command, namely one that will make the equations in the document readable. Type \texttt{M-x}. Now type \texttt{org-toggle-latex-fragment}. Alternately, you can click on this link, \url{org-toggle-latex-fragment}. You should be able to see the Schrodinger equation below.
 
 \item \(H\psi = E\psi\)
 
 \item \textbf{Tip:} If you find yourself stuck somewhere, type <ESC> four times or type \texttt{C-g}.
 \end{itemize}
 
-
 \subsection{Shell scripts}
-\label{sec:org46a7142}
+\label{sec:org583519b}
 We usually interact with the shell interactively, one command at a time.  It is possible
 to put a set of commands into a file, and that file then becomes a computer program.
 Here's a super simple one:
@@ -247,7 +246,7 @@ echo "Hello world"
 \end{minted}
 
 \section{Notebooks}
-\label{sec:orga81ac94}
+\label{sec:org4a886f8}
 We'll often have occassion to write little programs to set up, execute, or analyze our
 calculations.  A relatively recent innovation in the computational world is the popularity
 of \texttt{notebooks}. A notebook is much like a shell, in that it allows you to execute programs
@@ -264,7 +263,7 @@ particular interest in \href{https://python.org}{python}, a particular popular a
 notebooks have the extension .ipynb and are readily created and run within a jupyter notebook.
 
 \section{Introduction to Python}
-\label{sec:org94d1a80}
+\label{sec:orgc721520}
 Python is a programming language which we will use to solve many of the homework problems,
 especially density functional theory calculations using VASP (homeworks 5, homework 6, and
 probably your class project). It is therefore important that you familiarize yourself with
@@ -272,10 +271,10 @@ using it. The numerical and plotting features in python are mostly similar to \t
 with a few subtle differences. I would recommend that you try to solve the first problem
 in homework 2 using python. A few examples are below, adapted (a fancy way of saying
 pretty much copied) from John Kitchin's example files. We won't cover all of these, but
-you can use them for reference. To execute code in a jupyter notebook, use Ctrl-enter.
+you can use them for reference. To execute code in a jupyter notebook, use Ctrl-enter or Shift-enter.
 
 \subsection{Simple calculations}
-\label{sec:org4330d06}
+\label{sec:org10ca1f8}
 
 A good overview of basic python operators can be found at \url{http://www.tutorialspoint.com/python/python\_basic\_operators.htm}
 
@@ -349,7 +348,7 @@ print (5. % 4.)
 
 
 \subsection{Formatted printing}
-\label{sec:org96edea0}
+\label{sec:org65ac0cb}
 \url{http://docs.python.org/library/stdtypes.html\#string-formatting-operations}
 
 We will usually want to print more than a number, e.g. some descriptive text and the number. We also will want to format numbers so we do not see 9 decimal places all the time. We use string formatting for that. Here are some typical examples.
@@ -403,14 +402,14 @@ a = 0.667
 
 
 \subsection{Data types}
-\label{sec:orgba42d6f}
+\label{sec:org81a08e9}
 Numeric types \url{http://docs.python.org/library/stdtypes.html\#numeric-types-int-float-long-complex}
 
 Strings \url{http://docs.python.org/library/stdtypes.html\#string-methods}
 
 
 \subsubsection{lists/tuples}
-\label{sec:org316883e}
+\label{sec:orge4f2f9b}
 
 Lists and tuples are similar in that they are both sets of data. A list is delimited by [] (square brackets) and a tuple is delimited by () (parentheses). The difference between them is a list can be changed after it is created (it is mutable), but a tuple cannot (it is immutable).
 
@@ -473,7 +472,7 @@ a[1] = 56 #this is not allowed!
 
 
 \subsection{Conditional statements}
-\label{sec:orga6c3021}
+\label{sec:org2fa9367}
 conditional operators \url{http://docs.python.org/library/stdtypes.html\#comparisons}
 
 Python has the standard conditional operators for testing if a quantity is equal to (\texttt{=), less than (<), greater than (>), lessthan or equal to (<}) greater than or equal to (>=) and not equal (!=). These generally work on numbers and strings.
@@ -561,7 +560,7 @@ a is greater than or equal to b
 
 
 \subsection{Loops}
-\label{sec:org17c6c26}
+\label{sec:org16ea1e4}
 \url{http://docs.python.org/tutorial/datastructures.html\#looping-techniques}
 for
 while/break/continue
@@ -589,7 +588,7 @@ for i in range(4):
 
 
 \subsection{functions}
-\label{sec:org19d928d}
+\label{sec:org35c7809}
 \url{http://docs.python.org/tutorial/controlflow.html\#defining-functions}
 
 We can define functions with the \texttt{def} statement, and specify what they \texttt{return}
@@ -608,12 +607,12 @@ print (myfunc(x=3))
 
 
 \subsection{Classes and objects}
-\label{sec:org4605665}
+\label{sec:org37642de}
 \url{http://docs.python.org/tutorial/classes.html}
 
 
 \subsection{Modules}
-\label{sec:org7f9d148}
+\label{sec:org1098fae}
 \url{http://docs.python.org/tutorial/modules.html}
 
 The default Python environment has minimal functionality. We can \texttt{import} additional functionality from modules. The full standard library is documented at \url{http://docs.python.org/library/}. It is not likely you will use everything there, but it is helpful to be familiar with what is available so you do not reinvent solutions.
@@ -662,19 +661,19 @@ lab1.tex
 \end{verbatim}
 
 \subsubsection{Some common standard modules}
-\label{sec:org3cebe85}
+\label{sec:org7319150}
 \url{http://docs.python.org/tutorial/stdlib.html}
 os, sys, glob,  re
 
 
 \subsection{file I/O}
-\label{sec:orgd28dd6c}
+\label{sec:org05408c2}
 reading, writing files
 \url{http://docs.python.org/library/stdtypes.html\#file-objects}
 
 
 \subsection{Error handling}
-\label{sec:orgf9fc650}
+\label{sec:org17cbe52}
 \url{http://docs.python.org/tutorial/errors.html}
 
 Errors happen, and when they do they usually kill your script. Sometimes that is not desirable, and it is nice to catch errors, handle them, and keep on going. When errors occur in python, an Exception is raised. We can use \texttt{try/except} code blocks to try some code, and then respond to any exceptions that occur.
@@ -694,10 +693,10 @@ an error was found
 
 
 \subsection{Numerical Python (Numpy)}
-\label{sec:org254f792}
+\label{sec:orgc32d1ac}
 
 \subsubsection{The basics}
-\label{sec:org169cc9a}
+\label{sec:orgaaab64b}
 \url{http://docs.scipy.org/doc/numpy/reference/}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -752,7 +751,7 @@ Below are some recipes for doing linear algebra and polynomials.
 
 
 \subsubsection{Linear algebra}
-\label{sec:orgb3fb2b7}
+\label{sec:orgda403a7}
 \texttt{numpy.linalg} provides a lot of the linear algebra functionality we need. See \url{http://docs.scipy.org/doc/numpy/reference/routines.linalg.html} for details of all the things that are possible. For example, given these linear equations:
 
 \(x + y = 3\), 
@@ -823,7 +822,7 @@ print (x)
 
 
 \subsubsection{Polynomials}
-\label{sec:orgd22115f}
+\label{sec:orgb553b66}
 \texttt{numpy} can do polynomials too. We express polynomials by the coefficients in front of the powers of \(x\), e.g. \(4 x^2 + 2x - 1 = 0\) is represented by [4, 2, -1].
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -878,14 +877,14 @@ intercept = 1.0000000000000033
 
 
 \subsection{Scientific Python (Scipy)}
-\label{sec:org68a1623}
+\label{sec:org996947e}
 \url{http://docs.scipy.org/doc/scipy/reference/}
 
 \texttt{scipy} provides all the functionality we need for \href{http://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html}{integration}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html}{optimization}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html}{interpolation}, \href{http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html}{statistics}, and \href{http://docs.scipy.org/doc/scipy/reference/tutorial/io.html}{File I/O}. You should look up the link on integration. It might be useful for homework 2.
 
 
 \subsubsection{Solving Equations}
-\label{sec:org8a4fca9}
+\label{sec:orgfbc4846}
 Here is a typical usage for solving the equation \(x^2 = 2\) for \(x\). We have to define a function that is \(f(x) = 0\), and then use the \texttt{scipy.optimize.fsolve} function to solve it with an initial guess.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
@@ -909,11 +908,11 @@ print (type(x))
 
 
 \subsubsection{Integration Example}
-\label{sec:org3e774d2}
+\label{sec:org20eb886}
 
 \begin{enumerate}
 \item Using Quad
-\label{sec:orgd48ab52}
+\label{sec:org67f6faf}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from scipy.integrate import quad
 import numpy as np
@@ -931,7 +930,7 @@ print (ans)
 
 
 \item Using trapz
-\label{sec:org86505ae}
+\label{sec:org89fdd74}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 import numpy as np
@@ -950,7 +949,7 @@ print (np.trapz(y2, x2))
 
 
 \subsection{Plotting with Python (Matplotlib)}
-\label{sec:org476c351}
+\label{sec:orgbad971b}
 \url{http://matplotlib.sourceforge.net/}
 \texttt{matplotlib} is the prime plotting module for python. The syntax is similar to Matlab. The best way to learn matplotlib is to visit the gallery (\url{http://matplotlib.sourceforge.net/gallery.html}) and look for examples that do what you want. Here is a simple example.
 
@@ -974,9 +973,8 @@ plt.show()
 \includegraphics[width=.9\linewidth]{./images/Lab1.png}
 \end{center}
 
-
 \section{FDA}
-\label{sec:org4c32db2}
+\label{sec:org90be701}
 
 Now let us run our first computational chemistry code. Change into the
 \texttt{computational-chemistry/Lab1/FDA/fda} directory and run the command,
@@ -988,7 +986,7 @@ Now let us run our first computational chemistry code. Change into the
 This will use the \texttt{Ar.inp} file as input and produce two output files, \texttt{Ar.dmp} and \texttt{Ar.out}. The \texttt{00READ.ME} file contains some information about the format of the input file. You can open these files with Emacs to read what they contain.
 
 \subsection{Parsing the dmp file}
-\label{sec:org6bb95e8}
+\label{sec:org6123008}
 
 In homework 2, you will need to parse the \texttt{.dmp} file to plot some data. It contains the radial grid values and total charge density in two columns, followed by the charge density of each oribital on the same grid. Here we consider an example of how to do this with python.
 
