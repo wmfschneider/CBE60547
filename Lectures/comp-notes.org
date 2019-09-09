@@ -621,11 +621,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sympy.physics.hydrogen import E_nl
 from sympy.physics.hydrogen import R_nl
-from sympy import symbols
-from sympy.plotting import plot
 from sympy import var
-
-#fig = plt.gcf()
 
 var("r E")
 max = 10
@@ -633,22 +629,23 @@ max = 10
 r = np.linspace(0,max,100)
 Ones = np.array([R_nl(1, 0, x) for x in r],dtype='float')
 E = E_nl(1)
-Ones = Ones + E
-plt.plot(r,Ones,label='1s')
-plt.plot([0,max],[E,E],ls='--')
+Ones = Ones
+plt.plot(r,Ones,label='1s',color='blue')
+plt.plot([0,max],[E,E],ls=':',color='blue')
 
 Twos = np.array([R_nl(2, 0, x) for x in r],dtype='float')
 E = E_nl(2)
-Twos = Twos + E
-plt.plot(r,Twos,label='2s')
-plt.plot([0,max],[E,E],ls='--')
+Twos = Twos
+plt.plot(r,Twos,label='2s',color='orange')
+plt.plot([0,max],[E,E],ls=':',color='orange')
 Twop = np.array([R_nl(2, 1, x) for x in r],dtype='float')
-Twop = Twop + E
+Twop = Twop
 plt.plot(r,Twop,label='2p')
 
-plt.plot(r,-1/r,color = 'gray', label='potential')
+# plt.plot(r,-1/r+2/r**2,color = 'green', linestyle='--',label='l=1 potential')
 
-# plt.plot([0,max],[0,0],color='black',linestyle=':')
+plt.plot([0,max],[0,0],color='black',linestyle=':')
+plt.plot(r,-1/r,color = 'blue', linestyle='--',label='potential')
 plt.xlim(0,max)
 plt.ylim(-1,2)
 plt.xlabel('Distance (a0)')
@@ -773,7 +770,7 @@ What if we don't know where to look to find the \(R(r)\)?  Or an analytical solu
 Guess something.  Must obey appropriate boundary conditions and be a well-behaved function.  For example, a /Gaussian/:
 \[g_\xi(r) = e^{-\xi r^2}\]
 Let's normalize:
-\[N = \left\{ \int_0^\infty g_\xi^2(r) r^2 dr \right\}^{-1/2} = \left(\frac{8\xi^3}{\pi}\right)^{1/4} \]
+\[N = \left\{ \int_0^\infty g_\xi^2(r) r^2 dr \right\}^{-1/2} = 2 \left(\frac{8\xi^3}{\pi}\right)^{1/4} \]
 
 \[\tilde{g}_\xi(r) = N g_\xi(r)\]
 Now evaluate energy, say for \(\xi=1\):
@@ -800,13 +797,62 @@ Could even weight the two Gaussians differently:
 \[\langle c(r) |\hat{H} |c(r) \rangle = \SI{-0.333}{Hartree} \]
 Better yet!
 
-#+BEGIN_EXPORT LaTeX
-\begin{figure}
-\centering
-\includegraphics[scale=0.8]{./Images/Hbasis.png}
-\caption{Comparison of exact and approximations to H 1s radial function.}
-\end{figure}
-#+END_EXPORT
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.integrate import quad
+
+def Gaussian(xi,x):
+    return (np.exp(-xi*x*x))
+
+def integrand(x):
+    return (x*x*np.exp(-2.0*x*x))
+
+def Gnorm(xi,r):
+    return 2.0*((8.0 * xi**3/np.pi)**0.25)*np.exp(-xi*r*r)
+
+# Show normalization of a Gaussian:
+ans, err = quad(integrand, 0, 10)
+Norm = 1.0/np.sqrt(ans)
+# print(Norm,2*(8.0/np.pi)**0.25)
+
+max = 4
+r = np.linspace(0,max,100)
+
+R_10 = 2*np.exp(-r)  # 1s
+G1 = Gnorm(1.0,r)    # Gaussian x= = 1
+
+plt.xlim(0,max)
+plt.plot(r,R_10,label='1s')
+plt.plot(r,G1,label='xi = 1')
+
+Contract1 = Gnorm(1.0,r) + Gnorm(0.5,r)
+Overlap = np.trapz(Gnorm(1.0,r)*Gnorm(0.5,r)*r*r,r)
+#print(Overlap)
+Contract1 = Contract1 * 1.0/np.sqrt(2.0*(1.0 + Overlap))
+plt.plot(r,Contract1,label='xi=1 + xi=0.5')
+
+c1 = 1.0; c2 = 1.5
+Contract2 = c1* Gnorm(1.0,r) + c2 * Gnorm(0.5,r)
+Overlap = np.trapz(Gnorm(1.0,r)*Gnorm(0.5,r)*r*r,r)
+
+Contract2 = Contract2 * 1.0/np.sqrt(c1**2 + c2**2 + 2.0*c1*c2*Overlap)
+plt.plot(r,Contract2,label='xi=1 + 1.5 xi=0.5')
+
+plt.legend()
+plt.xlabel('Distance (a0)')
+plt.ylabel('Wavefunction R(r)')
+
+plt.title('Gaussian H atom radial wavefunctions')
+plt.savefig('./Images/Hbasis.png')
+
+# Add code to evaluate energies
+#+END_SRC
+
+#+RESULTS:
+#+CAPTION: Comparison of exact and approximations 2 H 1s radial function
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/Hbasis.png]]
 
 Could continue to add Gaussians of various exponents, and could vary weights, or could
 even add in any other functions that we want that are "well-behaved." Would find that no
@@ -819,7 +865,6 @@ where $E_0$ is the true ground state energy of the system.
 #+END_QUOTE
 
 Consequence of the completeness of the solutions of the Schr\ouml{}dinger equation.  Extremely important to us, because we can use the /calculus of variations/ to seek energy-optimal \(\Psi\).
-
 
 ** Basis functions
 Recognize that we are approximating
@@ -851,7 +896,7 @@ Apply variational principle to two basis functions for the H atom:
 
 \[f(r) =c_1 \phi_1(r) + c_2\phi_2(r) \]
 
-\[\langle E \rangle = \frac{\langle f(r)|\hat{H}|f(r)\rangle}{\langlef(r)|f(r)\rangle} \]
+\[\langle E \rangle = \frac{\langle f(r)|\hat{H}|f(r)\rangle}{\langle f(r)|f(r)\rangle} \]
 
 Substitute and solve \(\partial \langle E \rangle/\partial c_1 = \partial \langle E \rangle/\partial c_2 = 0\).  Each gives a linear /secular equation/ in $c_1$ and $c_2$:
 
@@ -935,12 +980,12 @@ Solutions are many-dimensional functions of the coordinates of all the electrons
 
 ** The Hartree atom
 Simplest approach is to approximate \(\Psi\). Douglas Hartree (1897-1958) writes:
-\[ \Psi(\mathbf{r}_1,\mathbf{r}_2) \approx \psi_1(\mathbf{r}_1)\cdot \psi_n(\mathbf{r}_n)\]
+\[ \Psi(\mathbf{r}_1,\mathbf{r}_2) \approx \psi_1(\mathbf{r}_1)\cdot \psi_2(\mathbf{r}_2)\]
 So-called Hartree product.  Can't be right.  It gives the probability of two electrons being in the same place as some number $> 0$!  Neglects /electron correlation/.  How to apply?
 
 1. Apply variational principle: What's the best possible set of \(\psi_i\)?  We'll say best are the set that give the lowest expectation value of energy.
        \begin{eqnarray}
-       \langle E \rangle & = & \langle \Psi | \hat{H} | \Psi \rangle \\
+       \langle E \rangle & = & \langle \Psi | \hat{H} | \Psi \rangle /\langle \Psi | \Psi\rangle \\
        \frac{ \delta \langle E \rangle}{\delta \psi_i} &= &0, \forall i
        \end{eqnarray}
 2. Lagrange multipliers to impose orthonormality constraint on \(\psi_i\):
@@ -983,7 +1028,7 @@ Sorry Hartree.  Can fix for He by writing
 \[\Psi(\bm{x}_1,\bm{x}_2) = \psi_1(\bm{r}_1)\psi_i(\bm{r}_2)\left(\alpha(1)\beta(2) - \beta(1)\alpha(2)\right) \]
 Hey, gentle reader, check, does this work?  
 
-What is the probability of two electrons being in the same place at the same time in the Hartree model?  How about in this wavefunction that obeys the Pauli principle?  Which will have less electrostatic repulsion between the electrons?  This is the magic of /exchange/.  Our models have to incorporate it, at least approximately, to get results better than Hartree
+What is the probability of two electrons being in the same place at the same time in the Hartree model?  How about in this wavefunction that obeys the Pauli principle?  Which will have less electrostatic repulsion between the electrons?  This is the magic of /exchange/.  Our models have to incorporate it, at least approximately, to get results better than Hartree.
 
 Can two electrons have the same wavefunction and the same spin and still obey the Pauli principle?
 ** Slater determinants and Hartree-Fock
@@ -995,12 +1040,48 @@ Slater determinant a general way to assure that a wavefunction satisfies Pauli p
 \psi_1(n) & \psi_2(n) & \cdots & \psi_n(n) \end{array} \right | = |\psi_1\psi_2\cdots\psi_n\rangle \]
 Swapping rows swaps coordinates and, by rules of determinants, changes sign.
 
-Apply variational principle just like above.  We'll skip the gorry details.  Arrive at /Hartree-Fock/ equations:
-
-
 ** Hartree-Fock equation
+Same song and dance:
+1. Apply variational principle to Slater determinant. The best \(\psi_i\) are those that minimize the expectation value of the energy.
+2. Use method of Lagrange multipliers to keep \(\psi_i\) orthogonal.
+
+For simplicity, restrict ourself to cases with an even number of electrons /N/, all spin-paired, so two electrons in every orbital.  Let index /j/ run over all occupied orbitals. Arrive at *restricted Hartree-Fock* equations:
+    \begin{eqnarray}
+     \left \{ \hat{h}_i + \hat{v}^{\text{Hartree}}_i \right + \hat{v}^{\text{exchange}}\} \psi_i(\mathbf{r}_1) &=&         \epsilon_i      \psi_i(\mathbf{r}_1) \\
+       \hat{v}^{\text{Hartree}}_i(\mathbf{r}_i) & =& 2 \sum_{j\ne i} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
+       \hat{v}^{\text{exchange}}_i(\mathbf{r}_i) \psi_i(\mathbf{r}_i) & = &\psi_j(\mathbf{r}_i) \sum_{j\ne i} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
+           \end{eqnarray}
+
+Yikes! Slater determinant wavefunction results in appearance of the "exchange" operator, which turns a \(\psi_i\) into a \(\psi_j\).  Exchange operator is not a simple multiplication.  Must be solved self-consistently, and is much harder to do than the simple Hartree expression. 
+
+Slight simplification possible, noting that \(i=j\) terms cancel out and slightly redefining operators:
+    \begin{eqnarray}
+     \left \{ \hat{h}_i + \hat{v}^{\text{Hartree}}_i \right + \hat{v}^{\text{exchange}}\} \psi_i(\mathbf{r}_1) &=&         \epsilon_i      \psi_i(\mathbf{r}_1) \\
+       \hat{v}^{\text{Hartree}}(\mathbf{r}_i) & =& 2 \sum_{j} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
+       \hat{v}^{\text{exchange}}_i(\mathbf{r}_i) \psi_i(\mathbf{r}_i) & = &\psi_j(\mathbf{r}_i) \sum_{j} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
+           \end{eqnarray}
+
+Now ``Hartree potential'' is the same for all orbitals/electrons. We can define the ``charge density'' to be
+\[ \rho(\mathbf{r}) = 2 \sum_j |\psi_j(\mathbf{r})^2|\]
+(units of charge/unit volume, multiply by /e/ to get a charge). The Hartree potential can be written
+\[ \hat{v}^{\text{Hartree}}(\mathbf{r}_1) = \int\frac{\rho(\mathbf{r}_2)}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \]
+This is the Coulomb repulsion of an electron with all electrons, /including itself/!  Called Poisson equation, well known in classical physics.  Because it involves a Coulomb repulsion, will see either \(\hat{v}^{\text{Hartree}}\) or \(\hat{v}^{\text{Coulomb}}\).  I'll often write \(\hat{v}^{\text{Coulomb}}[\rho(\mathbf{r})]\), to emphasize that the Coulomb potential is a /functional/ of the charge density.
+
+(Just to make sure we are following units around, the Coulomb potential has units of energy/charge, eg in SI it would be J/C and would have \(e/4\pi\epsilon_0\) in front.)
+
+The ``exchange potential'' cancels out the ``self-interaction'' of an electron with itself, and insures that two electrons of the same spin cannot be in the same place, ie, the wavefunction vanishes whenever the spatial coordinates of two electrons are the same.  It cannot be written simply in terms of the charge density.
+
 *** Basis of wavefunction theory (WFT)
+Hartree-Fock model is much better than Hartree alone, but not particularly good by today's standards.  However, it is
+systematic and rigorous, by requiring exact adherence to the Pauli principle, and it can be systematically improved.  It
+is the foundational basis of all wavefunction theory (WFT) models, all of which are characterized by exactly treating
+exchange.
+
 ** Hartree-Fock-Slater
+In 1951 John Slater introduced an approximation to the Hartree-Fock model that turned out to anticipate a whole new approach to solving the electronic structure problem, called /density functional theory/.  
+
+
+
 *** Basis of density functional theory (DFT)
 \newpage
 * Practical electronic structure

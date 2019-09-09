@@ -1,4 +1,4 @@
-% Created 2019-09-04 Wed 12:30
+% Created 2019-09-09 Mon 11:30
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -45,8 +45,8 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \author{Prof. William F.\ Schneider}
 \maketitle
 
-\section{Lectures 1-2: Review of quantum mechanics}
-\label{sec:org49a7840}
+\section{Lecture 1: Review of quantum mechanics}
+\label{sec:orge0c696f}
 An electron is trapped in a \uline{one-dimensional} box described by the potential (recall 1 bohr = \SI{0.529177}{\AA}, is the atomic unit of length):
 
 \begin{center}
@@ -63,15 +63,24 @@ V(x)=
 \item The ground-state wavefunction for this electron is \(\psi_{1}(x) = cos (\pi x/2)\) (accounting for the fact that we centered the box on the origin). Plot this wavefunction and show that it obeys the proper boundary conditions, has zero nodes, and is normalized.
 
 \item Suppose you approximate the true ground-state wavefunction by \(\phi_{1}(x) = 1 - x^{2}\). Calculate the expectation value of the energy (in Hartree) for this approximation. How does your answer compare to the energy you calculated in (a)?
+\end{enumerate}
 
-\item In class we applied this same idea to the hydrogen atom.  Calculate the expectation value of the approximate radial wavefunction \(\tilde{g}_{\xi=1}\) numerically and in atomic units.
+\section{Lecture 2: Hydrogen atom}
+\label{sec:orge963ac4}
+In class we applied these ideas to the hydrogen atom.  
 
-\item Can you find the ``best'' value of \(\xi\)?  What is it?
+\begin{enumerate}[(a)]
+\item Calculate the expectation value of the approximate radial wavefunction \(\tilde{g}_{\xi=1}\) numerically, in atomic units.
+
+(Undergrads do (b) or (c).  Grad students do both)
+\item Can you find the ``best'' value of \(\xi\)?  What is it?  How does it compare to the exact value?
+
+\item Suppose you instead approximate the radial wavefunction as \(c_1 \tilde{g}_{\xi=1} +c_2 \tilde{g}_{\xi=1.5}\).  What are the energy-optimal values of \(c_1\) and \(c_2\) and the corresponding energy?
 \end{enumerate}
 
 
 \section{Lectures 3: Many-electron atoms}
-\label{sec:org81df1b0}
+\label{sec:org26e266c}
 Hartree’s father performed the first calculations on multi-electron atoms by
 hand. Today those same calculations (much better ones, in fact) can be done in
 the blink of an eye on a computer. In this problem you will use a code first
