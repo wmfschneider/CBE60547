@@ -543,8 +543,8 @@ Coulomb potential---our nemesis!  Decays slowly with distance.  Boundary conditi
  \\
 $\displaystyle       V(r) = -\frac{e^2}{4\pi\epsilon_0}\frac{1}{r}, 0 < r< \infty$ \\
  \\
-$\displaystyle     \hat H = -\frac{\hbar^2}{2m_e}\frac{1}{r^2}\left [
-  \frac{\partial}{\partial r}r^2\frac{\partial}{\partial r}  \right ] +V(r)$ \\
+$\displaystyle     \hat H = -\frac{\hbar^2}{2m_e}\left \{ \frac{1}{r^2}\left [
+  \frac{\partial}{\partial r}r^2\frac{\partial}{\partial r}  \right ] - \frac{\hat{L}^2}{\hbar^2 r^2} \right \} +V(r)$ \\
 \\
 $\displaystyle     \hat L^2 = -\hbar^2 \left [
   \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial \phi^2}+\frac{1}{\sin
@@ -627,19 +627,30 @@ from sympy import var
 
 #fig = plt.gcf()
 
-var('r')
+var("r E")
 max = 10
 
 r = np.linspace(0,max,100)
 Ones = np.array([R_nl(1, 0, x) for x in r],dtype='float')
+E = E_nl(1)
+Ones = Ones + E
 plt.plot(r,Ones,label='1s')
+plt.plot([0,max],[E,E],ls='--')
+
 Twos = np.array([R_nl(2, 0, x) for x in r],dtype='float')
+E = E_nl(2)
+Twos = Twos + E
 plt.plot(r,Twos,label='2s')
+plt.plot([0,max],[E,E],ls='--')
 Twop = np.array([R_nl(2, 1, x) for x in r],dtype='float')
+Twop = Twop + E
 plt.plot(r,Twop,label='2p')
 
-plt.plot([0,max],[0,0],color='black',linestyle=':')
+plt.plot(r,-1/r,color = 'gray', label='potential')
+
+# plt.plot([0,max],[0,0],color='black',linestyle=':')
 plt.xlim(0,max)
+plt.ylim(-1,2)
 plt.xlabel('Distance (a0)')
 plt.ylabel('Wavefunction R(r)')
 
