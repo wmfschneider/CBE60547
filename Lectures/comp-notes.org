@@ -1029,12 +1029,16 @@ One big conceptual short-coming of the Hartree model is that it treats the elect
 Here the coordinate *x* includes both the position and the spin (up or down, \alpha or \beta) of the electron.
 
 Sorry Hartree.  Can fix for He by writing 
-\[\Psi(\bm{x}_1,\bm{x}_2) = \psi_1(\bm{r}_1)\psi_i(\bm{r}_2)\left(\alpha(1)\beta(2) - \beta(1)\alpha(2)\right) \]
-Hey, gentle reader, check, does this work?  
+\[\Psi(\bm{x}_1,\bm{x}_2) = \psi_1(\bm{r}_1)\psi_1(\bm{r}_2)\left(\alpha(1)\beta(2) - \beta(1)\alpha(2)\right) \]
+Hey, gentle reader, check, does this work?  Yes! Exchanging the coordinates changes the sign but keeps everything else the same.  Normalizing is easy if we take \(\psi_1\) to be normalized and recall that spin functions are orthogonal:
+\[\Psi(\bm{x}_1,\bm{x}_2) = \frac{1}{\sqrt{2}}\psi_1(\bm{r}_1)\psi_1(\bm{r}_2)\left(\alpha(1)\beta(2) - \beta(1)\alpha(2)\right) \]
 
-What is the probability of two electrons being in the same place at the same time in the Hartree model?  How about in this wavefunction that obeys the Pauli principle?  Which will have less electrostatic repulsion between the electrons?  This is the magic of /exchange/.  Our models have to incorporate it, at least approximately, to get results better than Hartree.
+Note it is impossible to construct an antisymmetric wavefunction in which both electrons have the same spatial function /and/ the same spin.  Two electrons cannot have the same space and spin variables.
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width 0.25\textwidth
+[[./Images/Pauli.png]]
+#+END_CENTER
 
-Can two electrons have the same wavefunction and the same spin and still obey the Pauli principle?
 ** Slater determinants and Hartree-Fock
 Slater determinant a general way to assure that a wavefunction satisfies Pauli principle:
 \[ \Psi = \frac{1}{n!}\left | \begin{array}{cccc}
