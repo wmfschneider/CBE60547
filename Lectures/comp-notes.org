@@ -1011,9 +1011,14 @@ Presents an obvious difficulty.  If we don't know \(\psi_j\) ahead of time, how 
 5. If the same within a desired tolerance, you are done!
 6. If not, return to step 2, using new \(\psi_i\), and repeat.
 
-Hartree's father did this by hand for all the atoms of the periodic table, tabulating wavefunctions and energies for all the electrons in each.  For instance, for He, he'd solve one equation, self-consistently, to get one \(\psi_1\), and then combine to get \(\Psi(1,2) = \psi_1(1)\alpha(1)\psi_1(2)\beta_2\).  Tedious!  Qualitatively great, quantitatively not so hot.  Mean-field approximation just not so hot.
+Hartree's father did this by hand for all the atoms of the periodic table, tabulating wavefunctions and energies for all the electrons in each.  See Hartree, Douglas R. /The Calculation of Atomic Structures/ (1957). For instance, for He, he'd solve one equation, self-consistently, to get one \(\psi_1\), and then combine to get \(\Psi(1,2) = \psi_1(1)\alpha(1)\psi_1(2)\beta_2\).  Tedious!  Qualitatively great, quantitatively not so hot.  Mean-field approximation just not so hot.
 
 Nonetheless, basic idea of representing many-body wavefunction in terms of "orbitals," of setting up orbital equations, and solving using a self-consistent procedure, remain today at the heart of virtually all electronic structure calculations.  Hurrah Hartree!
+
+#+BEGIN_QUOTE
+/Note: It would be very cool to write a simple Python code to illustrate the SCF procedure for two electrons in an atom. Could be done on a grid or in a basis. See eg [[http://www.users.csbsju.edu/~frioux/scf/scf-he.pdf]]./
+#+END_QUOTE
+
 ** The Pauli principle
 One big conceptual short-coming of the Hartree model is that it treats the electrons as if they were distinguishable. QM says electrons are indistinguishable.  Furthermore, they have a quantized angular momentum, called a spin, that is either up or down, making them fermions.  
 \newpage
@@ -1048,8 +1053,8 @@ Same song and dance:
 For simplicity, restrict ourself to cases with an even number of electrons /N/, all spin-paired, so two electrons in every orbital.  Let index /j/ run over all occupied orbitals. Arrive at *restricted Hartree-Fock* equations:
     \begin{eqnarray}
      \left \{ \hat{h}_i + \hat{v}^{\text{Hartree}}_i \right + \hat{v}^{\text{exchange}}\} \psi_i(\mathbf{r}_1) &=&         \epsilon_i      \psi_i(\mathbf{r}_1) \\
-       \hat{v}^{\text{Hartree}}_i(\mathbf{r}_i) & =& 2 \sum_{j\ne i} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
-       \hat{v}^{\text{exchange}}_i(\mathbf{r}_i) \psi_i(\mathbf{r}_i) & = &\psi_j(\mathbf{r}_i) \sum_{j\ne i} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
+       \hat{v}^{\text{Hartree}}_i(\mathbf{r}_1) & =& 2 \sum_{j\ne i} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
+       \hat{v}^{\text{exchange}}_i(\mathbf{r}_1) \psi_i(\mathbf{r}_1) & = &\psi_j(\mathbf{r}_1) \sum_{j\ne i} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
            \end{eqnarray}
 
 Yikes! Slater determinant wavefunction results in appearance of the "exchange" operator, which turns a \(\psi_i\) into a \(\psi_j\).  Exchange operator is not a simple multiplication.  Must be solved self-consistently, and is much harder to do than the simple Hartree expression. 
@@ -1057,8 +1062,8 @@ Yikes! Slater determinant wavefunction results in appearance of the "exchange" o
 Slight simplification possible, noting that \(i=j\) terms cancel out and slightly redefining operators:
     \begin{eqnarray}
      \left \{ \hat{h}_i + \hat{v}^{\text{Hartree}}_i \right + \hat{v}^{\text{exchange}}\} \psi_i(\mathbf{r}_1) &=&         \epsilon_i      \psi_i(\mathbf{r}_1) \\
-       \hat{v}^{\text{Hartree}}(\mathbf{r}_i) & =& 2 \sum_{j} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
-       \hat{v}^{\text{exchange}}_i(\mathbf{r}_i) \psi_i(\mathbf{r}_i) & = &\psi_j(\mathbf{r}_i) \sum_{j} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
+       \hat{v}^{\text{Hartree}}(\mathbf{r}_1) & =& 2 \sum_{j} \int \left | \psi_j(\mathbf{r}_2) \right      |^2\frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
+       \hat{v}^{\text{exchange}}_i(\mathbf{r}_1) \psi_i(\mathbf{r}_1) & = &\psi_j(\mathbf{r}_1) \sum_{j} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2
            \end{eqnarray}
 
 Now ``Hartree potential'' is the same for all orbitals/electrons. We can define the ``charge density'' to be
@@ -1072,17 +1077,76 @@ This is the Coulomb repulsion of an electron with all electrons, /including itse
 The ``exchange potential'' cancels out the ``self-interaction'' of an electron with itself, and insures that two electrons of the same spin cannot be in the same place, ie, the wavefunction vanishes whenever the spatial coordinates of two electrons are the same.  It cannot be written simply in terms of the charge density.
 
 *** Basis of wavefunction theory (WFT)
-Hartree-Fock model is much better than Hartree alone, but not particularly good by today's standards.  However, it is
+Hartree-Fock model is much better than Hartree alone, widely implemented in codes.   Not particularly good by today's standards.  However, it is
 systematic and rigorous, by requiring exact adherence to the Pauli principle, and it can be systematically improved.  It
 is the foundational basis of all wavefunction theory (WFT) models, all of which are characterized by exactly treating
-exchange.
+exchange. The only approach some people call /ab initio/.
 
 ** Hartree-Fock-Slater
 In 1951 John Slater introduced an approximation to the Hartree-Fock model that turned out to anticipate a whole new approach to solving the electronic structure problem, called /density functional theory/.  
 
+Rewrite exchange part as (and shorten ``exchange'' to ``x''):
+    \begin{eqnarray}
+       \hat{v}^{\text{x}}_i(\mathbf{r}_1) \psi_i(\mathbf{r}_1) & = &\psi_j(\mathbf{r}_1) \sum_{j} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \\
+   & = & \psi_j(\mathbf{r}_1) \sum_{j} \int \psi_j (\mathbf{r}_2) \cdot \psi_i (\mathbf{r}_2)  \frac{1}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \cdot \frac{\psi_i(\mathbf{r_1})\psi_i(\mathbf{r_1})}{\psi_i(\mathbf{r_1})\psi_i(\mathbf{r_1})} \\
+   & = & \left [ \int \frac{\rho_i^{\text{x}}(\mathbf{r}_1;\mathbf{r}_2)}{|\mathbf{r}_2-\mathbf{r}_1|}d\mathbf{r}_2 \right ] \psi_i(\mathbf{r}_1) \\
+  \rho_i^{\text{x}}(\mathbf{r}_1;\mathbf{r}_2)& =& \sum_j \frac{\psi_i(\mathbf{r_1})\psi_j(\mathbf{r_2})\psi_j(\mathbf{r_1})\psi_i(\mathbf{r_2})}{\psi_i(\mathbf{r_1})\psi_i(\mathbf{r_2})}
+           \end{eqnarray}
 
+This looks like the Coulomb expression, but the density thing is different for each orbital /i/.  The ``exchange density'' does have units of charge density enters in the same way, but with minus sign, to the electron density. Suggests that exchange can be thought of as an electron ``hole'' around an electron.  This exchange density has some special properties:
 
+1. Every electron at any position \(\mathbf{r}_1\) has an exchange hole around it equal to one electron of the same spin as itself:
+   \[ \int \rho_i^{\text{x}}(\mathbf{r}_1;\mathbf{r}_2) d\mathbf{r}_2 = 1 \]
+2. The exchange hole exactly cancels out all electrons of the same spin at the electron location.  Ie, it exactly fixes self-interaction:
+   \[\rho_i^{\text{x}}(\mathbf{r}_1;\mathbf{r}_1) = \sum_j |\psi_j(\mathbf{r})^2|\]
+
+Thus, the Coulomb repulsion felt by an electron is diminished by an exchange hole that
+follows the electron around, exactly canceling out the charge at its current location.
+It’s not necessarily spherical and is not the same for all orbitals, but the fact that it
+has these general properties gives hope that it can be approximated somehow.
+
+Hey, I have an idea!  (Actually, Slater had an idea.) What if we had a homogeneous (density the same everywhere) gas of electrons, like electrons of a given density \(\rho\) in an infinite box?  By symmetry the exchange hole would be spherical, and if it must integrate to 1, then it must have a radius (factor of 2 comes from fact we are only including electrons of the /same/ spin):
+\[R_\text{hole} = \left [\frac{4\pi\rho}{3\cdot 2} \right ]^{1/3} \]
+The potential felt by an electron due to this spherical hole is
+\[\hat{v}^\ext{x} = -\frac{1}{2}\int_\text{sphere}\frac{\rho}{r}dr = - \left [\frac{9\pi\rho}{4}\right ]^{1/3} \]
+
+Now, let's assume that an electron in a real system experiences an exchange hole potential at any point exactly like that of a homogeneous electron gas of the same density at that point.  This is the basis of the /Hartree-Fock-Slater/ model:
+\[\hat{v}^\ext{x,HFS}(\mathbf{r}_1) =-\frac{3}{2}\left[\frac{3\rho(\mathbf{r}_1)}{\pi} \right] -C\rho(\mathbf{r}_1)^{1/3} \]
+Some ambiguity as to the right value of the constant /C/, so sometimes just taken as a parameter.
+
+Can now write the /Hartree-Fock-Slater/ equation:
+\[ \left\{ \hat{h} + \hat{v}^\text{Coulomb}[\rho] + \hat{v}^\text{x,HFS}[\rho]\right \} \psi_i(\mathbf{r}) = \epsilon_i\psi_i(\mathbf{r}) \]
+This is *much* simpler to solve than Hartree-Fock equation, because the left hand side is the same for all electrons given a total density \(\rho(\mathbf{r})\). Still must be solved iteratively, using the /self-consistent field/.
+
+*** Notes
+1. Exchange potential scales with the total number of electrons around: more electrons (like near a nucleus) means a more compact, denser exchange hole, more electron exchange ``screening,'' a greater decrease in potential energy.  Further from nucleus, more diffuse exchange hole, less screening. 
+
+2. Screening is not exact, though; does not exactly cancel self-interaction.  Clearest in one-electron case: Coulomb and exchange potentials should then exactly cancel, which they evidently do not!  HFS energy of an H atom is not exactly −0.5 au!
+
+3. From a computational point of view, the exchange potential goes from being the hard thing to evaluate to being the easy thing.  The Coulomb potential takes more effort to evaluate, and tricks are often implemented to simplify that, like fitting the density to an auxiliary basis set.  On the other hand, the 1/3 power makes the exchange potential non-analytic, and solution of the HFS equation (and all DFT methods) involves some form of numerical quadrature.
+
+4. How does the HFS model do?  Pretty darn well, in particular for calculating the structures of things, and it works nicely for things like metals.  Not a bad deal!  Way to go, Slater!
+
+5. Another aside: back in the day, the numerical implementations of X\alpha were very crude and sometimes gave unreasonable results (like linear water!).  Slater still sold it very hard, which did not enamor him or all of DFT to the chemical community, although the physics community was far more accepting.  For many years DFT was unaccepted by chemists, until solid numerical implementations in codes like =Gaussian= brought it to the mainstream.
 *** Basis of density functional theory (DFT)
+Slater's arguments are not rigorous. However, as we will see later, they can be made rigorous.  HFS is the very simplest example of a /density functional theory/ model, because it is a model built entirely on charge density.  Such approach is justifiable.
+
+** Implementations
+Hartree-Fock method /always/ paired with /basis set/ methods and implemented in the codes available at [[http://webmo.net]].
+
+Hartree-Fock-Slater is intrinsically numerical.  Historically interesting is the Herman-Skillman code, that solves the problem numerically on a grid.  Available to us as the =fda= code.
+
+** Correlation
+If solved to reasonable precision, both the Hartree-Fock and Hartree-Fock-Slater models work pretty darn well for things like the shapes of molecules, structures of solids, charge distributions, vibrational frequencies, ....  Don't work so well for computing things that involve making and breaking bonds, like a reaction energy or an activation energy.
+
+Why?  All the models discussed here neglect /electron correlation/, the fact that the
+potential felt by an electron /is/ a function of the instantaneous positions of all the
+other electrons.  The contribution of correlation to absolute energies is not big by
+proportion, but it is very imporant to energy differences.  Any ``orbital'' model cannot
+capture correlation.  It can be introduced systematically and exactly into H-F models (at
+great computational expense) and systematically and approximately into DFT models (at much
+more modest expense). Hence the popularity of DFT!
+
 \newpage
 * Practical electronic structure
 ** Born-Oppenheimer approximation
