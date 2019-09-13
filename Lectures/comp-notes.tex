@@ -1,4 +1,4 @@
-% Created 2019-09-11 Wed 14:51
+% Created 2019-09-13 Fri 09:40
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -68,9 +68,9 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \end{OPTIONS}
 
 \section{Introduction}
-\label{sec:orga5da04a}
+\label{sec:org303aede}
 \subsection{What do we care about?}
-\label{sec:orgbcd8601}
+\label{sec:org5ba72b2}
 
 Things chemistry/materials-related:
 
@@ -89,7 +89,7 @@ Things chemistry/materials-related:
 Things that relate to the \emph{chemical} properties of substances.
 
 \subsection{How are we going to figure these out?  With only a computer?}
-\label{sec:orgea2f92d}
+\label{sec:org2670c9e}
 \begin{description}
 \item[{1926}] Erwin Schr\"{o}dinger equation: \(\hat{H}\Psi=E\Psi\)
 \item[{1929}] Paul Dirac, British physicist
@@ -139,7 +139,7 @@ too much computation.
 \texttt{Computational chemistry} is now so vast it is impossible to cover everything completely.  We limit ourselves to quantum-mechanics-based calculations.
 
 \subsection{Our goals}
-\label{sec:orgd9420df}
+\label{sec:org20f941e}
 \begin{enumerate}
 \item Understand when it is appropriate to use quantum-mechanics methods.
 \item Be able to state the basic theoretical, mathematical, and numerical concepts behind quantum mechanical ``wavefunction theory'' (WFT) and ``density functional theory,'' (DFT) calculations.
@@ -152,7 +152,7 @@ too much computation.
 \end{enumerate}
 
 \subsection{Reading resources}
-\label{sec:org9c85331}
+\label{sec:org85f26ff}
 \begin{itemize}
 \item These notes
 \item Chris Cramer, \emph{Essentials of Computational Chemistry}, Wiley, 2004
@@ -162,39 +162,39 @@ too much computation.
 \end{itemize}
 
 \subsection{Software tools}
-\label{sec:orgf5a2481}
+\label{sec:org62393ff}
 \subsubsection{Notebooks}
-\label{sec:orgf1542ff}
+\label{sec:org2d638f4}
 \begin{itemize}
 \item \href{https://jupyter.org/}{jupyter}/ipython
 \item \href{https://www.gnu.org/software/emacs/}{emacs}/org-mode
 \end{itemize}
 
 \subsubsection{Molecular methods}
-\label{sec:org721b3b0}
+\label{sec:org5988436}
 \begin{itemize}
 \item Avogadro environment \url{http://avogadro.cc/wiki/Main\_Page}
 \item GAMESS code \url{http://www.msg.ameslab.gov/GAMESS/GAMESS.html}
 \end{itemize}
 
 \subsubsection{Supercell methods}
-\label{sec:org858f756}
+\label{sec:orgae2b701}
 \begin{itemize}
 \item Vasp code \url{http://www.vasp.at/}
 \item ASE environment \url{https://wiki.fysik.dtu.dk/ase/}
 \end{itemize}
 
 \subsubsection{Great for getting started}
-\label{sec:org987d94e}
+\label{sec:orgd5820c3}
 \begin{itemize}
 \item Webmo \url{http://www.webmo.net/}
 \end{itemize}
 \newpage
 
 \section{Refresher on Quantum Mechanics}
-\label{sec:org89abf31}
+\label{sec:org4f9f736}
 \subsection{Why quantum mechanics?}
-\label{sec:org2a5c72c}
+\label{sec:org692b0f6}
 Want to describe ``mechanics'' (equations of motion) of atomic-scale things, like electrons in atoms and molecules
 
 Why? These ultimately determine the energy, the shape, and all the properties of matter.
@@ -243,7 +243,7 @@ energy \(E\) and described by:
 \end{eqnarray}
 
 \subsection{Postulates of non-relativistic quantum mechanics}
-\label{sec:org951bf3f}
+\label{sec:orgbcbc5e9}
 \begin{table} 
 \begin{center}
     \caption{\large{Postulates of Non-relativistic Quantum Mechanics}}
@@ -303,7 +303,7 @@ Total energy $E$ & $\hat{H}$ & $\displaystyle -\frac{\hbar^2}{2m}\nabla^2+V({\bf
 \end{table}
 
 \subsection{Notes on constants and units}
-\label{sec:orgf3f9f56}
+\label{sec:orgc23e690}
 Resource on physical constants: \url{http://physics.nist.gov/cuu/Constants/}
 Resource for unit conversions: \url{http://www.digitaldutch.com/unitconverter/}
 
@@ -334,7 +334,7 @@ Energy units
 \end{center}
 
 \subsection{Example: Energy states of a particle in a box}
-\label{sec:org7286d59}
+\label{sec:org3bba165}
 
 System defined by potential experienced by particle:
 
@@ -448,9 +448,9 @@ Properties of solutions:
 \newpage
 
 \section{Hydrogen atom: simplest chemical ``thing''}
-\label{sec:orgbe4e760}
+\label{sec:org5e74a76}
 \subsection{Schr\"{o}dinger equation}
-\label{sec:orgb096ab4}
+\label{sec:orgcfea3c8}
 Place massive nucleus at origin and describe position of electron in spherical coordinates
 
 \begin{center}
@@ -514,7 +514,7 @@ $\displaystyle \langle r \rangle = \left \{ \frac{3}{2} n^2 - \frac{1}{2} l(l+1)
 \end{table}
 
 \subsection{Analytical solutions}
-\label{sec:org361ec4f}
+\label{sec:org5bf2b38}
 \begin{enumerate}
 \item Separate: \(\psi(r,\theta,\phi)=R(r)\Theta(\theta,\phi)\)
 \item Angular equation \(\hat{L}^2\Theta(\theta,\phi) = E_L\Theta(\theta,\phi)\)
@@ -567,7 +567,7 @@ Note darn electron doesn't want to stay in the Coulomb well!
 \end{figure}
 
 \subsection{\emph{Variational principle}}
-\label{sec:orga688c57}
+\label{sec:org31dd955}
 What if we don't know where to look to find the \(R(r)\)?  Or an analytical solution doesn't exist?  Solve numerically.
 
 \(l=0\) case, in atomic units:
@@ -623,7 +623,7 @@ where \(E_0\) is the true ground state energy of the system.
 Consequence of the completeness of the solutions of the Schr\"{o}dinger equation.  Extremely important to us, because we can use the \emph{calculus of variations} to seek energy-optimal \(\Psi\).
 
 \subsection{Basis functions}
-\label{sec:org663d77a}
+\label{sec:org5fd8aed}
 Recognize that we are approximating
 
 \[R_{10}(r) \approx f(r) = \sum_i c_i \phi_i(r)\]
@@ -655,7 +655,7 @@ functionality provided.
 
 There are exceptions. \emph{GPAW} for instance solves the QM equations by finite difference expressions on a numerical grid.  Lends itself to parallelization and may be the future\ldots remains to be seen!
 \subsection{Secular equations}
-\label{sec:orgf0e3de0}
+\label{sec:orged51d49}
 Apply variational principle to two basis functions for the H atom:
 
 \[f(r) =c_1 \phi_1(r) + c_2\phi_2(r) \]
@@ -711,7 +711,7 @@ Same basic idea is used in virtually all calculations on atoms, molecules, \ldot
 of \emph{semi-empirical} and \emph{first principles} methods.
 
 \subsection{Spin}
-\label{sec:orge82bd69}
+\label{sec:orgf47fd3d}
 Can't leave the H atom without mentioning electron \emph{spin}.  Non-relativistic QM gives us three quantum numbers. Relativity teaches that space and time are equivalent. Relativistic H atom solutions introduce a 4th degree of freedom that, under many circumstances, decouples from other three.  Call it the electron \emph{spin}, because it behaves like the electron has an intrinsic quantum angular momentum with magnitude \(s = 1/2\).
 
 \[m_s = +1/2, \quad\text{``spin up''},\quad\alpha\]
@@ -723,13 +723,13 @@ To fully specify state of H atom, must specify all four quantum numbers.
 \newpage
 
 \section{(Two is too) many electrons}
-\label{sec:org02adb58}
+\label{sec:org49c01cd}
 Helium: next (after hydrogen) simplest atom
 
 In a sense, we ``know'' the answer\ldots \(1s^2\).  But is this same \(1s\) as H?  No!  Different nuclear charge, interactions between the two electrons.  This is an approximation and a very convenient shorthand!
 
 \subsubsection{Schr\"{o}dinger equation for He}
-\label{sec:org5da7b84}
+\label{sec:orgd853c24}
 Wavefunction \(\Psi(\mathbf{r}_1,\mathbf{r}_2)\), atom energy \(E\).
 
 Define 1-electron operator for each electron, in atomic units.  Include kinetic energy of electron and its attraction to nucleus of charge \(Z=2\):
@@ -750,7 +750,7 @@ First summation over all electrons, second gets all electron pairs.
 Solutions are many-dimensional functions of the coordinates of all the electrons.  Cannot solve this analytically, although approaches exist (eg quantum Monte Carlo) that can in principle get very close.  Thankfully, though, we can make approximations that work out really well.  We'll look at three historically important ones.
 
 \subsection{The Hartree atom}
-\label{sec:org83c2c83}
+\label{sec:org70e5313}
 Simplest approach is to approximate \(\Psi\). Douglas Hartree (1897-1958) writes:
 \[ \Psi(\mathbf{r}_1,\mathbf{r}_2) \approx \psi_1(\mathbf{r}_1)\cdot \psi_2(\mathbf{r}_2)\]
 So-called Hartree product.  Can't be right.  It gives the probability of two electrons being in the same place as some number \(> 0\)!  Neglects \emph{electron correlation}.  How to apply?
@@ -796,7 +796,7 @@ Nonetheless, basic idea of representing many-body wavefunction in terms of ``orb
 \end{quote}
 
 \subsection{The Pauli principle}
-\label{sec:orga3d7d88}
+\label{sec:org4bfe705}
 One big conceptual short-coming of the Hartree model is that it treats the electrons as if they were distinguishable. QM says electrons are indistinguishable.  Furthermore, they have a quantized angular momentum, called a spin, that is either up or down, making them fermions.  
 \begin{quote}
 \textbf{Pauli principle}: The wavefunction of a multi-particle fermion system must be anti-symmetric to coordinate exchange.
@@ -818,17 +818,32 @@ Note it is impossible to construct an antisymmetric wavefunction in which both e
 \end{center}
 
 \subsection{Slater determinants and Hartree-Fock}
-\label{sec:org28cbd01}
+\label{sec:orgbab9ba8}
 Slater determinant a general way to assure that a wavefunction satisfies Pauli principle:
-\[ \Psi = \frac{1}{n!}\left | \begin{array}{cccc}
+\[ \Psi = \frac{1}{\sqrt{n!}}\left | \begin{array}{cccc}
 \psi_1(1) & \psi_2(1) & \cdots & \psi_n(1) \\
 \psi_1(2) & \psi_2(2) & \cdots & \psi_n(2) \\
 \vdots & \vdots & \ddots & \vdots \\
 \psi_1(n) & \psi_2(n) & \cdots & \psi_n(n) \end{array} \right | = |\psi_1\psi_2\cdots\psi_n\rangle \]
 Swapping rows swaps coordinates and, by rules of determinants, changes sign.
 
+Let's compare.  Two spin-paired electrons in two different orbitals:
+\[ \left | \begin{array}{cc}
+\psi_1(1)\alpha(1) & \psi_2(1) \beta(1) \\
+\psi_1(2)\alpha(2) & \psi_2(2) \beta(2)\end{array} \right |
+ = \psi_1(1)\psi_2(2)\alpha(1)\beta(2)-\psi_2(1)\psi_1(2)\beta(1)\alpha(2) \]
+Antisymmetric?  What happens when the two electrons have the same spatial coordinate?
+
+Two spin-aligned electrons in two different orbitals:
+\[ \left | \begin{array}{cc}
+\psi_1(1)\alpha(1) & \psi_2(1) \alpha(1) \\
+\psi_1(2)\alpha(2) & \psi_2(2) \alpha(2) \end{array} \right |
+ = \left (\psi_1(1)\psi_2(2)-\psi_2(1)\psi_1(2)\right ) \alpha(1)\alpha(2) \]
+What happens now?
+
+Exchange guarantees that two electrons of same spin cannot be in the same place!  No such guarantee for electrons of opposite spin.
 \subsection{Hartree-Fock equation}
-\label{sec:org30f1a16}
+\label{sec:org4f3a564}
 Same song and dance:
 \begin{enumerate}
 \item Apply variational principle to Slater determinant. The best \(\psi_i\) are those that minimize the expectation value of the energy.
@@ -862,14 +877,14 @@ This is the Coulomb repulsion of an electron with all electrons, \emph{including
 The ``exchange potential'' cancels out the ``self-interaction'' of an electron with itself, and insures that two electrons of the same spin cannot be in the same place, ie, the wavefunction vanishes whenever the spatial coordinates of two electrons are the same.  It cannot be written simply in terms of the charge density.
 
 \subsubsection{Basis of wavefunction theory (WFT)}
-\label{sec:org5c41603}
+\label{sec:org65ee154}
 Hartree-Fock model is much better than Hartree alone, widely implemented in codes.   Not particularly good by today's standards.  However, it is
 systematic and rigorous, by requiring exact adherence to the Pauli principle, and it can be systematically improved.  It
 is the foundational basis of all wavefunction theory (WFT) models, all of which are characterized by exactly treating
 exchange. The only approach some people call \emph{ab initio}.
 
 \subsection{Hartree-Fock-Slater}
-\label{sec:org51cbcf9}
+\label{sec:org13e54c1}
 In 1951 John Slater introduced an approximation to the Hartree-Fock model that turned out to anticipate a whole new approach to solving the electronic structure problem, called \emph{density functional theory}.  
 
 Rewrite exchange part as (and shorten ``exchange'' to ``x''):
@@ -908,7 +923,7 @@ Can now write the \emph{Hartree-Fock-Slater} equation:
 This is \textbf{much} simpler to solve than Hartree-Fock equation, because the left hand side is the same for all electrons given a total density \(\rho(\mathbf{r})\). Still must be solved iteratively, using the \emph{self-consistent field}.
 
 \subsubsection{Notes}
-\label{sec:orgca378cf}
+\label{sec:orgc514b12}
 \begin{enumerate}
 \item Exchange potential scales with the total number of electrons around: more electrons (like near a nucleus) means a more compact, denser exchange hole, more electron exchange ``screening,'' a greater decrease in potential energy.  Further from nucleus, more diffuse exchange hole, less screening.
 
@@ -921,11 +936,13 @@ This is \textbf{much} simpler to solve than Hartree-Fock equation, because the l
 \item Another aside: back in the day, the numerical implementations of X\(\alpha\) were very crude and sometimes gave unreasonable results (like linear water!).  Slater still sold it very hard, which did not enamor him or all of DFT to the chemical community, although the physics community was far more accepting.  For many years DFT was unaccepted by chemists, until solid numerical implementations in codes like \texttt{Gaussian} brought it to the mainstream.
 \end{enumerate}
 \subsubsection{Basis of density functional theory (DFT)}
-\label{sec:orgad0f7e3}
+\label{sec:org59baf84}
 Slater's arguments are not rigorous. However, as we will see later, they can be made rigorous.  HFS is the very simplest example of a \emph{density functional theory} model, because it is a model built entirely on charge density.  Such approach is justifiable.
 
 \subsection{Implementations}
-\label{sec:orgc739c2a}
+\label{sec:orgfcf9368}
+\subsubsection{\texttt{GAMESS}}
+\label{sec:orgdd8e08b}
 Hartree-Fock method \emph{always} paired with \emph{basis set} methods and implemented in the codes available at \url{http://webmo.net}.  Example \texttt{GAMESS} input for Hartree-Fock Ar:
 
 \begin{verbatim}
@@ -954,10 +971,30 @@ Ar 18 0.00000000 0.00000000 0.00000000
  $END
 \end{verbatim}
 
-Hartree-Fock-Slater is intrinsically numerical.  Historically interesting is the Herman-Skillman code, that solves the problem numerically on a grid.  Available to us as the \texttt{fda} code, see \url{https://www.chemsoft.ch/qc/fda.htm}.
+\subsubsection{\texttt{FDA}}
+\label{sec:orgc95f384}
+Hartree-Fock-Slater is intrinsically numerical.  Historically interesting is the Herman-Skillman code, that solves the problem numerically on a grid.  Available to us as the \texttt{fda} code, see \url{https://www.chemsoft.ch/qc/fda.htm} and \url{./Resources/00READ.ME}.
+
+Ar input:
+\begin{verbatim}
+300 0.0001 30.0
+50 0.00001 0.10 0.50  0.682 0.0042
+18.0 5
+1 0 1.0 1.0
+2 0 1.0 1.0
+2 1 3.0 3.0
+3 0 1.0 1.0
+3 1 3.0 3.0
+\end{verbatim}
+
+Output at \url{./Resources/Ar.out}.
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{./Images/Ar-wave-functions.png}
+\end{center}
 
 \subsection{Performance}
-\label{sec:org240226e}
+\label{sec:orgd049020}
 One metric is the ability to predict ionization energies.  
 \begin{quote}
 \uline{Koopman’s theorem}: The negative of the energy of an occupied orbital (\(-\epsilon_i)\)) approximates the energy to extract an electron from that orbital, ie to ionize the system.   The energy of a virtual orbital approximates the energy to add an additional electron to a system, i.e. the electron affinity.  Assumes no relaxation of orbitals.  
@@ -970,7 +1007,7 @@ One metric is the ability to predict ionization energies.
 \end{figure}
 
 \subsection{Correlation}
-\label{sec:orgcb13c08}
+\label{sec:orge6a2b6a}
 If solved to reasonable precision, both the Hartree-Fock and Hartree-Fock-Slater models work pretty darn well for things like the shapes of molecules, structures of solids, charge distributions, vibrational frequencies, \ldots{}.  Don't work so well for computing things that involve making and breaking bonds, like a reaction energy or an activation energy.
 
 Why?  All the models discussed here neglect \emph{electron correlation}, the fact that the
@@ -983,20 +1020,31 @@ more modest expense). Hence the popularity of DFT!
 
 \newpage
 \section{Practical electronic structure}
-\label{sec:org9496eaa}
+\label{sec:orgb9d8eac}
 \subsection{Born-Oppenheimer approximation}
-\label{sec:org3b78f7a}
+\label{sec:orgf21d917}
 In principle all nuclei and electrons should be described quantum mechanically.  For \ce{H2},
 for instance, true wavefunction would be a function of the positions of nuclei and
-electrons, \(\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{1},\mathbf{R}_{2})\).
+electrons, \(\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{\alpha},\mathbf{R}_{\beta})\).
+
+\begin{center}
+\includegraphics[width=0.3\textwidth]{./Images/BornOppenheimer.png}
+\end{center}
 
 Nuclei much heavier than electrons and move much more slowly.  Assume nuclei are fixed in
 space (``clamped'') and electrons move in static field of those electrons. Equivalent to
 assuming that nuclear kinetic energy is decoupled from electron dynamics.
 Schr\"{o}dinger equation becomes parameteric in nuclear positions; solutions
-\(E(\mathbf{R}_{1},\mathbf{R}_{2})\) define a potential energy surface (PES).
+\(E(\mathbf{R}_{\alpha},\mathbf{R}_{\beta})\) define a potential energy surface (PES).
+
+\[E_\text{PES}(\mathbf{R}_{\alpha},\mathbf{R}_{\beta}) = E_\text{Schr} +\frac{1}{2}\sum_{\alpha,\beta}\frac{Z_\alpha Z_\beta }{|\mathbf{R}_{\beta} - \mathbf{R}_{\alpha}|}\]
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{./Images/PES.png}
+\end{center}
+
 \subsection{Model chemistry}
-\label{sec:org7acf14e}
+\label{sec:org00c77b6}
 Essentially always start with
 \begin{equation}
 \left \{ \hat{h} +v_{\text{Coulomb}}[\rho] + v_\text{exchange}[\psi_{i}] + v_\text{correlation}[\psi_{i}]\right\}\psi_i(\mathbf{r}) =\epsilon_i \psi_i(\mathbf{r})
@@ -1017,15 +1065,17 @@ CI & exact & variational & specialized\\
 \hline
 \textbf{Density functional theory} (DFT) &  &  & \\
 Hartree-Fock-Slater & \([\rho^{{4/3}}]\) & neglect & historic\\
-Local density approximation & \([\rho]\) & \([\rho]\) & general purpose solids\\
+Local density approximation & \([\rho^{{4/3}}]\) & \([\rho]\) & general purpose solids\\
 (LDA) &  &  & \\
-Generalized gradient approximation & \([\rho,\nabla\rho]\) & \([\rho,\nabla\rho]\) & general purpose\\
+Generalized gradient approximation & \([\rho,\nabla\rho]\) & \([\rho,\nabla\rho]\) & general purpose solids/surfaces\\
 (GGA) &  &  & \\
+``Improved'' GGA & \([\rho,\nabla\rho]\) & \([\rho,\nabla\rho]\) & general purpose\\
+(RPBE, BEEF, Mxx) &  &  & \\
 Hybrid & \(\approx\) exact & \([\rho,\nabla\rho]\) & general purpose molecules\\
+(B3LYP, PBE0, HSE06) &  &  & specialty solids/surfaces\\
 \hline
 \end{tabular}
 \end{center}
-
 The choice of the electronic structure model is the most fundamental approximation in
 applying these methods.  Determined from experience and need.
 
@@ -1035,32 +1085,32 @@ Specification in GAMESS is a bit arcane.  Default is Hartree-Fock. To specify DF
 \end{verbatim}
 
 \subsection{Open-shell systems}
-\label{sec:orged61040}
+\label{sec:org96cc6a3}
 Model has to be generalized somewhat to deal with systems with unpaired electrons.
 
 \subsection{Bring back the basis sets}
-\label{sec:orgdd5e560}
+\label{sec:org85a91e0}
 The one-electron HF or HFS equations give us defining equations for
 the energy-optimal orbitals, but they aren't convenient to solve for
 anything more complicated than an atom. What to do? Reintroduce idea
 of a basis set.
 
 \subsection{Semi-empirical methods}
-\label{sec:org35d0ec6}
+\label{sec:orgff45d49}
 \subsection{Examples}
-\label{sec:org923a72a}
+\label{sec:org5a2b1bc}
 \subsubsection{H2}
-\label{sec:org5b38b1c}
+\label{sec:orgaee355e}
 \subsubsection{HF}
-\label{sec:orgb66d975}
+\label{sec:org8bcd328}
 \subsection{Symmetry}
-\label{sec:org0425acd}
+\label{sec:org2b8d4ee}
 \subsection{Population analysis}
-\label{sec:orgddd0aa0}
+\label{sec:org77697ef}
 \subsection{Molecular orbital (MO) diagrams}
-\label{sec:orgb27ce72}
+\label{sec:org898a37f}
 \subsection{Gaussian basis sets}
-\label{sec:orgfafdfef}
+\label{sec:orgd54c6a8}
 Gaussian functions (\(e^{-\zeta|\mathbf{r}|^2}\)) are the most popular choice for atom-centered basis sets.  They do not efficiently represent molecular wavefunctions, but one- and two-electron integrals in  WFT  can be solved analytically over Gaussians.
 
 Other choices, like Slater functions (\(e^{-\zeta|\mathbf{r}|}\)) are possible but require numerical quadrature.
@@ -1082,10 +1132,10 @@ Common notation
 \end{itemize}
 
 \subsection{Electron cores}
-\label{sec:org1ac7adc}
+\label{sec:orgb9b73ca}
 
 \subsection{Performance details of SCF methods}
-\label{sec:org9a84ab0}
+\label{sec:org769cd56}
 Basis is often \emph{orthonormalized} to eliminate overlap from H-F-R equation; allows equations to be solved by matrix diagonalization.
 
 Initial density matrix \(\mathbf{P}\) are obtained by solving an approximate Hamiltonian (like
@@ -1110,7 +1160,7 @@ Controlled in GAMESS using the \texttt{\$SCF} group.
 \end{verbatim}
 \newpage
 \section{Potential energy surfaces}
-\label{sec:org20280b6}
+\label{sec:org1a76b6b}
 The potential energy surface (``PES'') is the sum of the repulsive energy of the nuclei and the kinetic and potential energies of all the electrons:
 \begin{center}
 \begin{equation}
@@ -1119,7 +1169,7 @@ E_\text{PES}(\mathbf{R_\alpha},\mathbf{R_\beta},\ldots) =E_\text{elec} +\sum_{\a
 \end{center}
 
 \subsection{Specifying atomic positions}
-\label{sec:org4999aaa}
+\label{sec:org95017c0}
 
 \begin{center}
 \begin{center}
@@ -1128,7 +1178,7 @@ E_\text{PES}(\mathbf{R_\alpha},\mathbf{R_\beta},\ldots) =E_\text{elec} +\sum_{\a
 \end{center}
 
 \subsubsection{Cartesian}
-\label{sec:orgafc456e}
+\label{sec:org88047a4}
 Computationally straightforward but don't correspond with our physical notion of bonds,
 bends, etc.  Easiest to get out of a piece of software.  A molecule has \(3 N-6\) internal degrees of freedom (\(3N-5\) if linear), but Cartesians specify \(3N\).  The extra values correspond to the location of the center of mass and molecular oriendation.  Codes will typically center and reorient the Cartesions.
 
@@ -1149,7 +1199,7 @@ H     1.0    -2.09983     1.28759    -0.40187
  $END
 \end{verbatim}
 \subsubsection{Internal coordinates}
-\label{sec:orgc2bebf9}
+\label{sec:org7d339ec}
 These provide a more intuitive representation and can be convenient when building molecules by hand.  In codes like \texttt{GAMESS}, most commonly defined using ``z-matrix'' notation. Specify  each atom in terms of its distance, angle, and dihedral angle with three previous atoms.
 
 In Gamess, would specify z-matrix for \ce{FCH2CH2F} like this:
@@ -1182,7 +1232,7 @@ $END
 Particularly convenient when you'd like to ``scan'' over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.
 
 \subsection{Features of potential energy surfaces}
-\label{sec:orgf2d02f4}
+\label{sec:orgec52dcc}
 \begin{center}
 \begin{center}
 \includegraphics[width=0.75\textwidth]{./Images/PES.pdf}
@@ -1190,99 +1240,99 @@ Particularly convenient when you'd like to ``scan'' over the value of some coord
 \end{center}
 
 \subsubsection{Gradients}
-\label{sec:orga6d53a9}
+\label{sec:org7e48f4f}
 
 \subsubsection{Hessians}
-\label{sec:org1bb244e}
+\label{sec:org944784a}
 
 \subsubsection{Minima}
-\label{sec:org8de00c2}
+\label{sec:org1d07f2f}
 
 \begin{itemize}
 \item Local
-\label{sec:org8346932}
+\label{sec:org9ae94cc}
 
 \item Global
-\label{sec:orgb964977}
+\label{sec:orgb274ff5}
 \end{itemize}
 
 \subsubsection{Saddle points}
-\label{sec:org37d82ba}
+\label{sec:org97ba339}
 
 \begin{itemize}
 \item First-order
-\label{sec:org0f63161}
+\label{sec:org4e6bbe1}
 
 \item Higher order
-\label{sec:org7ac0923}
+\label{sec:orge8c7f3e}
 \end{itemize}
 
 \subsubsection{Minimum energy paths}
-\label{sec:orgd89f028}
+\label{sec:org66e6792}
 
 \subsection{Energy gradients and second derivatives}
-\label{sec:org676c586}
+\label{sec:orgbdcaa7f}
 
 \subsection{Optimization algorithms}
-\label{sec:org01059b9}
+\label{sec:org6980dab}
 \subsubsection{Steepest descent}
-\label{sec:org80633aa}
+\label{sec:org0d263db}
 
 \subsubsection{Conjugate gradient}
-\label{sec:orge56c9cc}
+\label{sec:orga39d6af}
 
 \subsubsection{Quasi-Newton Raphson}
-\label{sec:org7db8b51}
+\label{sec:orgae9d837}
 
 
 \subsubsection{Direct inversion in the iterative subspace (DIIS)}
-\label{sec:orgeee3813}
+\label{sec:org1c69a97}
 \subsubsection{Trudge}
-\label{sec:org0d6887a}
+\label{sec:org6f348c8}
 \subsubsection{Genetic algorithm}
-\label{sec:orgbb5fb4c}
+\label{sec:org5d221bd}
 \subsubsection{Convergence criteria}
-\label{sec:org76c91e2}
+\label{sec:org1fbd4b9}
 
 \subsection{Geometry optimization algorithms}
-\label{sec:orgb13f05d}
+\label{sec:orgd39de3b}
 
 \subsection{Efficient coordinate systems}
-\label{sec:org6898236}
+\label{sec:org8cf9411}
 \subsection{Performance of models}
-\label{sec:org0620070}
+\label{sec:org55022fd}
 \subsection{Vibrational frequencies}
-\label{sec:org7187b78}
+\label{sec:org3fa50bc}
 \subsection{Transition states}
-\label{sec:orgdfffa8f}
+\label{sec:orge4f6342}
 \subsection{Intrinsic reaction coordinates}
-\label{sec:org40fd02b}
+\label{sec:orgaece227}
 \newpage
 
 \subsection{Molecular dynamics}
-\label{sec:orgf4fe1f5}
+\label{sec:org74bf878}
 
 \section{\texttt{GAMESS} Cheat Sheet}
-\label{sec:org9e63e6a}
+\label{sec:org3065613}
 \subsection{Specifying electronic configuration}
-\label{sec:org27f7e24}
+\label{sec:org907d642}
 \subsubsection{Closed shell (default)}
-\label{sec:org1a3d3ba}
+\label{sec:org90fe194}
 \begin{verbatim}
  $CONTRL RHFTYP=RHF MULT=1 $END
 \end{verbatim}
 
 \subsubsection{Open-shell (n = spin-multiplicity = \# unpaired electrons + 1)}
-\label{sec:orgf3b5ed8}
+\label{sec:org8a9a2ea}
 \begin{verbatim}
  $CONTRL RHFTYP=UHF MULT=n $END
 \end{verbatim}
 \subsection{Specifying electronic structure method}
-\label{sec:org2fa0d54}
+\label{sec:orge70a90b}
 \subsubsection{Hartree-Fock (default)}
-\label{sec:org28c67be}
+\label{sec:orgc892d63}
 \subsubsection{DFT}
-\label{sec:org70e0b43}
+\label{sec:org2511d83}
 \begin{verbatim}
  $CONTRL DFTTYP=xxx $END
 \end{verbatim}
@@ -1302,7 +1352,7 @@ Hybrid DFT & B3LYP\\
 \end{tabular}
 \end{center}
 \subsubsection{Beyond Hartree-Fock}
-\label{sec:org70f3e6c}
+\label{sec:org92b89af}
 Many methods available.  See manual for full description.  Most common is second-order perturbation theory, ``MP2,'' :
 \begin{verbatim}
  $CONTRL MPLEVL=2 $END
@@ -1314,7 +1364,7 @@ If you want a very high quality number, have a big computer and time to wait, tr
 \end{verbatim}
 
 \subsection{Specifying basis sets}
-\label{sec:orgbef60b0}
+\label{sec:org4464061}
 Gamess uses atom-centered basis functions.  A ``basis set'' is a set of such functions for many atoms, all constructed (hopefully) at a consistent level of accuracy. Many such basis sets exist and are coded into Gamess, and for the daring new basis sets can be input by hand.  Choice of basis set is always a compromise between accuracy and computational cost.  In general should always check sensitivity of property of interest to basis set.
 
 Specified in \$BASIS group.  Some common choices, in increasing level of sophistication:
@@ -1348,10 +1398,10 @@ Hay-Wadt & Split valence + core potential & GBASIS=HW\\
 \end{center}
 
 \subsection{Specifying geometry}
-\label{sec:org6abef8f}
+\label{sec:org06912a5}
 Again \texttt{GAMESS} has a number of options, several of which are arcane and seldom used.  Most common are Cartesian and z-matrix.  Here I give examples ignoring any symmetry the molecule might have.
 \subsubsection{Cartesian}
-\label{sec:orgba49f1f}
+\label{sec:org2888bb7}
 Specify an atom name, atomic number, and cartesian positions in \AA{}.  Over-specified, so code will typically center and reorient.  Following is for gauche difluoroethane, \ce{FCH2CH2F}.
 \begin{verbatim}
  $CONTRL COORD=CART $END
@@ -1370,7 +1420,7 @@ H     1.0    -2.09983     1.28759    -0.40187
 \end{verbatim}
 
 \subsubsection{Z-matrix}
-\label{sec:orgb26a778}
+\label{sec:orgc188ec7}
 Specify atom name, number of atom it is connected to, distance to that atom, number of atom it makes an angle with, value of the angle, number of the atom it makes a dihedral with, and value of the dihedral angle.  Values may be given directly or as variables, followed by list of variable specifications.  In \texttt{Gamess}, would specify z-matrix for \ce{FCH2CH2F} like this:
 \begin{verbatim}
 $CONTRL COORD=ZMT $END
@@ -1401,7 +1451,7 @@ $END
 Particularly convenient when you'd like to ``scan'' over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.  In general, though, variables should not be reused.
 
 \subsection{Specify calculation type}
-\label{sec:org9ff38ba}
+\label{sec:org102dc65}
 Specified in \$CONTRL group by RUNTYP flag:
 
 \begin{center}
@@ -1419,7 +1469,7 @@ Intrinisc reaction coordinate & IRC\\
 
 Note too that specifying EXETYP=CHECK will check your input without actually running the job.
 \subsection{Geometry optimization coordinate system}
-\label{sec:orgbe58da1}
+\label{sec:org3aa4112}
 By default, \texttt{GAMESS} performs optimizations in Cartesian coordinates.
 
 To use z-matrix coordinates, specify
@@ -1433,7 +1483,7 @@ To have \texttt{Gamess} automatically create a set of appropriate ``delocalized'
  $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
 \end{verbatim}
 \subsection{Performing a transition state search}
-\label{sec:org124fd7a}
+\label{sec:orga3b9095}
 Transition states are always more challenging to find than optimal geometries.  Always \texttt{at least} a three-step procedure:
 
 \begin{enumerate}
@@ -1443,95 +1493,95 @@ Transition states are always more challenging to find than optimal geometries.  
 \end{enumerate}
 
 \section{Plane waves and core potentials}
-\label{sec:orgb3fe870}
+\label{sec:orgdbd9f37}
 
 \subsection{Hydrogen atom in a box}
-\label{sec:orgd7f4eae}
+\label{sec:org14f37fa}
 
 \subsection{Periodic boundary conditions}
-\label{sec:org57706e1}
+\label{sec:org34fb4e3}
 
 \subsection{Supercells - Cartesian and fractional coordinates}
-\label{sec:org644ca4d}
+\label{sec:org9757b77}
 
 \subsection{Gaussian vs. Vasp}
-\label{sec:orgdea7719}
+\label{sec:org06a5cb1}
 
 \subsection{Vasp POSCAR}
-\label{sec:org3ae7282}
+\label{sec:org6ca7b9c}
 
 \subsection{Vasp INCAR}
-\label{sec:org8e8429e}
+\label{sec:orgcb5a162}
 
 \subsection{Core electron treatment}
-\label{sec:org215bdde}
+\label{sec:orgd33d2fb}
 
 \subsubsection{OPW}
-\label{sec:orga7effdc}
+\label{sec:orgca3a64e}
 
 \subsubsection{PP}
-\label{sec:org5a06962}
+\label{sec:org3153353}
 
 \subsubsection{PAW}
-\label{sec:org61d686c}
+\label{sec:orgfc58d49}
 
 \subsection{Comparing energies between calculations}
-\label{sec:orgc8f29bb}
+\label{sec:orgbd4cfc5}
 
 \subsection{Wavefunctions and charge densities}
-\label{sec:org5189fcd}
+\label{sec:orgb1841e2}
 
 \subsection{Exploring potential energy surfaces}
-\label{sec:org7eda46b}
+\label{sec:orgd691320}
 \newpage
 \section{Periodic electronic structure}
-\label{sec:orgcb430ff}
+\label{sec:orgf2d5b37}
 \subsection{Isolated vs. periodic systems}
-\label{sec:org1316555}
+\label{sec:orgb2ae965}
 \subsection{Bloch's theorem and qualitative band structure}
-\label{sec:org19d9de7}
+\label{sec:org2ad76df}
 \subsection{Band folding}
-\label{sec:org95ec194}
+\label{sec:org782d7f5}
 \subsection{Multi-dimensional periodicity}
-\label{sec:org27b2429}
+\label{sec:orgc38f973}
 \subsection{Density of statues}
-\label{sec:org48ca0d8}
+\label{sec:orgf01e0ba}
 \subsection{Bravais lattices}
-\label{sec:org350b0f0}
+\label{sec:orga240c79}
 \subsection{Quantitative supercell calculations}
-\label{sec:orgf41948b}
+\label{sec:orgbbd5a12}
 \subsection{Brillouin zone integration}
-\label{sec:org26646f2}
+\label{sec:org912ca1d}
 \subsubsection{k-point sampling}
-\label{sec:org658e926}
+\label{sec:org3946846}
 \subsubsection{Fermi smearing}
-\label{sec:orgf762718}
+\label{sec:org4bfe7a2}
 \newpage
 \section{Practical supercell calculations}
-\label{sec:orgee7fa78}
+\label{sec:org6598c95}
 \newpage
 \section{Surfaces}
-\label{sec:org160e4db}
+\label{sec:org69e2b11}
 \subsection{Surface planes}
-\label{sec:orgca081c1}
+\label{sec:org34e9be9}
 \subsection{Slab models}
-\label{sec:org79726ad}
+\label{sec:org16d19f7}
 \subsection{Surface energy}
-\label{sec:orgfd7a612}
+\label{sec:org3e15622}
 \subsection{Surface potentials and Fermi energies}
-\label{sec:orga92734e}
+\label{sec:org54f38ba}
 \subsection{Surface adsorption}
-\label{sec:org70e6725}
+\label{sec:org9aec80a}
 \subsection{Coverage-dependent adsorption}
-\label{sec:orged9a217}
+\label{sec:orgb2e3afe}
 \subsection{Reaction barriers}
-\label{sec:orga1c3e34}
+\label{sec:org123a04c}
 
 \newpage
 \section{First-principles thermodynamics}
-\label{sec:org719d2b2}
+\label{sec:orga902ee5}
 \subsection{Connection Between QM and Thermodynamics}
-\label{sec:orgab8429a}
+\label{sec:org20692dc}
 We have focused to this point on the many approaches and details of calculating
 the \emph{internal electronic energy} of a single molecule, that is, the energy
 associated with taking infinitely separated constituent nuclei and electrons at
@@ -1594,7 +1644,7 @@ a system following this distribution.
 \end{figure}
 
 \subsubsection{Averages and partition functions}
-\label{sec:org7d778dd}
+\label{sec:org1811c0d}
 Let's use this to calculate the internal energy \(U\) of a molecule at some
 temperature.
 \begin{equation}
@@ -1615,7 +1665,7 @@ partition function:
 All thermodynamic quantities can be written in terms of the partition function!
 
 \subsubsection{Harmonic oscillator example}
-\label{sec:org7f1075c}
+\label{sec:org97c085b}
 Harmonic oscillator is a reasonable model of a molecular vibration.  Energy
 spectrum given by
 \begin{equation}
@@ -1644,7 +1694,7 @@ Plot partition function vs \(T\), increasing function.
 \noindent Entropy
 
 \subsection{Molecular Ideal Gas}
-\label{sec:org6eeb2e2}
+\label{sec:orga7eab19}
 Nice example above for a simple model.  To get thermodynamics of an ideal gas,
 in principle need to sum over all the types of energy states (translational,
 rotational, vibrational, \ldots{}) of every molecule.  Seemingly impossible task.
@@ -1700,7 +1750,7 @@ Have to somehow \emph{model} these motions and have to use our quantum
 mechanical results to parameterize the models.
 
 \subsubsection{Translational partition function}
-\label{sec:orgad4a722}
+\label{sec:org1180a3e}
 Need a model molecules freely translating about in a box.  How about the
 \emph{particle in a box}?
 \begin{equation}
@@ -1726,39 +1776,39 @@ monatomic gas:
 
 
 \subsubsection{Rotational partition function}
-\label{sec:org0c298a7}
+\label{sec:org9385db6}
 Model molecule as a rigidly rotating body.  Body has three orthogonal moments
 of inertia \(I\) determined by the molecular structure.
 
 \subsubsection{Vibrational partition function}
-\label{sec:orgbabbc61}
+\label{sec:org46f3040}
 See harmonic oscillator above
 
 \subsubsection{Electronic partition function}
-\label{sec:org785d7d9}
+\label{sec:orgbc264f4}
 Governed by Fermi-Dirac distribution
 Electronic degeneracy
 
 
 \subsection{CO T-dependent thermo example}
-\label{sec:orgc3e4c5a}
+\label{sec:org7d78b9c}
 \newpage
 \section{Implicit solvation}
-\label{sec:org5e10284}
+\label{sec:org5282765}
 \section{Density functional theory}
-\label{sec:org1428b29}
+\label{sec:org970b011}
 \subsection{Electron density \(\rho\) as fundamental quantity}
-\label{sec:org2343d93}
+\label{sec:org21a4ea5}
 \subsection{Thomas-Fermi-Dirac model}
-\label{sec:orge90de04}
+\label{sec:org481396d}
 \subsection{Hartree-Fock-Slater model}
-\label{sec:orgbdf1f3a}
+\label{sec:org946fe6f}
 \subsection{Hohenberg-Kohn theorems}
-\label{sec:orgbf634ce}
+\label{sec:org442c5d5}
 \subsection{Kohn-Sham construction}
-\label{sec:orga1d15af}
+\label{sec:org44a7bb6}
 \subsection{Exchange-correlation functionals}
-\label{sec:org0e983a6}
+\label{sec:orga17c778}
 So Kohn et al. showed that the DFT approach is theoretically well-grounded and
 provided one way to practically apply it. Promise is that if we can find an
 approximation to the (unknown) true \(v_\text{xc}\) with the right balance of simplicity
@@ -1769,7 +1819,7 @@ How to proceed? Lots of approaches, and jargon here is at least as bad as in
 wavefunction-based methods. Perdew 2006 describes the ``Jacob's ladder'' of
 approximations:
 \subsubsection{LDA}
-\label{sec:orga45335d}
+\label{sec:org9cdc823}
 One well-defined limit is the homogeneous electron gas, and this is the usual
 starting point for modern approximate DFT methods. Assume exchange and
 correlation potentials at any given point depend only on the value of \(\rho\) there
@@ -1790,30 +1840,30 @@ calculating accurate bond energies, typically overbinding. Also tends to
 underestimate the HOMO-LUMO gap in molecules and analogous band gap in solids.
 
 \subsubsection{GGA}
-\label{sec:org0d93e3e}
+\label{sec:org657b157}
 
 \subsubsection{Meta-GGA}
-\label{sec:orgf5b5449}
+\label{sec:orgd0ef02a}
 
 \subsubsection{Hyper GGA and hybrid functionals}
-\label{sec:orgdf027e6}
+\label{sec:org34f82cb}
 
 \begin{itemize}
 \item ``Screened'' exchange
-\label{sec:org004f6f0}
+\label{sec:org15bf03b}
 \end{itemize}
 
 \subsubsection{Beyond hyper GGA}
-\label{sec:orga043542}
+\label{sec:orgfc71c12}
 
 \subsection{Implementations}
-\label{sec:org9181dfe}
+\label{sec:org1b1c0c8}
 
 \subsection{Performance}
-\label{sec:orgfec10ab}
+\label{sec:orgb034e9e}
 \newpage
 \newpage
 \section{Electron correlation methods}
-\label{sec:org5b9b32b}
+\label{sec:org0f59518}
 \newpage
 \end{document}

@@ -1041,13 +1041,28 @@ Note it is impossible to construct an antisymmetric wavefunction in which both e
 
 ** Slater determinants and Hartree-Fock
 Slater determinant a general way to assure that a wavefunction satisfies Pauli principle:
-\[ \Psi = \frac{1}{n!}\left | \begin{array}{cccc}
+\[ \Psi = \frac{1}{\sqrt{n!}}\left | \begin{array}{cccc}
 \psi_1(1) & \psi_2(1) & \cdots & \psi_n(1) \\
 \psi_1(2) & \psi_2(2) & \cdots & \psi_n(2) \\
 \vdots & \vdots & \ddots & \vdots \\
 \psi_1(n) & \psi_2(n) & \cdots & \psi_n(n) \end{array} \right | = |\psi_1\psi_2\cdots\psi_n\rangle \]
 Swapping rows swaps coordinates and, by rules of determinants, changes sign.
 
+Let's compare.  Two spin-paired electrons in two different orbitals:
+\[ \left | \begin{array}{cc}
+\psi_1(1)\alpha(1) & \psi_2(1) \beta(1) \\
+\psi_1(2)\alpha(2) & \psi_2(2) \beta(2)\end{array} \right |
+ = \psi_1(1)\psi_2(2)\alpha(1)\beta(2)-\psi_2(1)\psi_1(2)\beta(1)\alpha(2) \]
+Antisymmetric?  What happens when the two electrons have the same spatial coordinate?
+
+Two spin-aligned electrons in two different orbitals:
+\[ \left | \begin{array}{cc}
+\psi_1(1)\alpha(1) & \psi_2(1) \alpha(1) \\
+\psi_1(2)\alpha(2) & \psi_2(2) \alpha(2) \end{array} \right |
+ = \left (\psi_1(1)\psi_2(2)-\psi_2(1)\psi_1(2)\right ) \alpha(1)\alpha(2) \]
+What happens now?
+
+Exchange guarantees that two electrons of same spin cannot be in the same place!  No such guarantee for electrons of opposite spin.
 ** Hartree-Fock equation
 Same song and dance:
 1. Apply variational principle to Slater determinant. The best \(\psi_i\) are those that minimize the expectation value of the energy.
@@ -1135,6 +1150,7 @@ This is *much* simpler to solve than Hartree-Fock equation, because the left han
 Slater's arguments are not rigorous. However, as we will see later, they can be made rigorous.  HFS is the very simplest example of a /density functional theory/ model, because it is a model built entirely on charge density.  Such approach is justifiable.
 
 ** Implementations
+*** =GAMESS=
 Hartree-Fock method /always/ paired with /basis set/ methods and implemented in the codes available at [[http://webmo.net]].  Example =GAMESS= input for Hartree-Fock Ar:
 
 #+BEGIN_EXAMPLE
@@ -1163,7 +1179,93 @@ Ar 18 0.00000000 0.00000000 0.00000000
  $END
 #+END_EXAMPLE
 
-Hartree-Fock-Slater is intrinsically numerical.  Historically interesting is the Herman-Skillman code, that solves the problem numerically on a grid.  Available to us as the =fda= code, see [[https://www.chemsoft.ch/qc/fda.htm]].
+*** =FDA=
+Hartree-Fock-Slater is intrinsically numerical.  Historically interesting is the Herman-Skillman code, that solves the problem numerically on a grid.  Available to us as the =fda= code, see [[https://www.chemsoft.ch/qc/fda.htm]] and [[./Resources/00READ.ME]].
+
+Ar input:
+#+BEGIN_EXAMPLE
+300 0.0001 30.0
+50 0.00001 0.10 0.50  0.682 0.0042
+18.0 5
+1 0 1.0 1.0
+2 0 1.0 1.0
+2 1 3.0 3.0
+3 0 1.0 1.0
+3 1 3.0 3.0
+#+END_EXAMPLE
+
+Output at [[./Resources/Ar.out]].
+
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Lets open the file in read mode
+with open('./Resources/Ar.dmp', 'r') as f:
+
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+
+    # First we read the grid points and the total charge densities
+    grid_points = []
+    total_charge_densities = []
+
+    for line in lines[3:303]:
+
+        # Each is a string with two columns
+        grid_point, tot_charge_density = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        grid_points.append(float(grid_point))
+        total_charge_densities.append(float(tot_charge_density))
+    
+    # Now for the 1s orbital
+    one_s = []
+    one_s = [float(x) for x in lines[304:604]]
+
+    two_s = []
+    two_s = [float(x) for x in lines[605:905]]
+
+    two_p = []
+    two_p = [float(x) for x in lines[906:1206]]
+
+    three_s = []
+    three_s = [float(x) for x in lines[1207:1507]]
+
+    three_p = []
+    three_p = [float(x) for x in lines[1508:1808]]
+#    for x in lines[304:604]:
+#        one_s_charge_density.append(float(x))
+ 
+
+plt.figure()
+#plt.semilogx(grid_points, total_charge_densities)
+plt.plot(grid_points, total_charge_densities)
+plt.xlabel('Grid Points')
+plt.ylabel('Charge Density')
+plt.title('Overall')
+plt.savefig('./Images/Ar-overall-charge-density.png')
+
+plt.figure()
+plt.plot(grid_points, one_s,label='1s')
+plt.plot(grid_points, two_s,label='2s')
+plt.plot(grid_points, two_p,label='2p')
+plt.plot(grid_points, three_s,label='3s')
+plt.plot(grid_points, three_p,label='3p')
+plt.legend()
+plt.xlim(0,6)
+
+plt.xlabel('Distance (bohr)')
+plt.ylabel('Wavefunction rR(r)')
+plt.title('Ar radial wavefunctions')
+plt.savefig('images/Ar-wave-functions.png')
+#plt.show()
+#+END_SRC
+
+#+RESULTS:
+#+ATTR_LATEX: :width 0.8\textwidth
+[[./Images/Ar-wave-functions.png]]
 
 ** Performance
 One metric is the ability to predict ionization energies.  
@@ -1221,13 +1323,22 @@ more modest expense). Hence the popularity of DFT!
 ** Born-Oppenheimer approximation
 In principle all nuclei and electrons should be described quantum mechanically.  For \ce{H2},
 for instance, true wavefunction would be a function of the positions of nuclei and
-electrons, $\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{1},\mathbf{R}_{2})$.
+electrons, $\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{\alpha},\mathbf{R}_{\beta})$.
+
+#+ATTR_LATEX: :width 0.3\textwidth
+[[./Images/BornOppenheimer.png]]
 
 Nuclei much heavier than electrons and move much more slowly.  Assume nuclei are fixed in
 space ("clamped") and electrons move in static field of those electrons. Equivalent to
 assuming that nuclear kinetic energy is decoupled from electron dynamics.
 Schr\ouml{}dinger equation becomes parameteric in nuclear positions; solutions
-$E(\mathbf{R}_{1},\mathbf{R}_{2})$ define a potential energy surface (PES).
+$E(\mathbf{R}_{\alpha},\mathbf{R}_{\beta})$ define a potential energy surface (PES).
+
+\[E_\text{PES}(\mathbf{R}_{\alpha},\mathbf{R}_{\beta}) = E_\text{Schr} +\frac{1}{2}\sum_{\alpha,\beta}\frac{Z_\alpha Z_\beta }{|\mathbf{R}_{\beta} - \mathbf{R}_{\alpha}|}\]
+
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/PES.png]]
+
 ** Model chemistry
 Essentially always start with
 \begin{equation}
@@ -1236,24 +1347,26 @@ Essentially always start with
 
 Standard models of today all treat the one-electron and Coulomb pieces exactly and treat
 the electron-electron interactions at various levels of approximation.
-|------------------------------------+-----------------------+--------------------------+---------------------------|
-|                                    | $v_{\text{exchange}}$ | $v_{\text{correlation}}$ |                           |
-|------------------------------------+-----------------------+--------------------------+---------------------------|
-| *Wave function theory* (WFT)       |                       |                          |                           |
-| Hartree                            | self-interaction      | neglect                  | historic                  |
-| Hartree-Fock                       | exact                 | neglect                  | superceded                |
-| MPn, CC                            | exact                 | perturbative             | state-of-the-art          |
-| CI                                 | exact                 | variational              | specialized               |
-|------------------------------------+-----------------------+--------------------------+---------------------------|
-| *Density functional theory* (DFT)  |                       |                          |                           |
-| Hartree-Fock-Slater                | $[\rho^{{4/3}}]$      | neglect                  | historic                  |
-| Local density approximation        | $[\rho]$              | $[\rho]$                 | general purpose solids    |
-| (LDA)                              |                       |                          |                           |
-| Generalized gradient approximation | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose           |
-| (GGA)                              |                       |                          |                           |
-| Hybrid                             | $\approx$ exact       | $[\rho,\nabla\rho]$      | general purpose molecules |
-|------------------------------------+-----------------------+--------------------------+---------------------------|
-
+|------------------------------------+-----------------------+--------------------------+---------------------------------|
+|                                    | $v_{\text{exchange}}$ | $v_{\text{correlation}}$ |                                 |
+|------------------------------------+-----------------------+--------------------------+---------------------------------|
+| *Wave function theory* (WFT)       |                       |                          |                                 |
+| Hartree                            | self-interaction      | neglect                  | historic                        |
+| Hartree-Fock                       | exact                 | neglect                  | superceded                      |
+| MPn, CC                            | exact                 | perturbative             | state-of-the-art                |
+| CI                                 | exact                 | variational              | specialized                     |
+|------------------------------------+-----------------------+--------------------------+---------------------------------|
+| *Density functional theory* (DFT)  |                       |                          |                                 |
+| Hartree-Fock-Slater                | $[\rho^{{4/3}}]$      | neglect                  | historic                        |
+| Local density approximation        | $[\rho^{{4/3}}]$      | $[\rho]$                 | general purpose solids          |
+| (LDA)                              |                       |                          |                                 |
+| Generalized gradient approximation | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose solids/surfaces |
+| (GGA)                              |                       |                          |                                 |
+| "Improved" GGA                     | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose                 |
+| (RPBE, BEEF, Mxx)                  |                       |                          |                                 |
+| Hybrid                             | $\approx$ exact       | $[\rho,\nabla\rho]$      | general purpose molecules       |
+| (B3LYP, PBE0, HSE06)               |                       |                          | specialty solids/surfaces       |
+|------------------------------------+-----------------------+--------------------------+---------------------------------|
 The choice of the electronic structure model is the most fundamental approximation in
 applying these methods.  Determined from experience and need.
 
