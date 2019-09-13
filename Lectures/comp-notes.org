@@ -1376,7 +1376,15 @@ Specification in GAMESS is a bit arcane.  Default is Hartree-Fock. To specify DF
 #+END_EXAMPLE
 
 ** Open-shell systems
-Model has to be generalized somewhat to deal with systems with unpaired electrons.
+First, some jargon related to unpaired electrons:
+| # unpaired electrons | $S$   | $2S+1$ | name    |
+|----------------------+-------+--------+---------|
+|                    0 | 0     |      1 | singlet |
+|                    1 | $1/2$ |      2 | doublet |
+|                    2 | 1     |      3 | triplet |
+|                    3 | $3/2$ |      4 | quartet |
+
+Model has to be generalized somewhat to deal with systems with unpaired electrons. One approach is to construct wavefunctions that are exactly spin-adapted (eigenfunctions of the \(\hat{S}\) operator). Possible in the Hartree-Fock world, but messy.  More common is to relax that constraint a bit, define different orbital wavefunctions for spin-up and spin-down electrons, called /unrestricted/ or /spin-polarized/ (opposite of /non-spin-polarized/!).  Means that electron density has different spin-up and spin-down parts.
 
 ** Bring back the basis sets
 The one-electron HF or HFS equations give us defining equations for
