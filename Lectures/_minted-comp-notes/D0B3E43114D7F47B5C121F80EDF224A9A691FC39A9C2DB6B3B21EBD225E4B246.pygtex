@@ -1,0 +1,55 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{matplotlib.pyplot} \PYG{k+kn}{as} \PYG{n+nn}{plt}
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k+kn}{as} \PYG{n+nn}{np}
+
+\PYG{n}{H\PYGZus{}atom\PYGZus{}HF} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.46658185}
+\PYG{n}{He\PYGZus{}cation\PYGZus{}HF} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{1.9317484483}
+\PYG{n}{He\PYGZus{}atom\PYGZus{}HF} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.80778396}
+\PYG{n}{He\PYGZus{}atom\PYGZus{}LDA} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.771886}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+
+\PYG{n}{baseline} \PYG{o}{=} \PYG{n}{He\PYGZus{}atom\PYGZus{}HF}
+\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}./Resources/HHe+\PYGZhy{}HF\PYGZhy{}STO3G.dat\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{f}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} Reading all the lines in the file}
+    \PYG{c+c1}{\PYGZsh{} Each line is stored as an element of a list}
+    \PYG{n}{lines} \PYG{o}{=} \PYG{n}{f}\PYG{o}{.}\PYG{n}{readlines}\PYG{p}{()}
+    \PYG{n}{distance} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{HF\PYGZus{}energy} \PYG{o}{=} \PYG{p}{[]}
+
+    \PYG{k}{for} \PYG{n}{line} \PYG{o+ow}{in} \PYG{n}{lines}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} Each is a string with two columns}
+        \PYG{n}{dist}\PYG{p}{,} \PYG{n}{energy} \PYG{o}{=} \PYG{n}{line}\PYG{o}{.}\PYG{n}{split}\PYG{p}{()}
+
+        \PYG{c+c1}{\PYGZsh{} We need to convert each line to a float add it to our lists}
+        \PYG{n}{distance}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{dist}\PYG{p}{))}
+        \PYG{n}{HF\PYGZus{}energy}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{energy}\PYG{p}{)}\PYG{o}{\PYGZhy{}}\PYG{n}{baseline}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{distance}\PYG{p}{,}\PYG{n}{HF\PYGZus{}energy}\PYG{p}{,} \PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}H\PYGZhy{}F\PYGZsq{}}\PYG{p}{)}
+
+\PYG{n}{baseline} \PYG{o}{=} \PYG{n}{He\PYGZus{}atom\PYGZus{}LDA}
+\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}./Resources/HHe+\PYGZhy{}HF\PYGZhy{}STO3G.dat\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{f}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} Reading all the lines in the file}
+    \PYG{c+c1}{\PYGZsh{} Each line is stored as an element of a list}
+    \PYG{n}{lines} \PYG{o}{=} \PYG{n}{f}\PYG{o}{.}\PYG{n}{readlines}\PYG{p}{()}
+    \PYG{n}{distance} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{LDA\PYGZus{}energy} \PYG{o}{=} \PYG{p}{[]}
+
+    \PYG{k}{for} \PYG{n}{line} \PYG{o+ow}{in} \PYG{n}{lines}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} Each is a string with two columns}
+        \PYG{n}{dist}\PYG{p}{,} \PYG{n}{energy} \PYG{o}{=} \PYG{n}{line}\PYG{o}{.}\PYG{n}{split}\PYG{p}{()}
+
+        \PYG{c+c1}{\PYGZsh{} We need to convert each line to a float add it to our lists}
+        \PYG{n}{distance}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{dist}\PYG{p}{))}
+        \PYG{n}{LDA\PYGZus{}energy}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{energy}\PYG{p}{)}\PYG{o}{\PYGZhy{}}\PYG{n}{baseline}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{distance}\PYG{p}{,}\PYG{n}{LDA\PYGZus{}energy}\PYG{p}{,}\PYG{n}{label}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}LDA\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{([}\PYG{l+m+mf}{0.}\PYG{p}{,}\PYG{l+m+mf}{3.0}\PYG{p}{],[}\PYG{l+m+mf}{0.}\PYG{p}{,}\PYG{l+m+mf}{0.}\PYG{p}{],}\PYG{n}{ls}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZhy{}\PYGZsq{}}\PYG{p}{,}\PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}black\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlim}\PYG{p}{(}\PYG{l+m+mf}{0.4}\PYG{p}{,}\PYG{l+m+mf}{3.}\PYG{p}{)}
+
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{legend}\PYG{p}{()}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}distance (Angstrom)\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Energy\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}HHe+ Energies vs distance, referenced to H+ and He\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{o}{.}\PYG{n}{savefig}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}./Images/HHe+.png\PYGZsq{}}\PYG{p}{)}
+\end{Verbatim}

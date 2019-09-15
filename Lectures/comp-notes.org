@@ -1330,7 +1330,9 @@ electrons, $\Upsilon(\mathbf{r}_{1}, \mathbf{r}_{2},\mathbf{R}_{\alpha},\mathbf{
 
 Nuclei much heavier than electrons and move much more slowly.  Assume nuclei are fixed in
 space ("clamped") and electrons move in static field of those electrons. Equivalent to
-assuming that nuclear kinetic energy is decoupled from electron dynamics.
+assuming that nuclear kinetic energy is decoupled from electron dynamics.  Only change is that
+\[\hat{h} = -\frac{1}{2}\nabla^2 - \sum_\alpha \frac{Z_\alpha}{|\bm{r}-\bm{R}_\alpha|} \]
+
 Schr\ouml{}dinger equation becomes parameteric in nuclear positions; solutions
 $E(\mathbf{R}_{\alpha},\mathbf{R}_{\beta})$ define a potential energy surface (PES).
 
@@ -1343,38 +1345,176 @@ $E(\mathbf{R}_{\alpha},\mathbf{R}_{\beta})$ define a potential energy surface (P
 Essentially always start with
 \begin{equation}
 \left \{ \hat{h} +v_{\text{Coulomb}}[\rho] + v_\text{exchange}[\psi_{i}] + v_\text{correlation}[\psi_{i}]\right\}\psi_i(\mathbf{r}) =\epsilon_i \psi_i(\mathbf{r})
-\end{equation}
+\end{equation} 
+label:fock
 
 Standard models of today all treat the one-electron and Coulomb pieces exactly and treat
 the electron-electron interactions at various levels of approximation.
-|------------------------------------+-----------------------+--------------------------+---------------------------------|
-|                                    | $v_{\text{exchange}}$ | $v_{\text{correlation}}$ |                                 |
-|------------------------------------+-----------------------+--------------------------+---------------------------------|
-| *Wave function theory* (WFT)       |                       |                          |                                 |
-| Hartree                            | self-interaction      | neglect                  | historic                        |
-| Hartree-Fock                       | exact                 | neglect                  | superceded                      |
-| MPn, CC                            | exact                 | perturbative             | state-of-the-art                |
-| CI                                 | exact                 | variational              | specialized                     |
-|------------------------------------+-----------------------+--------------------------+---------------------------------|
-| *Density functional theory* (DFT)  |                       |                          |                                 |
-| Hartree-Fock-Slater                | $[\rho^{{4/3}}]$      | neglect                  | historic                        |
-| Local density approximation        | $[\rho^{{4/3}}]$      | $[\rho]$                 | general purpose solids          |
-| (LDA)                              |                       |                          |                                 |
-| Generalized gradient approximation | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose solids/surfaces |
-| (GGA)                              |                       |                          |                                 |
-| "Improved" GGA                     | $[\rho,\nabla\rho]$   | $[\rho,\nabla\rho]$      | general purpose                 |
-| (RPBE, BEEF, Mxx)                  |                       |                          |                                 |
-| Hybrid                             | $\approx$ exact       | $[\rho,\nabla\rho]$      | general purpose molecules       |
-| (B3LYP, PBE0, HSE06)               |                       |                          | specialty solids/surfaces       |
-|------------------------------------+-----------------------+--------------------------+---------------------------------|
+|------------------------------------+----------------------------------+----------------------------------+---------------------------------|
+|                                    | $v_{\text{exchange}}$            | $v_{\text{correlation}}$         |                                 |
+|------------------------------------+----------------------------------+----------------------------------+---------------------------------|
+| *Wave function theory* (WFT)       |                                  |                                  |                                 |
+| Hartree                            | self-interaction                 | neglect                          | historic                        |
+| Hartree-Fock                       | exact                            | neglect                          | superceded                      |
+| MPn, CC                            | exact                            | perturbative                     | state-of-the-art                |
+| CI                                 | exact                            | variational                      | specialized                     |
+|------------------------------------+----------------------------------+----------------------------------+---------------------------------|
+| *Density functional theory* (DFT)  |                                  |                                  |                                 |
+| Hartree-Fock-Slater                | $[\rho^{{4/3}}]$                 | neglect                          | historic                        |
+| Local density approximation        | $[\rho^{{4/3}}]$                 | $[\rho]$                         | general purpose solids          |
+| (LDA)                              |                                  |                                  |                                 |
+| Generalized gradient approximation | $[\rho,\nabla\rho]$              | $[\rho,\nabla\rho]$              | general purpose solids/surfaces |
+| (GGA)                              |                                  |                                  |                                 |
+| "Improved" GGA                     | $[\rho,\nabla\rho]$              | $[\rho,\nabla\rho]$              | general purpose                 |
+| (RPBE, BEEF, Mxx)                  |                                  |                                  |                                 |
+| Hybrid                             | $\approx$ exact                  | $[\rho,\nabla\rho]$              | general purpose molecules       |
+| (B3LYP, PBE0, HSE06)               |                                  |                                  | specialty solids/surfaces       |
+| Meta GGA                           | $[\rho,\nabla\rho,\nabla^2\rho]$ | $[\rho,\nabla\rho,\nabla^2\rho]$ | developing                      |
+|------------------------------------+----------------------------------+----------------------------------+---------------------------------|
+
 The choice of the electronic structure model is the most fundamental approximation in
 applying these methods.  Determined from experience and need.
 
-Specification in GAMESS is a bit arcane.  Default is Hartree-Fock. To specify DFT model, use
+Specification in =GAMESS= ([[https://www.msg.chem.iastate.edu/GAMESS/GAMESS.html]]) is a bit arcane.  Default is Hartree-Fock. To specify DFT model, use
 #+BEGIN_EXAMPLE
  $CONTRL DFTTYP =   Slater (HFS), SVWN (LDA), PBE (GGA), B3LYP (Hybrid)
 #+END_EXAMPLE
+** Bring back the basis sets
+The one-electron equations eq ref:fock give us defining expressions for the energy-optimal
+orbitals, but they aren't convenient to solve for anything more complicated than an atom. Expand solutions in a basis set:
+\[\psi_i(\bm{r}) = \sum_\nu C_{\mu i}\phi_\nu(\bm{r}) \]
+Often atom-centered.  You'll see the term "linear combination of atomic orbitals," LCAO.
 
+Abbreviate \(\hat{f}\psi_i = \epsilon_i\psi_i\]. Substitute in \(\psi_i\), mulitple through by a basis function \(\phi_\mu\):
+\[\sum_\nu F_{\mu \nu} C_{\nu i} = \epsilon_i \sum_\nu S_{\mu \nu} C_{\nu i}, \qquad \bm{FC} = \bm{SC}\epsilon \]
+where
+\[ F_{\mu \nu} = \langle \psi_\mu|\hat{f}|\phi_\nu\rangle\qquad  S_{\mu \nu} = \langle \psi_\mu|\phi_\nu\rangle\]
+Matrix equation to solve.
+
+Historically interesting, ``semi-empirical'' methods (MNDO, \ldots) worked by parameterizing the matrix elements against atom properties.
+
+Recall \(\hat{f}\) depends on the density, which can be written
+\[ \rho(\bm{r}) = \sum_{\mu \nu} P_{\mu \nu}\phi_\mu(\bm{r})\phi_\nu(\bm{r}),\qquad P_{\mu \nu}=2\sum_i C_{\mu i} C_{\nu i}  \]
+Depending on implementation, pieces of \(\hat{f}\) can often be computed just once and reused, eg one-electron integrals \(\langle\phi_\mu|\hat{h}|\phi_\nu\rangle\).
+
+*Algorithm*:
+1. Put your atoms somewhere in space
+2. Select a basis
+3. Pre-compute what you can
+4. Guess some coefficients/density/density matrix
+5. Construct secular matrix elements
+6. Solve secular matrix equation for \(C\) and \(\epsilon\)
+7. Construct and compare new density to old
+8. Update density and repeat, or \ldots
+9. \ldots if less than tolerance, all done!
+
+*ALWAYS* check to be sure result has converged, to the state you want!
+
+** Simple H2O Example
+Hartree-Fock calculation on \ce{H2O}, minimal (STO-3G) basis set.
+#+BEGIN_EXAMPLE
+!   File created by the GAMESS Input Deck Generator Plugin for Avogadro
+ $BASIS GBASIS=STO NGAUSS=3 $END
+ $CONTRL SCFTYP=RHF RUNTYP=ENERGY COORD=CART $END
+ $DATA 
+Title: H2O energy evaluation
+C1
+O     8.0    -0.89600     3.13196     0.00000
+H     1.0     0.07400     3.13196     0.00000
+H     1.0    -1.21933     3.71670     0.70316
+ $END
+#+END_EXAMPLE
+
+See [[./Resources/H2O-STO3G.gamout]].
+
+** Dissociating HHe+ example
+Compare Hartree-Fock and LDA for \ce{H-He+} vs distance. (Isoelectronic to H2, but avoids and problems with symmetry. Should dissociate to \ce{H+} and He.  Does it?
+
+#+BEGIN_EXAMPLE
+replace. Tab to end.
+#+END_EXAMPLE
+
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+
+H_atom_HF = -0.46658185
+He_cation_HF = -1.9317484483
+He_atom_HF = -2.80778396
+He_atom_LDA = -2.771886
+
+plt.figure()
+
+baseline = He_atom_HF
+with open('./Resources/HHe+-HF-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    HF_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        HF_energy.append(float(energy)-baseline)
+
+plt.plot(distance,HF_energy, label='H-F')
+
+baseline = He_atom_LDA
+with open('./Resources/HHe+-HF-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    LDA_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        LDA_energy.append(float(energy)-baseline)
+
+plt.plot(distance,LDA_energy,label='LDA')
+plt.plot([0.,3.0],[0.,0.],ls='--',color='black')
+plt.xlim(0.4,3.)
+
+plt.legend()
+plt.xlabel('distance (Angstrom)')
+plt.ylabel('Energy')
+plt.title('HHe+ Energies vs distance, referenced to H+ and He')
+plt.savefig('./Images/HHe+.png')
+
+#+END_SRC
+
+#+RESULTS:
+#+ATTR_LATEX: :width 0.7\textwidth
+[[./Images/HHe+.png]]
+
+How's the dissociation state?  Bond energy?
+** Symmetry
+Often problem can be simplified by taking advantage of symmetry of the system.
+#+BEGIN_EXAMPLE
+!   File created by the GAMESS Input Deck Generator Plugin for Avogadro
+ $BASIS GBASIS=STO NGAUSS=3 $END
+ $CONTRL SCFTYP=RHF RUNTYP=ENERGY COORD=CART $END
+ $DATA 
+Title: H2O energy evaluation
+CNV 2
+
+O     8.0    -0.89600     3.13196     0.00000
+H     1.0     0.07400     3.13196     0.00000
+H     1.0    -1.21933     3.71670     0.70316
+ $END
+#+END_EXAMPLE
+
+Results get labeled by symmetry labels.
+
+See [[./Resources/H2O-C2V.gamout]].
 ** Open-shell systems
 First, some jargon related to unpaired electrons:
 | # unpaired electrons | $S$   | $2S+1$ | name    |
@@ -1386,19 +1526,19 @@ First, some jargon related to unpaired electrons:
 
 Model has to be generalized somewhat to deal with systems with unpaired electrons. One approach is to construct wavefunctions that are exactly spin-adapted (eigenfunctions of the \(\hat{S}\) operator). Possible in the Hartree-Fock world, but messy.  More common is to relax that constraint a bit, define different orbital wavefunctions for spin-up and spin-down electrons, called /unrestricted/ or /spin-polarized/ (opposite of /non-spin-polarized/!).  Means that electron density has different spin-up and spin-down parts.
 
-** Bring back the basis sets
-The one-electron HF or HFS equations give us defining equations for
-the energy-optimal orbitals, but they aren't convenient to solve for
-anything more complicated than an atom. What to do? Reintroduce idea
-of a basis set.
+#+ATTR_LATEX: :width 0.9\textwidth
+[[./Images/Polarization.png]]
 
-** Semi-empirical methods
-** Examples
-*** H2
-*** HF
-** Symmetry
-** Population analysis
-** Molecular orbital (MO) diagrams
+Controlled in =GAMESS= using the =$CONTRL= group:
+#+BEGIN_EXAMPLE
+ $CONTRL SCFTYP = RHF   non-spin-polarized, default
+         SCFTYP = UHF   spin-polarized
+         MULT   = 1 (default), 2,...  spin multiplicity
+         ICHARG = 0 (default), 1,...  net charge
+ $END
+#+END_EXAMPLE
+
+
 ** Gaussian basis sets
 Gaussian functions ($e^{-\zeta|\mathbf{r}|^2}$) are the most popular choice for atom-centered basis sets.  They do not efficiently represent molecular wavefunctions, but one- and two-electron integrals in  WFT  can be solved analytically over Gaussians.
 
@@ -1416,16 +1556,22 @@ Gaussian basis sets have to be created for any given atom and must be used consi
 Common notation
 - _Minimal basis_ contains one contracted function for every atomic orbital
 
-** Electron cores
+** Examples
+*** H2
+*** HF
+** Population analysis
+** Molecular orbital (MO) diagrams
 
-** Performance details of SCF methods
+** Electron cores
+** Implementation details of SCF methods
 Basis is often /orthonormalized/ to eliminate overlap from H-F-R equation; allows equations to be solved by matrix diagonalization.
 
-Initial density matrix $\mathbf{P}$ are obtained by solving an approximate Hamiltonian (like
-extended H\uuml{}ckel). Always beware! Initial guess can influence final converged state.
+Initial density matrix $\mathbf{P}$ are obtained by solving an approximate Hamiltonian (like extended H\uuml{}ckel). Always beware! Initial guess can influence final converged state.
 
 Because the number of 2-electron integrals grows as $N^4$, they are sometimes calculated as needed "on-the-fly", so-called direct SCF.
 
+Hartree-Fock integrals can be computed analytically in a Gaussian basis.  Any other choice of basis, or any DFT functional, requires integrals to be computed by quadrature. Used to be a real hang-up.  Today, algorithms are very robust to establish grids and do quadrature.
+*** SCR updating
 The SCF procedure is an optimization problem: find set of coefficients that minimizes the total energy. As discussed above, success depends on a reasonable initial guess for density matrix and judicious updating. Various strategies can be used to speed and stabilize convergence, like damped mixing of previous cycles.
 
 Second-order SCF is a convergence acceleration method that requires calculation or estimation of the first- and second-derivatives of the energy with respect to the orbital coefficients. See e.g. Chaban et al., /Theor. Chem. Accts./ *1997*, /97/, 88-95.

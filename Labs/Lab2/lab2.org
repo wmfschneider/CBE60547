@@ -12,7 +12,7 @@
 #+LATEX_HEADER: \usepackage{setspace}
 #+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
 #+LATEX_HEADER: \usepackage{amsmath}
-#+LATEX_HEADER: \usepackage{enumerate}
+m#+LATEX_HEADER: \usepackage{enumerate}
 #+LATEX_HEADER: \usepackage[parfill]{parskip}
 
 \maketitle
@@ -100,7 +100,25 @@ avogadro &
 rungms N2.inp > N2.log
 #+END_SRC
 
+To queue a job, create and save gamess.sh:
+#+BEGIN_EXAMPLE
+#!/bin/bash
+#$ -pe smp 4
+#$ -q debug
+#$ -N gamess
+module load gamess
 
+cat <<EOF > ~/.gmsrc
+set SCR=/scratch365/$USER
+set USERSCR=$PWD
+EOF
+
+rungms $1.inp > $1.out
+#+END_EXAMPLE
+
+#+BEGIN_SRC sh
+qsub gamess.sh N2
+#+END_SRC
 
 *** Analyzing the output
 

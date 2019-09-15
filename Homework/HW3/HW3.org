@@ -1,6 +1,6 @@
 #+TITLE: 
 #+AUTHOR: 
-#+DATE: Due: 02/12/2015
+#+DATE: Due: 27-Sept-2019
 #+LATEX_CLASS: article
 #+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
 #+OPTIONS: toc:nil # suppress toc, so we can put it where we want
@@ -11,25 +11,25 @@
 #+LATEX_HEADER: \usepackage{fancyhdr}
 #+LATEX_HEADER: \usepackage{hyperref}
 #+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage{siunitx}
 #+LATEX_HEADER: \usepackage[labelfont=bf]{caption}
 #+LATEX_HEADER: \usepackage{amsmath}
 #+LATEX_HEADER: \usepackage{enumerate}
 #+LATEX_HEADER: \usepackage[parfill]{parskip}
 
-\title{Homework 3\\Lectures 4: Electronic Structure Models\\(CBE 60547)}
+\title{Homework 3\\Computational Chemistry\\(CBE 60547)}
 \author{Prof. William F.\ Schneider}
 \maketitle
 
-
-Here is an example input deck for a HFS/6-31G calculation on NH_{3}. This is a good starting template for the calculations below. You can also construct an input deck in Avogadro. Refer to the =GAMESS= manual for more information.
+Here is an example input deck for a HFS/6-31G(d) calculation on NH_{3}. This is a good starting template for the calculations below. You can also construct an input deck in Avogadro. Refer to the =GAMESS= manual for more information.
 
 #+BEGIN_EXAMPLE
 !   File created by the GAMESS Input Deck Generator Plugin for Avogadro
- $BASIS GBASIS=N31 NGAUSS=6 $END
- $CONTRL RUNTYP=ENERGY DFTTYP=SLATER $END
+ $BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+ $CONTRL RUNTYP=ENERGY DFTTYP=PBE $END
 
  $DATA 
-Title
+TITLE: NH3 single-point calculation
 C1
 N     7.0    -1.03363     0.80618     0.00000
 H     1.0    -0.01363     0.80618     0.00000
