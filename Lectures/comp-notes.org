@@ -1410,7 +1410,7 @@ Depending on implementation, pieces of \(\hat{f}\) can often be computed just on
 
 *ALWAYS* check to be sure result has converged, to the state you want!
 
-** Simple H2O Example
+** H2O Energy Example
 Hartree-Fock calculation on \ce{H2O}, minimal (STO-3G) basis set.
 #+BEGIN_EXAMPLE
 !   File created by the GAMESS Input Deck Generator Plugin for Avogadro
@@ -1426,12 +1426,105 @@ H     1.0    -1.21933     3.71670     0.70316
 #+END_EXAMPLE
 
 See [[./Resources/H2O-STO3G.gamout]].
+** Symmetry
+Often problem can be simplified by taking advantage of symmetry of the system.
+#+BEGIN_EXAMPLE
+!   File created by the GAMESS Input Deck Generator Plugin for Avogadro
+ $BASIS GBASIS=STO NGAUSS=3 $END
+ $CONTRL SCFTYP=RHF RUNTYP=ENERGY COORD=CART $END
+ $DATA 
+Title: H2O energy evaluation
+CNV 2
+
+O     8.0    -0.89600     3.13196     0.00000
+H     1.0     0.07400     3.13196     0.00000
+H     1.0    -1.21933     3.71670     0.70316
+ $END
+#+END_EXAMPLE
+
+Results get labeled by symmetry labels.
+
+See [[./Resources/H2O-C2V.gamout]].
+
+** Dissociating H2+ example
+Compute energy vs distance.  Should dissociate to H atom and H+ ion.
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+
+H_atom_HF = -0.46658185
+H_atom_LDA = -0.4356702
+He_cation_HF = -1.9317484483
+He_atom_HF = -2.80778396
+He_atom_LDA = -2.771886
+
+plt.figure()
+
+baseline = H_atom_HF
+with open('./Resources/H2+-HF-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    HF_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        HF_energy.append(float(energy)-baseline)
+
+plt.plot(distance,HF_energy, label='H-F')
+
+baseline = H_atom_LDA
+with open('./Resources/H2+-LDA-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    LDA_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        LDA_energy.append(float(energy)-baseline)
+
+plt.plot(distance,LDA_energy,label='LDA')
+plt.plot([0.,4.0],[0.,0.],ls='--',color='black')
+plt.xlim(0.4,4.0)
+
+plt.legend()
+plt.xlabel('distance (Angstrom)')
+plt.ylabel('Energy (Hartree)')
+plt.title('H2+ Energies vs distance, referenced to H')
+plt.savefig('./Images/H2+.png')
+
+#+END_SRC
+
+#+RESULTS:
+#+ATTR_LATEX: :width 0.7\textwidth
+[[./Images/H2+.png]]
+
+Oops, come on, LDA!  Illustrates self-interaction problem in LDA.  Electron is too eager
+to be diffuse, spreads out over both atoms when it should localize on one.
 
 ** Dissociating HHe+ example
-Compare Hartree-Fock and LDA for \ce{H-He+} vs distance. (Isoelectronic to H2, but avoids and problems with symmetry. Should dissociate to \ce{H+} and He.  Does it?
+Compare Hartree-Fock and LDA for \ce{H-He+} vs distance. (Isoelectronic to H2, but avoids any problems with symmetry. Should dissociate to \ce{H+} and He.  Does it?
 
 #+BEGIN_EXAMPLE
-replace. Tab to end.
+ $BASIS GBASIS=STO NGAUSS=3 $END
+ $CONTRL SCFTYP=RHF RUNTYP=ENERGY ICHARG=1 MULT=1 $END
+ $DATA 
+Title
+C1
+H     1.0     0.   0.  0.
+He    2.0     0.   0.  XXX
+ $END
 #+END_EXAMPLE
 
 #+BEGIN_SRC python :exports results
@@ -1464,7 +1557,7 @@ with open('./Resources/HHe+-HF-STO3G.dat', 'r') as f:
 plt.plot(distance,HF_energy, label='H-F')
 
 baseline = He_atom_LDA
-with open('./Resources/HHe+-HF-STO3G.dat', 'r') as f:
+with open('./Resources/HHe+-LDA-STO3G.dat', 'r') as f:
     # Reading all the lines in the file
     # Each line is stored as an element of a list
     lines = f.readlines()
@@ -1485,7 +1578,7 @@ plt.xlim(0.4,3.)
 
 plt.legend()
 plt.xlabel('distance (Angstrom)')
-plt.ylabel('Energy')
+plt.ylabel('Energy (Hartree)')
 plt.title('HHe+ Energies vs distance, referenced to H+ and He')
 plt.savefig('./Images/HHe+.png')
 
@@ -1495,26 +1588,7 @@ plt.savefig('./Images/HHe+.png')
 #+ATTR_LATEX: :width 0.7\textwidth
 [[./Images/HHe+.png]]
 
-How's the dissociation state?  Bond energy?
-** Symmetry
-Often problem can be simplified by taking advantage of symmetry of the system.
-#+BEGIN_EXAMPLE
-!   File created by the GAMESS Input Deck Generator Plugin for Avogadro
- $BASIS GBASIS=STO NGAUSS=3 $END
- $CONTRL SCFTYP=RHF RUNTYP=ENERGY COORD=CART $END
- $DATA 
-Title: H2O energy evaluation
-CNV 2
-
-O     8.0    -0.89600     3.13196     0.00000
-H     1.0     0.07400     3.13196     0.00000
-H     1.0    -1.21933     3.71670     0.70316
- $END
-#+END_EXAMPLE
-
-Results get labeled by symmetry labels.
-
-See [[./Resources/H2O-C2V.gamout]].
+Equilibrium distance? How's the dissociation state?  Bond energy?  Truth is about \SI{-0.075}{Hartree}. LDA has advantage of cancellation of errors between exchange and correlation errors.  A good thing!
 ** Open-shell systems
 First, some jargon related to unpaired electrons:
 | # unpaired electrons | $S$   | $2S+1$ | name    |
@@ -1538,7 +1612,6 @@ Controlled in =GAMESS= using the =$CONTRL= group:
  $END
 #+END_EXAMPLE
 
-
 ** Gaussian basis sets
 Gaussian functions ($e^{-\zeta|\mathbf{r}|^2}$) are the most popular choice for atom-centered basis sets.  They do not efficiently represent molecular wavefunctions, but one- and two-electron integrals in  WFT  can be solved analytically over Gaussians.
 
@@ -1556,12 +1629,8 @@ Gaussian basis sets have to be created for any given atom and must be used consi
 Common notation
 - _Minimal basis_ contains one contracted function for every atomic orbital
 
-** Examples
-*** H2
-*** HF
 ** Population analysis
 ** Molecular orbital (MO) diagrams
-
 ** Electron cores
 ** Implementation details of SCF methods
 Basis is often /orthonormalized/ to eliminate overlap from H-F-R equation; allows equations to be solved by matrix diagonalization.
@@ -1571,7 +1640,7 @@ Initial density matrix $\mathbf{P}$ are obtained by solving an approximate Hamil
 Because the number of 2-electron integrals grows as $N^4$, they are sometimes calculated as needed "on-the-fly", so-called direct SCF.
 
 Hartree-Fock integrals can be computed analytically in a Gaussian basis.  Any other choice of basis, or any DFT functional, requires integrals to be computed by quadrature. Used to be a real hang-up.  Today, algorithms are very robust to establish grids and do quadrature.
-*** SCR updating
+*** SCF updating
 The SCF procedure is an optimization problem: find set of coefficients that minimizes the total energy. As discussed above, success depends on a reasonable initial guess for density matrix and judicious updating. Various strategies can be used to speed and stabilize convergence, like damped mixing of previous cycles.
 
 Second-order SCF is a convergence acceleration method that requires calculation or estimation of the first- and second-derivatives of the energy with respect to the orbital coefficients. See e.g. Chaban et al., /Theor. Chem. Accts./ *1997*, /97/, 88-95.
