@@ -1,0 +1,63 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+ch}{\PYGZsh{}!/bin/bash}
+\PYG{c+c1}{\PYGZsh{}\PYGZdl{} \PYGZhy{}pe smp 4}
+\PYG{c+c1}{\PYGZsh{}\PYGZdl{} \PYGZhy{}q debug}
+\PYG{c+c1}{\PYGZsh{}\PYGZdl{} \PYGZhy{}N gamess}
+module load gamess
+
+cat \PYG{l+s}{\PYGZlt{}\PYGZlt{}EOF \PYGZgt{} \PYGZti{}/.gmsrc}
+\PYG{l+s}{set SCR=/scratch365/\PYGZdl{}USER}
+\PYG{l+s}{set USERSCR=\PYGZdl{}PWD}
+\PYG{l+s}{EOF}
+
+rm \PYGZhy{}f dist template summary.dat
+
+cat \PYG{l+s}{\PYGZlt{}\PYGZlt{}EOF \PYGZgt{} dist}
+\PYG{l+s}{0.5}
+\PYG{l+s}{0.6}
+\PYG{l+s}{0.7}
+\PYG{l+s}{0.8}
+\PYG{l+s}{0.9}
+\PYG{l+s}{1.0}
+\PYG{l+s}{1.1}
+\PYG{l+s}{1.2}
+\PYG{l+s}{1.3}
+\PYG{l+s}{1.4}
+\PYG{l+s}{1.5}
+\PYG{l+s}{1.6}
+\PYG{l+s}{1.7}
+\PYG{l+s}{1.8}
+\PYG{l+s}{1.9}
+\PYG{l+s}{2.0}
+\PYG{l+s}{2.1}
+\PYG{l+s}{2.2}
+\PYG{l+s}{2.3}
+\PYG{l+s}{2.4}
+\PYG{l+s}{2.5}
+\PYG{l+s}{2.6}
+\PYG{l+s}{2.7}
+\PYG{l+s}{2.8}
+\PYG{l+s}{2.9}
+\PYG{l+s}{3.0}
+\PYG{l+s}{EOF}
+
+cat \PYG{l+s}{\PYGZlt{}\PYGZlt{}\PYGZsq{}EOF\PYGZsq{} \PYGZgt{} template}
+\PYG{l+s}{ \PYGZdl{}BASIS GBASIS=STO NGAUSS=3 \PYGZdl{}END}
+\PYG{l+s}{ \PYGZdl{}CONTRL SCFTYP=RHF RUNTYP=ENERGY ICHARG=1 MULT=1 \PYGZdl{}END}
+\PYG{l+s}{ \PYGZdl{}DATA}
+\PYG{l+s}{Title}
+\PYG{l+s}{C1}
+\PYG{l+s}{H     1.0     0.   0.  0.}
+\PYG{l+s}{He    2.0     0.   0.  XXX}
+\PYG{l+s}{ \PYGZdl{}END}
+\PYG{l+s}{EOF}
+
+\PYG{k}{for} i in  \PYG{k}{\PYGZdl{}(}cat dist\PYG{k}{)}\PYG{p}{;} \PYG{k}{do}
+    \PYG{n+nb}{echo} \PYG{n+nv}{\PYGZdl{}i}
+    sed s/XXX/\PYG{n+nv}{\PYGZdl{}i}/ \PYGZlt{} template \PYGZgt{} \PYG{n+nv}{\PYGZdl{}i}.inp
+    \PYG{n+nb}{echo} \PYG{n+nv}{\PYGZdl{}i}.inp
+    rungms \PYG{n+nv}{\PYGZdl{}i}.inp \PYGZgt{} \PYG{n+nv}{\PYGZdl{}i}.out
+    \PYG{n+nv}{ENERGY}\PYG{o}{=}\PYG{k}{\PYGZdl{}(}grep \PYG{l+s+s1}{\PYGZsq{}\PYGZca{} FINAL RHF\PYGZsq{}} \PYG{n+nv}{\PYGZdl{}i}.out \PYG{p}{|} gawk \PYG{l+s+s1}{\PYGZsq{}\PYGZob{}print \PYGZdl{}5\PYGZcb{}\PYGZsq{}}\PYG{k}{)}
+    \PYG{n+nb}{echo} \PYG{l+s+s2}{\PYGZdq{}}\PYG{n+nv}{\PYGZdl{}i}\PYG{l+s+s2}{ }\PYG{n+nv}{\PYGZdl{}ENERGY}\PYG{l+s+s2}{\PYGZdq{}} \PYGZgt{}\PYGZgt{} summary.dat
+\PYG{k}{done}
+\end{Verbatim}

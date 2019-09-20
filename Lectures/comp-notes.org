@@ -1447,7 +1447,7 @@ Results get labeled by symmetry labels.
 See [[./Resources/H2O-C2V.gamout]].
 
 ** Dissociating H2+ example
-Compute energy vs distance.  Should dissociate to H atom and H+ ion.
+Compute energy vs distance.  Should dissociate to H atom and \ce{H+} ion.
 #+BEGIN_SRC python :exports results
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1510,11 +1510,10 @@ plt.savefig('./Images/H2+.png')
 #+ATTR_LATEX: :width 0.7\textwidth
 [[./Images/H2+.png]]
 
-Oops, come on, LDA!  Illustrates self-interaction problem in LDA.  Electron is too eager
-to be diffuse, spreads out over both atoms when it should localize on one.
+Oops, come on, LDA!  Illustrates self-interaction problem in LDA.  Electron is too eager to be diffuse, spreads out over both atoms when it should localize on one.
 
 ** Dissociating HHe+ example
-Compare Hartree-Fock and LDA for \ce{H-He+} vs distance. (Isoelectronic to H2, but avoids any problems with symmetry. Should dissociate to \ce{H+} and He.  Does it?
+Compare Hartree-Fock and LDA for \ce{H-He+} vs distance. (Isoelectronic to \ce{H2}, but avoids any problems with symmetry. Should dissociate to \ce{H+} and He.  Does it?
 
 #+BEGIN_EXAMPLE
  $BASIS GBASIS=STO NGAUSS=3 $END
@@ -1626,12 +1625,105 @@ Gaussian basis sets have to be created for any given atom and must be used consi
 - _Basis set_ is a predefined set of exponents and contraction coefficients appropriate
   for some specific atom.
 
-Common notation
-- _Minimal basis_ contains one contracted function for every atomic orbital
+*** Gaussian basis set nomenclature
+- _Minimal basis_ contains one contracted function for every atomic orbital. STO-3G is the
+  poster child.
+- _Double zeta_ contains two contracted functions for every atomic orbital
+- _Split valence_ is more common, single zeta in core, double zete in valence, typical of Pople basis sets, eg "6-31G"
+- _Triple-split valence_ would be "6-311G"
+- _Polarization functions_ are functions of one angular momentum greater than the highest angular momentum occupied states, eg \(p\) function for H, or \(d\) function for C. Important to capture the polarization of charge when atoms make molecules.  Arcane nomenclature, eg 6-31G(d,p) or 6-31G**.
+- _Diffuse functions_ are small exponent functions to describe anions or loosely bound electrons. Again argane nomenclature, eg 6-31+G(d,p). Yech.
+- _Correlation consistent_ and _atomic natural orbital_ are series of basis sets that are constructured to be efficient and to improve systematically. 
+- _Complete basis set_ (CBS) limit is notion of extrapolating energies from a series of systematically improving basis sets.  Very common in high accuracy calculations.
 
-** Population analysis
-** Molecular orbital (MO) diagrams
+*** Standard basis sets in 
+Specified in $BASIS group.  Some common choices, in increasing level of sophistication:
+
+|--------------+----------------------------------+----------------------------------------|
+| Name         | Type                             | Flags                                  |
+|--------------+----------------------------------+----------------------------------------|
+|              | *Pople type*                     | *The most venerable and widely used*   |
+| STO-3G       | Minimal                          | GBASIS=STO  NGAUSS = 3                 |
+| 3-21G        | Split valence                    | GBASIS=N21  NGAUSS=3                   |
+| 6-31G(d)     | Split valence polarized          | GBASIS=N31 NGAUSS =6 NDFUNC=1          |
+| 6-311+G(d,p) | Triple-split valence             | GBASIS=N311 NGAUSS=6 NDFUNC=1 NPFUNC=1 |
+|              | polarized and augmented          | DIFFSP=1                               |
+|              |                                  |                                        |
+|              | *Polarization-consistent*        | *Good for DFT*                         |
+| PC0          | Minimal                          | GBASIS=PC0                             |
+| PC1          | Split valence polarized          | GBASIS=PC1                             |
+| PC2          | Triple split double polarized    | GBASIS=PC2                             |
+|              |                                  |                                        |
+|              | *Correlation-consistent*         | *Good for MP2 and beyond*              |
+| cc-pVDZ      | Split valence polarized          | GBASIS=CC2                             |
+| cc-pVTZ      | Triple split double polarized    | GBASIS=CC3                             |
+| aug-cc-pvDZ  | augmented with diffuse functions | GBASIS=ACC2                            |
+|              |                                  |                                        |
+|              | *Effective core potentials*      | *Good for treating heavy atoms*        |
+| SBKJC        | Split valence + core potential   | GBASIS=SBKJC                           |
+| Hay-Wadt     | Split valence + core potential   | GBASIS=HW                              |
+|--------------+----------------------------------+----------------------------------------|
+
+Complicated field, which is why the old standards live on in routine calculations.  Optimal approach is to employ a _composite model_, calibrated by someone else, with well defined set of basis functions and treatments of exchance and correlation.  A composite model pieces together results from a number of different calculations to estimate a higher accuracy model.
+
 ** Electron cores
+Low energy "core" electrons typically don't participate in chemical bonding but can add substantially  to computational cost.  Generally seek approximations, especially  for heavy elements/metals.
+
+Heart of approach is to partition an atom into core and valence parts.  Seek ways to
+express the influence of the core on the valence without actually having to compute the
+core. Essentially seek to write 
+\[ \hat{v}^\text{ee} \approx \hat{v}^\text{ee,core} +
+\hat{v}^\text{ee,val} \] 
+where the core potential is some simpler, composite expression of
+the influence of the core on the valence.  Typically take the electron cores as ``frozen''
+in the pure atomic states, and express influence on valence through
+ angular-momentum-dependent operators parameterized against accurate atomic calculations.  Goal is to recover valence wavefunctions with less effort.
+
+*** Relativistic effects
+Relativistic kinetic energy is relativistic total energy minus the rest energy:
+ \[T = \sqrt{p^2c^2 + m_0^2c^4} - m_0c^2\]
+Taylor expanding about \(p^2 = 0\) gives the _first-order mass-velocity correction_:
+\[ T \approx \frac{p^2}{2m_0} - \frac{p^4}{8 m_0^3 c^2}\]
+Reduces to non-relativistic result when \(c\rightarrow\infty\).  Electrons near core move at speeds close to \(c\), second term becomes non-negligible and diminishes their energy.  Most important for \(s\) states that penetrate closest to nucleus; they shield nucleus better and other valence states rise up in energy.
+
+Electron spin and orbital magnetic moments also couple when \(l>0\), leads to _spin-orbit coupling_ that splits \(p\), \(d\), \ldots states into \(j = l \pm s\) states. 
+
+#+CAPTION: Comparison of Non-Relativistic and Relativistic Atomic States.
+#+ATTR_LATEX: :width .5\textwidth
+[[./Images/Relativity.png]]
+
+_Darwin correction_ corrects s orbitals for electron and nucleus being at the same point; comes from solution of full Dirac relativistic equation for the atom.
+
+Relativistic effects typically incorporated implicitly, by including in model for core electrons and thus capturing their effect on the valence.  Spin-orbit, if necessary, added after the fact.
+*** Implementations
+Non-relativistic and relativistic effective core potentials (ECPs) available for many elements.  These specify the potential felt by the valence electrons due to the core in terms of radial potential functions and angular projection operators.  Typically these have to be combined with basis functions designed to work with them.
+
+Most common are Hay-Wadt (LANL) and Stevens-Basch-Krause (SBK).  Other more modern ones also available, like Stuttgart.
+** Population analysis
+The molecular orbitals contain information that can be helpful in understanding structure and bonding.  
+
+Perhaps most direct is the distribution of charge around the molecule, 
+
+ 
+Can calculate moments of the charge (dipole, quadrupole, \ldots).  Note these are only exactly defined for neutral species.
+
+Another interesting quantity is the Coulomb, or often-termed "electrostatic" potential (ESP) created by the combination of electrons and nuclei.  CHELPG works by trying to reproduce calculated electrostatic potential with charges placed at the atom centers.
+
+Chemically it is intuitively nice to assign charge to individual atoms, in what is called a population analysis.  There is no single "right" way to do this\ldots the "charge" on an atom in a molecule in not uniquely defined!
+
+Consider an occupied molecular orbital made up of two basis functions on two different atoms, α and β:
+ 
+ can be interpreted as the fraction of charge in ψ that can be assigned to α, and likewise  for β.  The remainder is the “overlap” population between α and β.  Who gets these?  In Mulliken population analysis they are divided equally between the two atoms.  Summing over all the occupied orbitals and subtracting from the nuclear charge gives the gross atomic populations.
+
+Mulliken populations are directionally very useful but their absolute magnitudes have no real meaning.  They are sensitive to the choice of basis, and equal distribution of overlap density between atoms is rather arbitrary.
+
+The overlap problem goes away if the basis is orthogonal, so the overlap terms go to zero.  In the Löwdin approach the basis set is orthogonalized according to  , so that  .  MO coefficients in this transformed basis used to assign charge to individual atoms.  More stable, less common than Mulliken approach.  This orthogonalization scheme is not unique, so other implementations possible.
+
+Natural orbitals are another, more sophisticated scheme for orthogonalizing and assigning charge.  See http://www.chem.wisc.edu/~nbo5/.  Again more stable than Mulliken, more information rich.
+
+Bader analysis another more sophisticated method, based on a geometric analysis of the total charge density.  See Bader, R. F. W. Atoms in Molecules: A Quantum Theory; Oxford University Press: Oxford, 1990.
+** Molecular orbital (MO) diagrams
+Correlate molecular orbitals with their parent fragments.  Use to be the thing.  Seldom now
 ** Implementation details of SCF methods
 Basis is often /orthonormalized/ to eliminate overlap from H-F-R equation; allows equations to be solved by matrix diagonalization.
 
@@ -1640,12 +1732,12 @@ Initial density matrix $\mathbf{P}$ are obtained by solving an approximate Hamil
 Because the number of 2-electron integrals grows as $N^4$, they are sometimes calculated as needed "on-the-fly", so-called direct SCF.
 
 Hartree-Fock integrals can be computed analytically in a Gaussian basis.  Any other choice of basis, or any DFT functional, requires integrals to be computed by quadrature. Used to be a real hang-up.  Today, algorithms are very robust to establish grids and do quadrature.
-*** SCF updating
+** SCF updating
 The SCF procedure is an optimization problem: find set of coefficients that minimizes the total energy. As discussed above, success depends on a reasonable initial guess for density matrix and judicious updating. Various strategies can be used to speed and stabilize convergence, like damped mixing of previous cycles.
 
 Second-order SCF is a convergence acceleration method that requires calculation or estimation of the first- and second-derivatives of the energy with respect to the orbital coefficients. See e.g. Chaban et al., /Theor. Chem. Accts./ *1997*, /97/, 88-95.
 
-Pulay's "direct inversion in the iterative subspace," or "DIIS," is a popular and powerful acceleration procedure that extrapolates from several previous Fock matrices to predict optimal next Fock to diagonalize.
+Pulay's ``direct inversion in the iterative subspace,'' or ``DIIS,'' is a popular and powerful acceleration procedure that extrapolates from several previous Fock matrices to predict optimal next Fock to diagonalize. *An opportunity for machine learning?* 
 
 Controlled in GAMESS using the =$SCF= group.
 
