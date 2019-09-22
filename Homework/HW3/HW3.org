@@ -54,7 +54,7 @@ d. What are the identities (1s, 2p, etc.) and energies of the occupied atomic or
 e. Compare your computed total energy and atomic orbital energies with those you got from Homework 2 using the fda code for Ar.
 
 ** The Generalized Gradient Approximation
-The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using =GAMESS=, perform a single point calculation (~RUNTYP=ENERGY~) on the bent triatomic SO_{2} using the GGA (~DFTTYP=PBE~) and PC1 basis set (~GBASIS=PC1~, ~ISPHER=1~; no ~NGAUSS~ flag needed). Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
+The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using =GAMESS=, perform a single point calculation (~RUNTYP=ENERGY~) on the bent triatomic SO_{2} using the GGA (~DFTTYP=PBE~) and PC1 basis set (~GBASIS=PCSEG-1~; no ~NGAUSS~ flag needed). Add ~ISPHER=1~ to the ~$CONTRL~ object. Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
 
 #+ATTR_LATEX: :options [(a)]
 a. What is the spin multiplicity of SO_{2}? (Recall, the spin multiplicity is \(2S +1\), where \(S = 1/2\) for one unpaired electron, \(S = 1\) for two unpaired electrons, and so on).
