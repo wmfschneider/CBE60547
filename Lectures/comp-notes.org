@@ -1588,6 +1588,71 @@ plt.savefig('./Images/HHe+.png')
 [[./Images/HHe+.png]]
 
 Equilibrium distance? How's the dissociation state?  Bond energy?  Truth is about \SI{-0.075}{Hartree}. LDA has advantage of cancellation of errors between exchange and correlation errors.  A good thing!
+
+** Dissociated He2 example
+#+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+
+H_atom_HF = -0.46658185
+He_cation_HF = -1.9317484483
+He_atom_HF = -2.80778396
+He_atom_LDA = -2.771886
+
+plt.figure()
+
+baseline = 2.* He_atom_HF
+with open('./Resources/He2-HF-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    HF_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        HF_energy.append(float(energy)-baseline)
+
+plt.plot(distance,HF_energy, label='H-F')
+
+baseline = 2.* He_atom_LDA
+with open('./Resources/He2-LDA-STO3G.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    distance = []
+    LDA_energy = []
+
+    for line in lines:
+        # Each is a string with two columns
+        dist, energy = line.split()
+
+        # We need to convert each line to a float add it to our lists
+        distance.append(float(dist))
+        LDA_energy.append(float(energy)-baseline)
+
+plt.plot(distance,LDA_energy,label='LDA')
+plt.plot([0.,3.0],[0.,0.],ls='--',color='black')
+plt.xlim(0.4,3.)
+
+plt.legend()
+plt.xlabel('distance (Angstrom)')
+plt.ylabel('Energy (Hartree)')
+plt.title('He2 Energies vs distance, referenced to He')
+plt.savefig('./Images/He2.png')
+
+#+END_SRC
+
+#+RESULTS:
+
+[[./Images/He2.png]]
+#+RESULTS:
+
+
 ** Open-shell systems
 First, some jargon related to unpaired electrons:
 | # unpaired electrons | $S$   | $2S+1$ | name    |
@@ -1650,9 +1715,9 @@ Specified in $BASIS group.  Some common choices, in increasing level of sophisti
 |              | polarized and augmented          | DIFFSP=1                               |
 |              |                                  |                                        |
 |              | *Polarization-consistent*        | *Good for DFT*                         |
-| PC0          | Minimal                          | GBASIS=PC0                             |
-| PC1          | Split valence polarized          | GBASIS=PC1                             |
-| PC2          | Triple split double polarized    | GBASIS=PC2                             |
+| PC0          | Minimal                          | GBASIS=PCseg-0                         |
+| PC1          | Split valence polarized          | GBASIS=PCseg-1                         |
+| PC2          | Triple split double polarized    | GBASIS=PCseg-22                        |
 |              |                                  |                                        |
 |              | *Correlation-consistent*         | *Good for MP2 and beyond*              |
 | cc-pVDZ      | Split valence polarized          | GBASIS=CC2                             |
@@ -1711,7 +1776,7 @@ Another interesting quantity is the Coulomb, or often-termed "electrostatic" pot
 
 Chemically it is intuitively nice to assign charge to individual atoms, in what is called a population analysis.  There is no single "right" way to do this\ldots the "charge" on an atom in a molecule in not uniquely defined!
 
-Consider an occupied molecular orbital made up of two basis functions on two different atoms, α and β:
+Consider an occupied molecular orbital made up of two basis functions on two different atoms, \alpha and \beta:
  
  can be interpreted as the fraction of charge in ψ that can be assigned to α, and likewise  for β.  The remainder is the “overlap” population between α and β.  Who gets these?  In Mulliken population analysis they are divided equally between the two atoms.  Summing over all the occupied orbitals and subtracting from the nuclear charge gives the gross atomic populations.
 
