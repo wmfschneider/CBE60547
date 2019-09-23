@@ -1,4 +1,5 @@
-% Created 2015-03-19 Thu 18:22
+% Created 2019-09-23 Mon 12:27
+% Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -16,6 +17,7 @@
 \usepackage{wasysym}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage[theorems, skins]{tcolorbox}
 \usepackage[version=3]{mhchem}
 \usepackage[numbers,super,sort&compress]{natbib}
 \usepackage{natmove}
@@ -30,28 +32,28 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{setspace}
+\usepackage{siunitx}
 \usepackage[labelfont=bf]{caption}
 \usepackage{amsmath}
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
-\date{Due: 02/12/2015}
+\date{Due: 30-Sept-2019}
 \title{}
 \begin{document}
 
-\title{Homework 3\\Lectures 4: Electronic Structure Models\\(CBE 60547)}
+\title{Homework 3\\Computational Chemistry\\(CBE 60547)}
 \author{Prof. William F.\ Schneider}
 \maketitle
 
-
-Here is an example input deck for a HFS/6-31G calculation on NH$_{\text{3}}$. This is a good starting template for the calculations below. You can also construct an input deck in Avogadro. Refer to the GAMESS manual for more information.
+Here is an example input deck for a HFS/6-31G(d) calculation on NH\(_{\text{3}}\). This is a good starting template for the calculations below. You can also construct an input deck in Avogadro. Refer to the \texttt{GAMESS} manual and the \texttt{GAMESS} cheatsheet in the lecture notes for more information.
 
 \begin{verbatim}
 !   File created by the GAMESS Input Deck Generator Plugin for Avogadro
- $BASIS GBASIS=N31 NGAUSS=6 $END
- $CONTRL RUNTYP=ENERGY DFTTYP=SLATER $END
+ $BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END
+ $CONTRL RUNTYP=ENERGY DFTTYP=PBE $END
 
  $DATA 
-Title
+TITLE: NH3 single-point calculation
 C1
 N     7.0    -1.03363     0.80618     0.00000
 H     1.0    -0.01363     0.80618     0.00000
@@ -62,9 +64,8 @@ H     1.0    -1.37363     0.79732     0.96162
 
 
 \section{\texttt{GAMESS} vs. \texttt{FDA}}
-\label{sec-1}
-
-Using \texttt{GAMESS}, perform a DFT/Hartree-Fock-Slater (\verb~DFTTYP=SLATER~) calculation on an Ar atom using the 6-31G basis set.
+\label{sec:orgc85955c}
+Using \texttt{GAMESS}, perform a DFT/Hartree-Fock-Slater (\texttt{DFTTYP=SLATER}) calculation on an Ar atom using the 6-31G basis set.
 
 \begin{enumerate}[(a)]
 \item How many primitive Gaussians are included in this calculation? How many total basis functions? How do they divide between s, p, and d?
@@ -79,12 +80,11 @@ Using \texttt{GAMESS}, perform a DFT/Hartree-Fock-Slater (\verb~DFTTYP=SLATER~) 
 \end{enumerate}
 
 \section{The Generalized Gradient Approximation}
-\label{sec-2}
-
-The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using \texttt{GAMESS}, perform a single point calculation (\verb~RUNTYP=ENERGY~) on the bent triatomic SO$_{\text{2}}$ using the GGA (\verb~DFTTYP=PBE~) and PC1 basis set (\verb~GBASIS=PC1~, \verb~ISPHER=1~; no \verb~NGAUSS~ flag needed). Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
+\label{sec:org3c5bef2}
+The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using \texttt{GAMESS}, perform a single point calculation (\texttt{RUNTYP=ENERGY}) on the bent triatomic SO\(_{\text{2}}\) using the GGA (\texttt{DFTTYP=PBE}) and PC1 basis set (\texttt{GBASIS=PCSEG-1}; no \texttt{NGAUSS} flag needed). Add \texttt{ISPHER=1} to the \texttt{\$CONTRL} object. Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
 
 \begin{enumerate}[(a)]
-\item What is the spin multiplicity of SO$_{\text{2}}$? (Recall, the spin multiplicity is 2S +1, where S = 1/2 for one unpaired electron, S = 1 for two unpaired electrons, and so on).
+\item What is the spin multiplicity of SO\(_{\text{2}}\)? (Recall, the spin multiplicity is \(2S +1\), where \(S = 1/2\) for one unpaired electron, \(S = 1\) for two unpaired electrons, and so on).
 
 \item How many basis functions are in this calculation?
 
@@ -96,36 +96,34 @@ The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-S
 
 \item How many occupied orbitals does the molecule have? What are the energies of the HOMO and LUMO?
 
-\item What is the final dipole moment?
+\item What is the final dipole moment?  How does it compare to experiment?
 
 \item What are the Mulliken gross charges on the S and O atoms?
 
-\item Plot out the electrostatic potential of SO$_{\text{2}}$. Which end of the molecule is electrophilic and which is nucleophilic?
+\item (Grad students only.  Do in \texttt{Avogadro}.)  Plot out the electrostatic potential of SO\(_{\text{2}}\). Which end of the molecule is electrophilic and which is nucleophilic?
 \end{enumerate}
 
-\section{Geometry Optimization of SO$_{\text{2}}$}
-\label{sec-3}
+\section{Geometry Optimization of SO\(_{\text{2}}\)}
+\label{sec:org132fc89}
 
 \begin{enumerate}[(a)]
-\item Do a series of calculations in which you vary the S–O distances and O–S–O angle over a regular grid of values. Approximate the combination of values that give the lowest energy.
+\item Do a series of calculations in which you vary the \ce{S–O} distances and \ce{O–S–O} angle over a regular grid of values. Approximate the combination of values that give the lowest energy.
 
-\item A geometry optimization (\verb~RUNTYP=OPTIMIZE~) is a faster way to find the optimal geometry of a molecule. Perform a geometry optimization on SO$_{\text{2}}$ using the same computational model as above. What are the optimal S–O distances and O–S–O angle?
+\item A geometry optimization (\texttt{RUNTYP=OPTIMIZE}) is a faster way to find the optimal geometry of a molecule. Perform a geometry optimization on SO\(_{\text{2}}\) using the same computational model as above. What are the optimal S–O distances and O–S–O angle?
 \end{enumerate}
 
 \section{Other Molecules}
-\label{sec-4}
-
+\label{sec:org6c352e8}
 Oxygen makes bonds with lots of things. Fill out the table below by doing an appropriate set of calculations:
 
 \begin{center}
 \begin{tabular}{llllll}
-AO$_{\text{2}}$ & A-O (\AA{}) & O-A-O (\textdegree{}) & Spin Multiplicity & Dipole Moment (e\AA{}) & Mulliken Charge\\
+AO\(_{\text{2}}\) & A-O (\AA{}) & O-A-O (\textdegree{}) & Spin Multiplicity & Dipole Moment (e\AA{}) & Mulliken Charge\\
 \hline
-CO$_{\text{2}}$ &  &  &  &  & \\
-NO$_{\text{2}}$ &  &  &  &  & \\
-SiO$_{\text{2}}$ &  &  &  &  & \\
-SO$_{\text{2}}$ &  &  &  &  & \\
+CO\(_{\text{2}}\) &  &  &  &  & \\
+NO\(_{\text{2}}\) &  &  &  &  & \\
+SiO\(_{\text{2}}\) &  &  &  &  & \\
+SO\(_{\text{2}}\) &  &  &  &  & \\
 \end{tabular}
 \end{center}
-% Emacs 24.4.3 (Org mode 8.2.10)
 \end{document}
