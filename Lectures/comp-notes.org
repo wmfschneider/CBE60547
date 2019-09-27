@@ -1379,6 +1379,17 @@ Specification in =GAMESS= ([[https://www.msg.chem.iastate.edu/GAMESS/GAMESS.html
 #+BEGIN_EXAMPLE
  $CONTRL DFTTYP =   Slater (HFS), SVWN (LDA), PBE (GGA), B3LYP (Hybrid)
 #+END_EXAMPLE
+*** Beyond Hartree-Fock
+Many methods available.  See manual for full description.  Most common is second-order perturbation theory, "MP2":
+#+BEGIN_EXAMPLE
+ $CONTRL MPLEVL=2 $END
+#+END_EXAMPLE
+
+If you want a very high quality number, have a big computer and time to wait, try "coupled cluster":
+#+BEGIN_EXAMPLE
+ $CONTRL CCTYP=CCSD(T) $END
+#+END_EXAMPLE
+
 ** Bring back the basis sets
 The one-electron equations eq ref:fock give us defining expressions for the energy-optimal
 orbitals, but they aren't convenient to solve for anything more complicated than an atom. Expand solutions in a basis set:
@@ -1693,7 +1704,7 @@ Controlled in =GAMESS= using the =$CONTRL= group:
 #+BEGIN_EXAMPLE
  $CONTRL SCFTYP = RHF   non-spin-polarized, default
          SCFTYP = UHF   spin-polarized
-         MULT   = 1 (default), 2,...  spin multiplicity
+         MULT   = 1 (default), 2,...  spin multiplicity = 1 + number of unpaired electrons
          ICHARG = 0 (default), 1,...  net charge
  $END
 #+END_EXAMPLE
@@ -1797,7 +1808,7 @@ The molecular orbitals contain information that can be helpful in understanding 
 
 - _Moments_ of charge density (dipole, quadrupole), useful for thinking about molecule-molecule interactions.  (Only exactly defined for neutrals!)
 
-- _Electrostatic potential_, or Coulomb potential created by electrons and nuclei.  More refined way of thinking about "how spots" on a molecule. Commonly used to parameterize classical forcefields, by seeking set of atom-centered charges that reproduce calculated electrostatic potential, as is done with /CHELPG/.  Not uniquely defined.
+- _Electrostatic potential_, or Coulomb potential created by electrons and nuclei.  More refined way of thinking about "how spots" on a molecule. Commonly used to parameterize classical forcefields, by seeking set of atom-centered charges that reproduce calculated electrostatic potential, as is done with =CHELPG=.  Not uniquely defined.
 
 - _Population analyses_, which attempt to distribute electrons to individual atoms and possibly bonds based on decomposition of molecular orbitals.  Chemically it is intuitively nice to assign charge to individual atoms.  There is no single "right" way to do this\ldots the "charge" on an atom in a molecule in not uniquely defined!  Consider an occupied molecular orbital \psi made up of two basis functions on two different atoms, \alpha and \beta:
 \begin{eqnarray}
@@ -1859,9 +1870,9 @@ E_\text{PES}(\mathbf{R_\alpha},\mathbf{R_\beta},\ldots) =E_\text{elec} +\sum_{\a
 
 *** Cartesian
 Computationally straightforward but don't correspond with our physical notion of bonds,
-bends, etc.  Easiest to get out of a piece of software.  A molecule has \(3 N-6 \) internal degrees of freedom (\(3N-5\) if linear), but Cartesians specify \(3N\).  The extra values correspond to the location of the center of mass and molecular oriendation.  Codes will typically center and reorient the Cartesions.
+bends, etc.  Easiest to get out of a piece of software.  A molecule has \(3 N-6 \) internal degrees of freedom (\(3N-5\) if linear), but Cartesians specify \(3N\).  The extra values correspond to the location of the center of mass and molecular oriendation.  Codes will typically center and reorient the Cartesians.
 
-In Gamess, would specify Cartesian coordinates for \ce{FCH2CH2F} like this:
+In =GAMESS=, would specify Cartesian coordinates for \ce{FCH2CH2F} like this:
 #+BEGIN_EXAMPLE
  $CONTRL COORD=CART $END
  $DATA
@@ -1910,54 +1921,105 @@ $END
 Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.
 
 ** Features of potential energy surfaces
+*** One-dimensional example
 #+BEGIN_CENTER
 #+ATTR_LATEX: :width 0.75\textwidth
 [[./Images/PES.pdf]]
 #+END_CENTER
+Note 3-fold periodicity as expected for rotation about a \ce{C−C} single bond.  Note too there are some special points:
 
-*** Gradients
+- _Minima_ are places where energy bottoms out.  More formally, first derivative of energy, or slope, or "gradient \(g = 0\), and second derivative, or curvature, or "Hessian \(H > 0\).  These are the *locally* stable conformations of the molecule.  Note that lowest energy in this case is not trans, but rather gauche conformations.  Are you surprised?
 
-*** Hessians
+- _Saddle points_ are places where energy is maximized.  Physicially, corresponds to "transition states" connecting low-energy conformations.  Gradient \(g = 0\), but curvature \(H < 0\).
 
-*** Minima
+*** Many-dimensional PES features
+Gradient becomes vector and Hessian a matrix
 
-**** Local
+\[ \bm{g} = \left ( \begin{array}{c} \frac{\partial E}{\partial q_1} \\ \vdots \\ \frac{\partial E}{\partial q_{3N}} \end{array} \right )\qquad \left (\begin{array}{ccc} \frac{\partial^2 E}{\partial q_1^2} & \cdots & \frac{\partial^2 E}{\partial q_1\partial q_{3N}} \\ \vdots & \ddots & \vdots \\ \frac{\partial^2 E}{\partial q_1\partial q_{3N}} & \cdots & \frac{\partial^2 E}{\partial q_{3N}^2}  \end{array} \right ) \]
 
-**** Global
+#+CAPTION: From Schlegel, /J. Comp. Chem./ *2003*, /24/, 1514-1527.
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/Schlegel-PES.png]]
 
-*** Saddle points
+- _gradient_ is vector tangent to PES.  The force on an object is \(\bm{F} = - \bm{g}\), so the gradients are often called the forces.  Where gradient (slope) is negative, force is positive, and vice versa.  Force always pushes system toward nearest minimum. If the potential is harmonic, then the force constant \(k = H\), so the Hessian is also called the "force constant."
 
-**** First-order
+- _Hessian matrix_ is real and symmetric. Diagonalization gives eignevalues and eigenvectors.  Eigenvectors give "natural" directions along PES (physically, the harmonic vibrational modes), and eigenvalues indicate curvature in that direction.
 
-**** Higher order
+- _Minimum_ on multidimensional PES has gradient vector \(\bm{g} = 0\) and all positive Hessian eigenvalues.
 
-*** Minimum energy paths
+- _First-order saddle point_, or _transition state_, has \(\bm{g} = 0\) and one and only one negative Hessian eigenvalues.  (Physically, one unique direction that leads downhill in energy.)  Must correspond to lowest-energy point connecting two minima.
+
+- _Minimum energy pathway_ (MEP) or _intrinsic reaction coordinate_ (IRC) is steepest descent pathway (in mass-weighted coordinates) from saddle point to nearby minima.  Path a marble with infinite inertia would follow.
+
+- _Higher order saddle points_ have \(\bm{g} = 0\) and more than one negative Hessian eigenvalue.  Can always lead to lower energy first order saddle point.  These generally do not have chemical significance.
+
+In computational chemistry/materials science, it is frequently  our job to identify the critical points (minima and transition states on a PES).  In liquids, PES much more flat and lightly corrugated.  Statistical mechanics becomes mores important.
+
+Each distinct electronic state defines its own PES. Motion along Remember that there are multiple PES’s for any atom configuration, corresponding to different electronic states.  Sometimes these states can interact, intersect, giving avoided crossings, conical intersections.  Lead to more complicated dynamical behavior.
 
 ** Energy gradients and second derivatives
+*** Gradients
+\[ \frac{\partial E_\text{elec}}{\partial q_i} = \frac{\partial}{\partial q_i} \langle \Psi | \hat{H} | \Psi \rangle = \langle \frac{\partial \Psi}{\partial q_i} | \hat{H} | \Psi \rangle + \langle \Psi |\frac{\partial \hat{H}}{\partial q_i} | \Psi \rangle + \langle  \Psi | \hat{H} | \frac{\partial \Psi}{\partial q_i} \Psi \rangle  \]
+- _Hellman-Feynmann theorem_ says that sum of first and last terms vanish, so in principle only need to compute middle, which involves derivative of Coulomb potential and can be evaluated.
+- _Pulay forces_ are forces from first and last terms that appear when basis functions are centered on atoms.  An advantage of plane-wave basis sets, for which these terms vanish.
+*** Hessian
+In some electronic structure models can be computed analytically.  More commonly, determined from numerical differentiation of gradients.  Implementations typically assume that system is at minimum.
 
-** Optimization algorithms
-*** Steepest descent
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/Harmonic.png]]
 
-*** Conjugate gradient
+/h/ must be small enough to stay in the harmonic region, but big enough to avoid numerical noise swamping the gradients.  
 
-*** Quasi-Newton Raphson
+For a molecule with /N/ atoms, to construct complete  \( 3N\times  3N\) Hessian, have to evaluate gradients \(6N\) times for two-sided differencing.  Each pair of displacements completes one row of Hessian.  Obviously tends to be quite expensive.
 
-
-*** Direct inversion in the iterative subspace (DIIS)
-*** Trudge
-*** Genetic algorithm
-*** Convergence criteria
+To get better precision and accuracy, could calculate more than two displacements, and could fit to a more complicated function than a harmonic potential.
 
 ** Geometry optimization algorithms
+*** Energy-only
+- _Trudge_ infers gradient by wandering around
+*** Energy + gradient
+- _Steepest descent_, just march down hill.  \(\bm{R}^\prime = \bm{R} - \lambda \bm{g}\). Safe, very inefficient near minimum. May do line search to adapt \lambda.
+- _Conjugate gradient_ is steepest descent plus orthogonalization to previous step.  Save, less very inefficient.
+*** Energy + gradient + higher order
+- _Quasi-Newton Raphson_ takes advantages of both first and second derivative information:
+   \[ \bm{R}^\prime = \bm{R} - \bm{H}^{-1}(\bm{R})\bm{g}(\bm{R}) \]
+Typically do not know Hessian and it is expensive to calculate.  Make an initial guess, then update Hessian with gradient information from each geometry step. "Learning" PES as we go. Generally converges very rapidly near minima, where surface is not too anharmonic.
+- _Direct inversion in the iterative subspace_ (DIIS) uses sizes of QNR steps as estimates of error and constructs new step from linear combination of previous that minimizes error inferred from previous steps:
+  \[ \bm{err}(\bm{R}) = \sum_i c_i \bm{H}^{-1}_i \bm{g}_i \]
+Generally very efficient in region of minimum. Algorithm can misbehave away from minima, possibly even converging to nearby saddle points, so often started with conjugate gradient steps.   
+*** Machine learning
+All of these based on some form of assumed model of underlying PES (Taylor expand to second order around minimum).  Emerging are methods that "fingerprint" structure and construct and improve energy model with each step. Remains to be seen if a new "standard" emerges. 
+*** Convergence criteria
+Typically determine convergence by enforcing maximum on each individual force component 
+
+** Specify =GAMESS= calculation type
+Specified in $CONTRL group by RUNTYP flag:
+
+| Calculation                   | RUNTYP=  |
+|-------------------------------+----------|
+| Single-point energy           | Energy   |
+| Single-point energy + force   | Gradient |
+| Geometry optimization         | Optimize |
+| Frequency calculation         | Hessian  |
+| Transition state search       | Sadpoint |
+| Intrinisc reaction coordinate | IRC      |
+
+Note too that specifying EXETYP=CHECK will check your input without actually running the job.
 
 ** Efficient coordinate systems
+Optimizations are most efficient in coordinate system that diagonalizes Hessian.  Large off-diagonal Hessian terms imply strong coupling.  Cartesian coordinates do not reflect physical forces in system and are generally poor choice/slow convergence for optimizations.
+
+*** Z-matrix
+
+*** Redundant internals
+
 ** Performance of models
 ** Vibrational frequencies
 ** Transition states
 ** Intrinsic reaction coordinates
+** Molecular dynamics
 \newpage
 
-** Molecular dynamics
 
 * =GAMESS= Cheat Sheet
 ** Specifying electronic configuration
@@ -1987,45 +2049,6 @@ Particularly convenient when you'd like to "scan" over the value of some coordin
 | "Minnesota" optimized       | M06    |
 |                             | M11    |
 |-----------------------------+--------|
-*** Beyond Hartree-Fock
-Many methods available.  See manual for full description.  Most common is second-order perturbation theory, "MP2," :
-#+BEGIN_EXAMPLE
- $CONTRL MPLEVL=2 $END
-#+END_EXAMPLE
-
-If you want a very high quality number, have a big computer and time to wait, try "coupled cluster,":
-#+BEGIN_EXAMPLE
- $CONTRL CCTYP=CCSD(T) $END
-#+END_EXAMPLE
-
-** Specifying basis sets
-Gamess uses atom-centered basis functions.  A "basis set" is a set of such functions for many atoms, all constructed (hopefully) at a consistent level of accuracy. Many such basis sets exist and are coded into Gamess, and for the daring new basis sets can be input by hand.  Choice of basis set is always a compromise between accuracy and computational cost.  In general should always check sensitivity of property of interest to basis set.
-
-Specified in $BASIS group.  Some common choices, in increasing level of sophistication:
-
-|--------------+--------------------------------+----------------------------------------|
-| Name         | Type                           | Flags                                  |
-|--------------+--------------------------------+----------------------------------------|
-|              | *Pople type*                   | *The most venerable and widely used*   |
-| STO-3G       | Minimal                        | GBASIS=STO  NGAUSS = 3                 |
-| 3-21G        | Split valence                  | GBASIS=N21  NGAUSS=3                   |
-| 6-31G(d)     | Split valence polarized        | GBASIS=N31 NGAUSS =6 NDFUNC=1          |
-| 6-311+G(d,p) | Triple-split valence           | GBASIS=N311 NGAUSS=6 NDFUNC=1 NPFUNC=1 |
-|              | polarized and augmented        |      DIFFSP=1                          |
-|              |                                |                                        |
-|              | *Polarization-consistent*      | *Good for DFT*                         |
-| PC0          | Minimal                        | GBASIS=PC0                             |
-| PC1          | Split valence polarized        | GBASIS=PC1                             |
-| PC2          | Triple split double polarized  | GBASIS=PC2                             |
-|              |                                |                                        |
-|              | *Correlation-consistent*       | *Good for MP2 and beyond*              |
-| cc-pVDZ      | Split valence polarized        | GBASIS=CC2                             |
-| cc-pVTZ      | Triple split double polarized  | GBASIS=CC3                             |
-|              |                                |                                        |
-|              | *Effective core potentials*    | *Good for treating heavy atoms*        |
-| SBKJC        | Split valence + core potential | GBASIS=SBKJC                           |
-| Hay-Wadt     | Split valence + core potential | GBASIS=HW                              |
-|--------------+--------------------------------+----------------------------------------|
 
 ** Specifying geometry
 Again =GAMESS= has a number of options, several of which are arcane and seldom used.  Most common are Cartesian and z-matrix.  Here I give examples ignoring any symmetry the molecule might have.
@@ -2077,19 +2100,6 @@ $END
 #+END_EXAMPLE
 Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.  In general, though, variables should not be reused.
 
-** Specify calculation type
-Specified in $CONTRL group by RUNTYP flag:
-
-| Calculation                   | RUNTYP=  |
-|-------------------------------+----------|
-| Single-point energy           | Energy   |
-| Single-point energy + force   | Gradient |
-| Geometry optimization         | Optimize |
-| Frequency calculation         | Hessian  |
-| Transition state search       | Sadpoint |
-| Intrinisc reaction coordinate | IRC      |
-
-Note too that specifying EXETYP=CHECK will check your input without actually running the job.
 ** Geometry optimization coordinate system
 By default, =GAMESS= performs optimizations in Cartesian coordinates.
 
