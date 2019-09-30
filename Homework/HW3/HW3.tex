@@ -1,4 +1,4 @@
-% Created 2019-09-23 Mon 12:27
+% Created 2019-09-27 Fri 13:45
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -32,6 +32,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{setspace}
+\usepackage[version=3]{mhchem}
 \usepackage{siunitx}
 \usepackage[labelfont=bf]{caption}
 \usepackage{amsmath}
@@ -64,7 +65,7 @@ H     1.0    -1.37363     0.79732     0.96162
 
 
 \section{\texttt{GAMESS} vs. \texttt{FDA}}
-\label{sec:orgc85955c}
+\label{sec:org36b0df6}
 Using \texttt{GAMESS}, perform a DFT/Hartree-Fock-Slater (\texttt{DFTTYP=SLATER}) calculation on an Ar atom using the 6-31G basis set.
 
 \begin{enumerate}[(a)]
@@ -80,7 +81,7 @@ Using \texttt{GAMESS}, perform a DFT/Hartree-Fock-Slater (\texttt{DFTTYP=SLATER}
 \end{enumerate}
 
 \section{The Generalized Gradient Approximation}
-\label{sec:org3c5bef2}
+\label{sec:orge8bd4a1}
 The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-Slater that gives a nice balance between accuracy and computational expense. Using \texttt{GAMESS}, perform a single point calculation (\texttt{RUNTYP=ENERGY}) on the bent triatomic SO\(_{\text{2}}\) using the GGA (\texttt{DFTTYP=PBE}) and PC1 basis set (\texttt{GBASIS=PCSEG-1}; no \texttt{NGAUSS} flag needed). Add \texttt{ISPHER=1} to the \texttt{\$CONTRL} object. Guess appropriate bond lengths and angle. Be sure to report your input file for your calculation.
 
 \begin{enumerate}[(a)]
@@ -100,20 +101,21 @@ The generalized gradient approximation (GGA) is an improvement on Hartree-Fock-S
 
 \item What are the Mulliken gross charges on the S and O atoms?
 
-\item (Grad students only.  Do in \texttt{Avogadro}.)  Plot out the electrostatic potential of SO\(_{\text{2}}\). Which end of the molecule is electrophilic and which is nucleophilic?
+\item (Grad students only.  Do in \texttt{Avogadro} or \texttt{Webmo}.)  Plot out the electrostatic potential of SO\(_{\text{2}}\). Which end of the molecule is electrophilic and which is nucleophilic?
 \end{enumerate}
 
+
 \section{Geometry Optimization of SO\(_{\text{2}}\)}
-\label{sec:org132fc89}
+\label{sec:org7af73d0}
 
 \begin{enumerate}[(a)]
-\item Do a series of calculations in which you vary the \ce{S–O} distances and \ce{O–S–O} angle over a regular grid of values. Approximate the combination of values that give the lowest energy.
+\item Do a series of calculations in which you vary the \ce{S-O} distances and \ce{O-S-O} angle over a regular grid of values. Approximate the combination of values that give the lowest energy.
 
-\item A geometry optimization (\texttt{RUNTYP=OPTIMIZE}) is a faster way to find the optimal geometry of a molecule. Perform a geometry optimization on SO\(_{\text{2}}\) using the same computational model as above. What are the optimal S–O distances and O–S–O angle?
+\item A geometry optimization (\texttt{RUNTYP=OPTIMIZE}) is a faster way to find the optimal geometry of a molecule. Perform a geometry optimization on SO\(_{\text{2}}\) using the same computational model as above. What are the optimal \ce{S-O} distances and \ce{O-S-O} angle?
 \end{enumerate}
 
 \section{Other Molecules}
-\label{sec:org6c352e8}
+\label{sec:orgc1ec993}
 Oxygen makes bonds with lots of things. Fill out the table below by doing an appropriate set of calculations:
 
 \begin{center}

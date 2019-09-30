@@ -1860,7 +1860,6 @@ The potential energy surface ("PES") is the sum of the repulsive energy of the n
 E_\text{PES}(\mathbf{R_\alpha},\mathbf{R_\beta},\ldots) =E_\text{elec} +\sum_{\alpha=1}^N \sum_{\beta =\alpha +1}^N \frac{Z_\alpha Z_\beta e^2}{R_{\alpha \beta}}
 \end{equation}
 #+END_CENTER
-
 ** Specifying atomic positions
 
 #+BEGIN_CENTER
@@ -1928,14 +1927,14 @@ Particularly convenient when you'd like to "scan" over the value of some coordin
 #+END_CENTER
 Note 3-fold periodicity as expected for rotation about a \ce{C−C} single bond.  Note too there are some special points:
 
-- _Minima_ are places where energy bottoms out.  More formally, first derivative of energy, or slope, or "gradient \(g = 0\), and second derivative, or curvature, or "Hessian \(H > 0\).  These are the *locally* stable conformations of the molecule.  Note that lowest energy in this case is not trans, but rather gauche conformations.  Are you surprised?
+- _Minima_ are places where energy bottoms out.  More formally, first derivative of energy, or slope, or "gradient" \(g = 0\), and second derivative, or curvature, or "Hessian" \(H > 0\).  These are the *locally* stable conformations of the molecule.  Note that lowest energy in this case is not trans, but rather gauche conformations.  Are you surprised?
 
 - _Saddle points_ are places where energy is maximized.  Physicially, corresponds to "transition states" connecting low-energy conformations.  Gradient \(g = 0\), but curvature \(H < 0\).
 
 *** Many-dimensional PES features
 Gradient becomes vector and Hessian a matrix
 
-\[ \bm{g} = \left ( \begin{array}{c} \frac{\partial E}{\partial q_1} \\ \vdots \\ \frac{\partial E}{\partial q_{3N}} \end{array} \right )\qquad \left (\begin{array}{ccc} \frac{\partial^2 E}{\partial q_1^2} & \cdots & \frac{\partial^2 E}{\partial q_1\partial q_{3N}} \\ \vdots & \ddots & \vdots \\ \frac{\partial^2 E}{\partial q_1\partial q_{3N}} & \cdots & \frac{\partial^2 E}{\partial q_{3N}^2}  \end{array} \right ) \]
+\[ \bm{g} = \left ( \begin{array}{c} \frac{\partial E}{\partial q_1} \\ \vdots \\ \frac{\partial E}{\partial q_{3N}} \end{array} \right )\qquad \bm{H} = \left (\begin{array}{ccc} \frac{\partial^2 E}{\partial q_1^2} & \cdots & \frac{\partial^2 E}{\partial q_1\partial q_{3N}} \\ \vdots & \ddots & \vdots \\ \frac{\partial^2 E}{\partial q_1\partial q_{3N}} & \cdots & \frac{\partial^2 E}{\partial q_{3N}^2}  \end{array} \right ) \]
 
 #+CAPTION: From Schlegel, /J. Comp. Chem./ *2003*, /24/, 1514-1527.
 #+ATTR_LATEX: :width 0.75\textwidth
@@ -1976,21 +1975,32 @@ To get better precision and accuracy, could calculate more than two displacement
 
 ** Geometry optimization algorithms
 *** Energy-only
-- _Trudge_ infers gradient by wandering around
+- _Trudge_ infers gradient and locates minimum by wandering around
 *** Energy + gradient
 - _Steepest descent_, just march down hill.  \(\bm{R}^\prime = \bm{R} - \lambda \bm{g}\). Safe, very inefficient near minimum. May do line search to adapt \lambda.
-- _Conjugate gradient_ is steepest descent plus orthogonalization to previous step.  Save, less very inefficient.
+- _Conjugate gradient_ is steepest descent plus orthogonalization to previous step.  Safe, less very inefficient, common choice when far from minima.
 *** Energy + gradient + higher order
 - _Quasi-Newton Raphson_ takes advantages of both first and second derivative information:
    \[ \bm{R}^\prime = \bm{R} - \bm{H}^{-1}(\bm{R})\bm{g}(\bm{R}) \]
 Typically do not know Hessian and it is expensive to calculate.  Make an initial guess, then update Hessian with gradient information from each geometry step. "Learning" PES as we go. Generally converges very rapidly near minima, where surface is not too anharmonic.
+- _Rational function optimization_ is similar in spirit, also constructs Hessian, but uses more sophisticated (than quadratic) guess form of PES to update positions.
 - _Direct inversion in the iterative subspace_ (DIIS) uses sizes of QNR steps as estimates of error and constructs new step from linear combination of previous that minimizes error inferred from previous steps:
   \[ \bm{err}(\bm{R}) = \sum_i c_i \bm{H}^{-1}_i \bm{g}_i \]
-Generally very efficient in region of minimum. Algorithm can misbehave away from minima, possibly even converging to nearby saddle points, so often started with conjugate gradient steps.   
+Generally very efficient in region of minimum. Algorithm can misbehave away from minima, possibly even converging to nearby saddle points, so often started with conjugate gradient steps. 
+
 *** Machine learning
 All of these based on some form of assumed model of underlying PES (Taylor expand to second order around minimum).  Emerging are methods that "fingerprint" structure and construct and improve energy model with each step. Remains to be seen if a new "standard" emerges. 
 *** Convergence criteria
 Typically determine convergence by enforcing maximum on each individual force component 
+
+=GAMESS= offers a limited set of algorithms.
+#+BEGIN_EXAMPLE
+ $STATPT METHOD = NR     ! Quasi-Newton Raphson
+         METHOD = RFO    ! rational function optimization
+         OPTTOL = 0.0001 ! convergence criterion in au/bohr.
+ $END
+#+END_EXAMPLE
+  
 
 ** Specify =GAMESS= calculation type
 Specified in $CONTRL group by RUNTYP flag:
@@ -2000,6 +2010,7 @@ Specified in $CONTRL group by RUNTYP flag:
 | Single-point energy           | Energy   |
 | Single-point energy + force   | Gradient |
 | Geometry optimization         | Optimize |
+| Linear scan over PES          | Scan     |
 | Frequency calculation         | Hessian  |
 | Transition state search       | Sadpoint |
 | Intrinisc reaction coordinate | IRC      |
@@ -2007,19 +2018,28 @@ Specified in $CONTRL group by RUNTYP flag:
 Note too that specifying EXETYP=CHECK will check your input without actually running the job.
 
 ** Efficient coordinate systems
-Optimizations are most efficient in coordinate system that diagonalizes Hessian.  Large off-diagonal Hessian terms imply strong coupling.  Cartesian coordinates do not reflect physical forces in system and are generally poor choice/slow convergence for optimizations.
+Optimizations are most efficient in coordinate system that diagonalizes Hessian, so that optimizations along each direction are (nearly) independent.  Large off-diagonal Hessian terms imply strong coupling.  Cartesian coordinates do not reflect physical forces in system and are generally poor choice/slow convergence for optimizations. Can choose other coordinate systems. Forces/Hessian always computed in cartesians, so any other coordinate system requires transformations back and forth.
 
-*** Z-matrix
+- _Cartesians_ simplest to implement, consistent performance.  Typically only choice in supercell calculations.
 
-*** Redundant internals
+- _Z-matrix_ are easy to define and use for organic molecules with no rings.  For \(3N-6\) degrees of freedom, must specify \(N-1\) distances, \(N-2\) angles, and \(N-3\) dihedrals.  Typically will converge much faster than Cartesians for small molecules.  Implemented in most molecular codes, including =GAMESS=. Specify using NZVAR \(=3N-6\).
+
+- _Natural internals_ are generalizations of z-matrix that are coordinates that approximately diagonalize Hessian. Hard to generate /a priori/ or automatically. Specification in =GAMESS= is arcane.
+
+- _Redundant internals_ are an over-determined set of internal coordinates, like all bond distance, all angles between bonded atoms, all dihedrals.  Easily constructed automatically. Mapping between Cartesians and redundant internals becomes more complicated; transform from redundant to Cartesians is overdetermined and has to be solved iteratively.  Works very efficiently for molecules though. Implemented (in spirit) in =GAMESS=.
+#+BEGIN_EXAMPLE
+ $CONTRL NZVAR = 3N-6 $END
+ $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
+#+END_EXAMPLE
 
 ** Performance of models
+
+** Global optimizations
 ** Vibrational frequencies
 ** Transition states
 ** Intrinsic reaction coordinates
 ** Molecular dynamics
 \newpage
-
 
 * =GAMESS= Cheat Sheet
 ** Specifying electronic configuration
