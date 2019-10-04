@@ -2033,7 +2033,6 @@ Hessian (force) calculation can be done analytically or by numerical differentia
  $END
 #+END_EXAMPLE
 
-
 ** Efficient coordinate systems
 Optimizations are most efficient in coordinate system that diagonalizes Hessian, so that optimizations along each direction are (nearly) independent.  Large off-diagonal Hessian terms imply strong coupling.  Cartesian coordinates do not reflect physical forces in system and are generally poor choice/slow convergence for optimizations. Can choose other coordinate systems. Forces/Hessian always computed in cartesians, so any other coordinate system requires transformations back and forth.
 
@@ -2106,7 +2105,13 @@ Note it is impossible for molecule to just sit at \(q = 0\).  Nuclei are /always
 
 For a chemical bond, \(\kappa\approx \SI{500}{N.m^{-1}}\), \(h\nu \approx \SI{0.8}{eV} \).
  
-Vibrational modes can be probed/observed spectroscopically.  Probability for light to stimulate a transition given by dipole operator.  Results in /absorption selection rules/ that say only jumps between adjacent levels are dipole allowed.  Intensity of absorption transitions relates to derivative of dipole moment w.r.t. bond stretching, can be calculated from electronic wavefunction.  Intensity of Raman transitions related to derivative of polarizability.
+Vibrational modes can be probed/observed spectroscopically.  Probability for light to stimulate a transition given by dipole operator:
+\[\mu_{if} = \left(
+        \frac{d\mu}{dx}\right ) \langle \psi_i|\hat\mu |\psi_f \rangle\]
+Results in /absorption selection rules/ that say only jumps between adjacent levels are dipole allowed, \(\Delta v = \pm 1\).  
+Intensity of absorption transitions relates to derivative of dipole moment w.r.t. bond stretching, can be calculated from electronic wavefunction:
+\[B_{if}=\frac{|\mu_{if}|^2}{6\epsilon_0\hbar^2}\]
+Intensity of Raman transitions related to derivative of polarizability.
 
 Harmonic vibrational frequency systematically overestimate experiment. Convolution of /harmonic approximation/ error: actual PES is not exactly harmonic, and errors intrinsic to electronic structure model.  Errors are typically systematic (see eg [[https://doi.org/10.1021/jp960976r]]).
 
@@ -2120,6 +2125,10 @@ Harmonic vibrational frequency systematically overestimate experiment. Convoluti
 #+CAPTION: Scaled HF/6-31G(d) vibrational spectrum vs experiment
 [[./Images/Methanol.png]]
 ** Transition states
+*** Symmetry
+*** Coordinate drag
+*** 1st order methods (NEB, ...)
+*** 2nd order methods
 ** Intrinsic reaction coordinates
 ** Molecular dynamics
 \newpage
