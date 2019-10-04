@@ -2020,11 +2020,19 @@ Specified in $CONTRL group by RUNTYP flag:
 | Single-point energy + force   | Gradient |
 | Geometry optimization         | Optimize |
 | Linear scan over PES          | Scan     |
-| Frequency calculation         | Hessian  |
+| Energy + second derivative    | Hessian  |
 | Transition state search       | Sadpoint |
 | Intrinisc reaction coordinate | IRC      |
 
 Note too that specifying EXETYP=CHECK will check your input without actually running the job.
+
+Hessian (force) calculation can be done analytically or by numerical differentiation of forces, depending on electronic structure method:
+#+BEGIN_EXAMPLE
+ $FORCE METHOD = ANALYTICAL
+               = SEMINUM
+ $END
+#+END_EXAMPLE
+
 
 ** Efficient coordinate systems
 Optimizations are most efficient in coordinate system that diagonalizes Hessian, so that optimizations along each direction are (nearly) independent.  Large off-diagonal Hessian terms imply strong coupling.  Cartesian coordinates do not reflect physical forces in system and are generally poor choice/slow convergence for optimizations. Can choose other coordinate systems. Forces/Hessian always computed in cartesians, so any other coordinate system requires transformations back and forth.
