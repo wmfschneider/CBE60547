@@ -1852,6 +1852,15 @@ Controlled in GAMESS using the =$SCF= group.
       DAMP=     .T./.F. damping, on for initial iterations
  $END
 #+END_EXAMPLE
+
+Can also control initial guess orbitals. Particularly powerful feature is to restart from converged orbitals from a previous calculations (.dat file), controlled with =$GUESS= group.
+
+#+BEGIN_EXAMPLE
+ $GUESS GUESS = HUCKEL   construct intial guess from a simple Hamiltonian
+              = MOREAD   read in orbitals from $VEC group.
+#+END_EXAMPLE
+
+
 \newpage
 * Potential energy surfaces
 The potential energy surface ("PES") is the sum of the repulsive energy of the nuclei and the kinetic and potential energies of all the electrons:
@@ -1954,7 +1963,7 @@ Gradient becomes vector and Hessian a matrix
 
 In computational chemistry/materials science, it is frequently  our job to identify the critical points (minima and transition states on a PES).  In liquids, PES much more flat and lightly corrugated.  Statistical mechanics becomes mores important.
 
-Each distinct electronic state defines its own PES. Motion along Remember that there are multiple PES’s for any atom configuration, corresponding to different electronic states.  Sometimes these states can interact, intersect, giving avoided crossings, conical intersections.  Lead to more complicated dynamical behavior.
+Each distinct electronic state defines its own PES. Remember that there are multiple PES’s for any atom configuration, corresponding to different electronic states.  Sometimes these states can interact, intersect, giving avoided crossings, conical intersections.  Lead to more complicated dynamical behavior.
 
 ** Energy gradients and second derivatives
 *** Gradients
@@ -1987,9 +1996,10 @@ Typically do not know Hessian and it is expensive to calculate.  Make an initial
 - _Direct inversion in the iterative subspace_ (DIIS) uses sizes of QNR steps as estimates of error and constructs new step from linear combination of previous that minimizes error inferred from previous steps:
   \[ \bm{err}(\bm{R}) = \sum_i c_i \bm{H}^{-1}_i \bm{g}_i \]
 Generally very efficient in region of minimum. Algorithm can misbehave away from minima, possibly even converging to nearby saddle points, so often started with conjugate gradient steps. 
-
 *** Machine learning
 All of these based on some form of assumed model of underlying PES (Taylor expand to second order around minimum).  Emerging are methods that "fingerprint" structure and construct and improve energy model with each step. Remains to be seen if a new "standard" emerges. 
+*** Global optimizations
+Simulated annealling, genetic algorithms, \ldots, more on the exotic side.
 *** Convergence criteria
 Typically determine convergence by enforcing maximum on each individual force component 
 
@@ -2000,7 +2010,6 @@ Typically determine convergence by enforcing maximum on each individual force co
          OPTTOL = 0.0001 ! convergence criterion in au/bohr.
  $END
 #+END_EXAMPLE
-  
 
 ** Specify =GAMESS= calculation type
 Specified in $CONTRL group by RUNTYP flag:
@@ -2022,9 +2031,13 @@ Optimizations are most efficient in coordinate system that diagonalizes Hessian,
 
 - _Cartesians_ simplest to implement, consistent performance.  Typically only choice in supercell calculations.
 
-- _Z-matrix_ are easy to define and use for organic molecules with no rings.  For \(3N-6\) degrees of freedom, must specify \(N-1\) distances, \(N-2\) angles, and \(N-3\) dihedrals.  Typically will converge much faster than Cartesians for small molecules.  Implemented in most molecular codes, including =GAMESS=. Specify using NZVAR \(=3N-6\).
+- _Z-matrix_ are easy to define and use for organic molecules with no rings.  For \(3N-6\) degrees of freedom, must specify \(N-1\) distances, \(N-2\) angles, and \(N-3\) dihedrals.  Typically will converge much faster than Cartesians for small molecules.  Implemented in most molecular codes, including =GAMESS=.
 
-- _Natural internals_ are generalizations of z-matrix that are coordinates that approximately diagonalize Hessian. Hard to generate /a priori/ or automatically. Specification in =GAMESS= is arcane.
+#+BEGIN_EXAMPLE
+ $CONTRL COORD=ZMAT NZVAR = 3N-6 $END
+#+END_EXAMPLE
+
+- _Natural internals_ are generalizations of z-matrix that are coordinates that approximately diagonalize Hessian. Hard to generate /a priori/ or automatically. Specification in =GAMESS= is arcane, done in =$ZMAT=.
 
 - _Redundant internals_ are an over-determined set of internal coordinates, like all bond distance, all angles between bonded atoms, all dihedrals.  Easily constructed automatically. Mapping between Cartesians and redundant internals becomes more complicated; transform from redundant to Cartesians is overdetermined and has to be solved iteratively.  Works very efficiently for molecules though. Implemented (in spirit) in =GAMESS=.
 #+BEGIN_EXAMPLE
@@ -2032,10 +2045,72 @@ Optimizations are most efficient in coordinate system that diagonalizes Hessian,
  $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
 #+END_EXAMPLE
 
-** Performance of models
+|               | FCH2CH2F | C5H10  |
+|---------------+----------+--------|
+| Cartesian     |       13 | 30     |
+| Z-matrix      |       11 | failed |
+| Redundant/DLC |       16 | failed |
 
-** Global optimizations
+** Performance of models for geometries
+Generally pretty good!  Gross geometries of molecules can be computed with good reliability using common approximations (H-F, LDA, GGA). Subtler things (does \ce{FCH2CH2F} really prefer /trans/ or /gauche/?) can take more care in choice of electronic structure model. [[https://cccbdb.nist.gov/]] is a great place to look for benchmarks.
+
 ** Vibrational frequencies
+Suppose we are at a minimum on a PES.  Near that minimum, we can Taylor expand the PES and truncate at second order ("harmonic", or quadratic, approximation).  The Schr\ouml{}dinder equation describing the dynamical motion of the nuclei can be written in terms of displacements from the equilibrium position, \(q_i = x_i - x^\text{eq}_i\), \(i =1, \ldots, 3N\) and the Hessian \(H\):
+\[\hat{H} = -\frac{\hbar^2}{2}\sum_i \frac{1}{m_i}\frac{\partial^2}{dq_i^2}+\frac{1}{2}\sum_{i,j} H_{ij} q_i q_j\]
+or in mass-weighted coordinates, \(\xi_i=\sqrt{m_i}q_i\):
+\[ \hat{H} = -\frac{\hbar^2}{2}\sum_i \frac{\partial^2}{d\xi_i^2}+\frac{1}{2}\sum_{i,j} \tilde{H}_{ij} \xi_i \xi_j,\qquad \tilde{H}_{ij}=\frac{1}{\sqrt{m_i m_j}}H_{ij} \]
+From eigenvalues \(\kappa_i\) and eignevectors \(s_i\) ("normal modes") of mass-weighted Hessian, can transform into \(3N\) one-dimensional problems:
+\[\hat{H}_i=-\frac{\hbar^2}{2}\frac{d^2}{ds_i^2}+\kappa_is_i^2\]
+This is one-dimensional harmonic oscillator Hamiltonian, solutions well known.
+#+BEGIN_EXPORT latex
+\begin{table}[]
+   \begin{center}
+   \caption{Harmonic oscillator model}
+    \label{Harmonic-oscillator}
+\begin{tabular}[h]{|c|}
+\hline
+ \\
+$\displaystyle       V(x) = \frac{1}{2} \kappa x^2, -\infty < x < \infty $ \\
+ \\
+$\displaystyle     \psi_v(x) = N_v H_v(x/\alpha)e^{-x^2/2\alpha^2}, v = 0, 1, 2, \ldots $ \\
+\\
+$\displaystyle \alpha=(\hbar^2/\kappa)^{1/4}, N_v=(2^vv!\alpha\sqrt{\pi})^{-1/2} $ \\
+ \\
+\underline{Hermite polynomials} \\
+$\displaystyle H_0(y) =1$\\
+$\displaystyle H_1(y) = 2y$\\
+$\displaystyle H_2(y) = 4y^2-2$\\
+$\displaystyle H_{n+1}(y) = 2 y H_n(y) -2 n H_{n-1}(y)$\\
+ \\
+$\displaystyle     \nu =\frac{1}{2\pi}\sqrt{\kappa}$ \\
+$\displaystyle     E_v=\left (v+\frac{1}{2}\right )h \nu, v=0, 1, 2, ...$ \\
+ \\
+     \includegraphics[scale=.8]{./Images/HO} \\       
+\hline
+\end{tabular}
+ \end{center}
+\end{table}
+#+END_EXPORT
+Do this in \(3N\) Cartesian space, so 6 (or 5) of the normal modes correspond to translations and rotations of the molecule.  If calculation is exact, these will have \(\kappa_i = 0\).  Numerical errors may make them somewhat non-zero.  If necessary, these can be projected out by transforming Hessian to internal and back to Cartesian coordinates.
+
+Note it is impossible for molecule to just sit at \(q = 0\).  Nuclei are /always vibrating/ about \(x^\text{eq}\). Gives zero point energy
+\[ZPE = \frac{1}{2}\sum_i h\nu_i\]
+
+For a chemical bond, \(\kappa\approx \SI{500}{N.m^{-1}}\), \(h\nu \approx \SI{0.8}{eV} \).
+ 
+Vibrational modes can be probed/observed spectroscopically.  Probability for light to stimulate a transition given by dipole operator.  Results in /absorption selection rules/ that say only jumps between adjacent levels are dipole allowed.  Intensity of absorption transitions relates to derivative of dipole moment w.r.t. bond stretching, can be calculated from electronic wavefunction.  Intensity of Raman transitions related to derivative of polarizability.
+
+Harmonic vibrational frequency systematically overestimate experiment. Convolution of /harmonic approximation/ error: actual PES is not exactly harmonic, and errors intrinsic to electronic structure model.  Errors are typically systematic (see eg [[https://doi.org/10.1021/jp960976r]]).
+
+|                | scale factor |
+|----------------+--------------|
+| HF/3-21G       |       0.9085 |
+| HF/6-31G(d)    |       0.8929 |
+| MP2/6-31G(d)   |       0.9434 |
+| B3LYP/6-31G(d) |       0.9613 |
+
+#+CAPTION: Scaled HF/6-31G(d) vibrational spectrum vs experiment
+[[./Images/Methanol.png]]
 ** Transition states
 ** Intrinsic reaction coordinates
 ** Molecular dynamics

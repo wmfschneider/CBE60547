@@ -1,4 +1,4 @@
-% Created 2019-09-20 Fri 12:24
+% Created 2019-10-03 Thu 23:54
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -43,17 +43,17 @@ m\#+LATEX\~HEADER: \usepackage{enumerate}
 \maketitle
 
 \section{Electronic Structure Calculations using \texttt{GAMESS} and \texttt{Avogadro}}
-\label{sec:org4b99ce4}
+\label{sec:org867c58a}
 
 In this lab session we will learn how to run and visualize the results of electronic structure calculations utilizing the GAMESS and Avogadro software on the CRC machines.
 
 \subsection{Logging In With FastX}
-\label{sec:org99eecc9}
+\label{sec:org5ca6aec}
 Go to \url{https://crcfe01.crc.nd.edu} and log in using your ND credentials.  Then
 choose a single xterm session to get started.  Alternatively, download \href{https://www.starnet.com/fastx/current-client}{fastX} software.
 
 \subsection{Loading the required modules}
-\label{sec:org8f79cbe}
+\label{sec:org2a921d9}
 
 \begin{itemize}
 \item The shell command \texttt{module avail} shows a list of software installed on the CRC machines which you can load and use
@@ -75,7 +75,7 @@ module load openbabel
 \end{minted}
 
 \subsection{Avogadro}
-\label{sec:org619d8b7}
+\label{sec:org33afa39}
 
 \begin{itemize}
 \item To launch avogadro type
@@ -105,11 +105,14 @@ avogadro &
 \item Click and drag one of the nitrogens until the bond length is 1.1 \AA{}$\backslash$ (later we will learn methods for optimizing geometry, but for right now we will set it based on the experimental distance \url{http://cccbdb.nist.gov/exp2.asp?casno=7727379})
 \end{itemize}
 
+\subsection{Webmo}
+\label{sec:orgeb23c90}
+Webmo is a web-based molecule editor and viewer that works pretty darn well with games.  It is accessible at \url{http://webmo.net}.  Log in as a guest.  You can draw molecules, construct Gamess input, and analyze Gamess output.
 \subsection{\texttt{GAMESS}}
-\label{sec:orgc66b4b1}
+\label{sec:org825bc2f}
 
 \subsubsection{Creating Input files}
-\label{sec:org5bfe3b5}
+\label{sec:org5f29a80}
 
 \begin{itemize}
 \item We are ready to generate our input file now. From the extensions menu select \texttt{GAMESS} and click on \texttt{Input Generator}
@@ -122,7 +125,7 @@ avogadro &
 \end{itemize}
 
 \subsubsection{Running calculations}
-\label{sec:org63d15ac}
+\label{sec:org0e8dd48}
 
 \begin{itemize}
 \item Go back to the terminal cd into the directory where you saved the input file
@@ -154,8 +157,15 @@ rungms $1.inp > $1.out
 qsub gamess.sh N2
 \end{minted}
 
+\begin{verbatim}
+qconf -sql   # list availabe queues
+qconf -sq /queuename/   # list details of a queue
+\end{verbatim}
+
+
+
 \subsubsection{Analyzing the output}
-\label{sec:org892a39d}
+\label{sec:org12f48cb}
 
 \begin{itemize}
 \item Open the output file in a text editor, either gedit or emacs.
@@ -183,7 +193,7 @@ emacs N2.log &
 \end{itemize}
 
 \subsubsection{Run a series of jobs}
-\label{sec:org4557b92}
+\label{sec:orgc16d085}
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{sh}
 #!/bin/bash
 #$ -pe smp 4
@@ -251,5 +261,5 @@ done
 
 \end{minted}
 \subsubsection{Plot output}
-\label{sec:orga12fcac}
+\label{sec:org75ba150}
 \end{document}

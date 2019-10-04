@@ -70,6 +70,8 @@ avogadro &
 
 - Click and drag one of the nitrogens until the bond length is 1.1 \AA\ (later we will learn methods for optimizing geometry, but for right now we will set it based on the experimental distance http://cccbdb.nist.gov/exp2.asp?casno=7727379)
 
+** Webmo
+Webmo is a web-based molecule editor and viewer that works pretty darn well with games.  It is accessible at [[http://webmo.net]].  Log in as a guest.  You can draw molecules, construct Gamess input, and analyze Gamess output.
 ** =GAMESS=
 
 *** Creating Input files
@@ -111,6 +113,13 @@ rungms $1.inp > $1.out
 #+BEGIN_SRC sh
 qsub gamess.sh N2
 #+END_SRC
+
+#+BEGIN_EXAMPLE
+qconf -sql   # list availabe queues
+qconf -sq /queuename/   # list details of a queue
+#+END_EXAMPLE
+
+
 
 *** Analyzing the output
 
