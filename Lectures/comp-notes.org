@@ -1749,7 +1749,7 @@ Specified in $BASIS group.  Some common choices, in increasing level of sophisti
 |              | polarized and augmented          | DIFFSP=1                               |
 |              |                                  |                                        |
 |              | *Polarization-consistent*        | *Good for DFT*                         |
-| PC0          | Minimal                          | GBASIS=PCseg-0      ISPHER=1           |
+| PC0          | Split valence                    | GBASIS=PCseg-0      ISPHER=1           |
 | PC1          | Split valence polarized          | GBASIS=PCseg-1      ISPHER=1           |
 | PC2          | Triple split double polarized    | GBASIS=PCseg-22     ISPHER=1           |
 |              |                                  |                                        |
@@ -2006,8 +2006,10 @@ Typically determine convergence by enforcing maximum on each individual force co
 =GAMESS= offers a limited set of algorithms.
 #+BEGIN_EXAMPLE
  $STATPT METHOD = NR     ! Quasi-Newton Raphson
-         METHOD = RFO    ! rational function optimization
+                = RFO    ! rational function optimization
          OPTTOL = 0.0001 ! convergence criterion in au/bohr.
+         HESS = GUESS    ! guess an initial Hessian
+              = READ     ! read from $VIB group
  $END
 #+END_EXAMPLE
 
@@ -2030,6 +2032,7 @@ Hessian (force) calculation can be done analytically or by numerical differentia
 #+BEGIN_EXAMPLE
  $FORCE METHOD = ANALYTICAL
                = SEMINUM
+        VIBSIZ = 0.01    ! step size (bohr)
  $END
 #+END_EXAMPLE
 
@@ -2052,6 +2055,7 @@ Optimizations are most efficient in coordinate system that diagonalizes Hessian,
  $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
 #+END_EXAMPLE
 
+|---------------+----------+--------|
 |               | FCH2CH2F | C5H10  |
 |---------------+----------+--------|
 | Cartesian     |       13 | 30     |
@@ -2091,28 +2095,38 @@ $\displaystyle H_{n+1}(y) = 2 y H_n(y) -2 n H_{n-1}(y)$\\
  \\
 $\displaystyle     \nu =\frac{1}{2\pi}\sqrt{\kappa}$ \\
 $\displaystyle     E_v=\left (v+\frac{1}{2}\right )h \nu, v=0, 1, 2, ...$ \\
- \\
-     \includegraphics[scale=.8]{./Images/HO} \\       
+% \\
+%     \includegraphics[scale=.6]{./Images/HO} \\       
 \hline
 \end{tabular}
  \end{center}
 \end{table}
 #+END_EXPORT
+
+#+ATTR_LATEX: :width 0.5\textwidth
+[[./Images/HO.pdf]]
+
 Do this in \(3N\) Cartesian space, so 6 (or 5) of the normal modes correspond to translations and rotations of the molecule.  If calculation is exact, these will have \(\kappa_i = 0\).  Numerical errors may make them somewhat non-zero.  If necessary, these can be projected out by transforming Hessian to internal and back to Cartesian coordinates.
 
 Note it is impossible for molecule to just sit at \(q = 0\).  Nuclei are /always vibrating/ about \(x^\text{eq}\). Gives zero point energy
 \[ZPE = \frac{1}{2}\sum_i h\nu_i\]
 
 For a chemical bond, \(\kappa\approx \SI{500}{N.m^{-1}}\), \(h\nu \approx \SI{0.8}{eV} \).
- 
-Vibrational modes can be probed/observed spectroscopically.  Probability for light to stimulate a transition given by dipole operator:
-\[\mu_{if} = \left(
-        \frac{d\mu}{dx}\right ) \langle \psi_i|\hat\mu |\psi_f \rangle\]
-Results in /absorption selection rules/ that say only jumps between adjacent levels are dipole allowed, \(\Delta v = \pm 1\).  
-Intensity of absorption transitions relates to derivative of dipole moment w.r.t. bond stretching, can be calculated from electronic wavefunction:
-\[B_{if}=\frac{|\mu_{if}|^2}{6\epsilon_0\hbar^2}\]
-Intensity of Raman transitions related to derivative of polarizability.
 
+*** Absorption intensities 
+Vibrational modes can be probed/observed spectroscopically.  Intensity of stimulated absorption from vibrational state /i/ to /f/ given by Einstein coefficient of stimulated absorption:
+\[B_{if}=\frac{|\mu_{if}|^2}{6\epsilon_0\hbar^2}\]
+Arises from coupling of electric field of light with dipole of system.  Transition dipole moment, \(\mu_{if})\, given by:
+\[\mu_{if} = \langle \psi_i|\hat\mu |\psi_f \rangle\]
+where \(\hat\mu\) is dipole operator, 
+\[\hat\mu = \sum q_i \bm{r}_i \]
+where sum runs over all charged particles and \(q_i\) is each charge.  Dipole moment changes as molecule vibrates.  In direction \(\xi\), can write
+\[\hat\mu(\xi(t)) = \mu(0) +\xi(t)\left( \frac{d\mu}{d\xi}\right )_{\xi=0} + \ldots\]
+Use harmonic oscillator wavefunctions for \(\psi_i\) and \(\psi_f\):
+\[\mu_{if} = \langle \psi_i|\hat\mu |\psi_f \rangle = \langle \psi_i|\mu(0) |\psi_f \rangle + \left( \frac{d\mu}{d\xi}\right )_{\xi=0} \langle \psi_i | \xi|\psi_f\rangle + \ldots\]
+First integral vanishes for \(i\ne f\). Second integral provides /gross selection rule/ that intensity of transition proportional to the /dynamic/  dipole moment along vibrational normal mode \(\xi\) and /particular selection rule/ that intensity of transition is zero unless \(f = i \pm 1\).  Latter comes from nature of Hermite polynomials.  At normal temperatures, \(i = 0\), and the only observable vibrational transitions are \(1\rightarrow 2\).
+
+*** Performance of harmonic approximation for vibrational spectrum
 Harmonic vibrational frequency systematically overestimate experiment. Convolution of /harmonic approximation/ error: actual PES is not exactly harmonic, and errors intrinsic to electronic structure model.  Errors are typically systematic (see eg [[https://doi.org/10.1021/jp960976r]]).
 
 |                | scale factor |
@@ -2122,168 +2136,116 @@ Harmonic vibrational frequency systematically overestimate experiment. Convoluti
 | MP2/6-31G(d)   |       0.9434 |
 | B3LYP/6-31G(d) |       0.9613 |
 
+Relative intensities are generally predicted with good reliability.  Model predicts absorption peaks to be delta functions.  Peaks always broadened due to a variety of fundamental and instrumental considerations.  Common in displaying spectra to arbitrarily broaden using a Lorentzian function.
+
 #+CAPTION: Scaled HF/6-31G(d) vibrational spectrum vs experiment
+#+ATTR_LATEX: :width 0.75\textwidth
 [[./Images/Methanol.png]]
 ** Transition states
 *** Symmetry
+Can exploit symmetry to force calculation to converge to a transition state. Eclipsed form of \ce{FCH2-CH2F} has mirror symmetry (\(C_s\)), if initialized in that configuration, optimization must preserve symmetry:
+#+ATTR_LATEX: :width 0.25\textwidth
+[[./Images/FCH2CH2F-eclipsed.png]]
 *** Coordinate drag
-*** 1st order methods (NEB, ...)
-*** 2nd order methods
-** Intrinsic reaction coordinates
-** Molecular dynamics
-\newpage
+If reaction state coordinate maps closely onto some internal coordinate, then can do a series of "constrained" optimizations, fixing the coordinate of interest to a series of values and relaxing all other coordinates.  Use =IFREEZ= within =GAMESS=.  For example, define \ce{FCH2CH2F} using z-matrix and freeze \ce{F-C-C-F} dihedral angle at a series of values.
 
-* =GAMESS= Cheat Sheet
-** Specifying electronic configuration
-*** Closed shell (default)
 #+BEGIN_EXAMPLE
- $CONTRL RHFTYP=RHF MULT=1 $END
-#+END_EXAMPLE
-
-*** Open-shell (n = spin-multiplicity = # unpaired electrons + 1)
-#+BEGIN_EXAMPLE
- $CONTRL RHFTYP=UHF MULT=n $END
-#+END_EXAMPLE
-** Specifying electronic structure method
-*** Hartree-Fock (default)
-*** DFT
-#+BEGIN_EXAMPLE
- $CONTRL DFTTYP=xxx $END
-#+END_EXAMPLE
-=Gamess= supports _many_ DFT functionals.  See the $DFT section of the manual for a full set.  Common DFT methods include:
-|-----------------------------+--------|
-| method                      | xxx    |
-|-----------------------------+--------|
-| Slater                      | Slater |
-| Local density approx        | SVN    |
-| Generalized gradient approx | PBE    |
-| Hybrid DFT                  | B3LYP  |
-| "Minnesota" optimized       | M06    |
-|                             | M11    |
-|-----------------------------+--------|
-
-** Specifying geometry
-Again =GAMESS= has a number of options, several of which are arcane and seldom used.  Most common are Cartesian and z-matrix.  Here I give examples ignoring any symmetry the molecule might have.
-*** Cartesian
-Specify an atom name, atomic number, and cartesian positions in \AA.  Over-specified, so code will typically center and reorient.  Following is for gauche difluoroethane, \ce{FCH2CH2F}.
-#+BEGIN_EXAMPLE
- $CONTRL COORD=CART $END
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=OPTIMIZE COORD=ZMT NZVAR=18 ISPHER=1 $END
+ $BASIS GBASIS=PCseg-0 $END
+ $STATPT IFREEZ(1)=12 $END
  $DATA
-FCH2CH2F drag calculation
-C1
-C     6.0    -3.76764     0.33879     0.03727
-C     6.0    -2.35246     0.34495     0.03689
-F     9.0    -4.72277     0.58147    -1.18012
-F     9.0    -1.59909    -0.68487    -0.83662
-H     1.0    -4.04387     1.08375     0.75395
-H     1.0    -3.92958    -0.71060     0.16941
-H     1.0    -2.03786     0.18875     1.04760
-H     1.0    -2.09983     1.28759    -0.40187
- $END
-#+END_EXAMPLE
-
-*** Z-matrix
-Specify atom name, number of atom it is connected to, distance to that atom, number of atom it makes an angle with, value of the angle, number of the atom it makes a dihedral with, and value of the dihedral angle.  Values may be given directly or as variables, followed by list of variable specifications.  In =Gamess=, would specify z-matrix for \ce{FCH2CH2F} like this:
-#+BEGIN_EXAMPLE
-$CONTRL COORD=ZMT $END
-$DATA
-FCH2CH2F drag calculation
+FCH2CH2F eclipsed TS
 C1
 C
 C   1   r1
 F   2   r2   1   A1
 H   2   r3   1   A2   3   D1
 H   2   r4   1   A3   3   D2
-F   1   r2   2   A1   3   D3
-H   1   r3   2   A2   6   D1
-H   1   r4   2   A3   6   D2
+F   1   r5   2   A4   3   D3
+H   1   r6   2   A5   6   D4
+H   1   r7   2   A6   6   D5
 
-r1=1.5386
-r2=1.39462
-r3=1.11456
-r4=1.12
-A1=109.54214
-A2=111.
-A3=110.
-D1=120.
-D2=-120.5
-D3=50.
-$END
+...
+D4=120.
+...
+ $END
 #+END_EXAMPLE
-Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.  In general, though, variables should not be reused.
 
-** Geometry optimization coordinate system
-By default, =GAMESS= performs optimizations in Cartesian coordinates.
 
-To use z-matrix coordinates, specify
-#+BEGIN_EXAMPLE
- $CONTRL COORDS=ZMT NZVAR=xx $END
-#+END_EXAMPLE
-where NZVAR = 3N-6.
+ #+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
 
-To have =Gamess= automatically create a set of appropriate "delocalized" internal coordinates, specify
-#+BEGIN_EXAMPLE
- $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
-#+END_EXAMPLE
-** Performing a transition state search
-Transition states are always more challenging to find than optimal geometries.  Always ~at least~ a three-step procedure:
+autoeV = 27.211386
+H_atom_HF = -0.46658185
+H_atom_LDA = -0.4356702
+He_cation_HF = -1.9317484483
+He_atom_HF = -2.80778396
+He_atom_LDA = -2.771886
 
-1. Guess a transition state structure and compute Hessian matrix (RUNTYP = HESSIAN).  Check to be sure there is one imaginary mode approximating desired TS.
-2. Perform the transition state search.  Must supply computed Hessian matrix, copied from .dat file, as $HESS group.  Also should specify $STATPT HESS=READ $END.
-3. Check the result!  Assuming the transition state search converges, run another frequency calculation to confirm that there is one and only one imaginary mode, and that it corresponds to desired TS.
+plt.figure()
 
-* Plane waves and core potentials
+baseline = H_atom_HF
+with open('./Resources/FCH2CH2F-PC1.dat', 'r') as f:
+    # Reading all the lines in the file
+    # Each line is stored as an element of a list
+    lines = f.readlines()
+    angle = []
+    GGA_energy = []
 
-** Hydrogen atom in a box
+    for line in lines:
+        # Each is a string with two columns
+        theta, energy = line.split()
 
-** Periodic boundary conditions
+        # We need to convert each line to a float add it to our lists
+        angle.append(float(theta))
+        GGA_energy.append(float(energy))
 
-** Supercells - Cartesian and fractional coordinates
+minimum = np.min(GGA_energy)
+GGA_energy = (GGA_energy - minimum) * autoeV
+GGA_energy2 = np.flip(GGA_energy)
+GGA_energy3=np.concatenate((GGA_energy,GGA_energy2))
 
-** Gaussian vs. Vasp
+angle=np.array(angle)
+phase = 180.0
+angle2 = angle + phase
+angle3 = np.concatenate((angle,angle2))
 
-** Vasp POSCAR
+plt.plot(angle3,GGA_energy3, 'ro', label='GGA', ls='--')
 
-** Vasp INCAR
 
-** Core electron treatment
+# plt.plot([0.,4.0],[0.,0.],ls='--',color='black')
+# plt.xlim(0.4,4.0)
 
-*** OPW
+plt.legend()
+plt.xlabel('angle (degree)')
+plt.ylabel('Energy (eV)')
+# plt.title('H2+ Energies vs distance, referenced to H')
+plt.savefig('./Images/FCH2CH2F-scan.png')
 
-*** PP
+ #+END_SRC
 
-*** PAW
+ #+RESULTS:
 
-** Comparing energies between calculations
+#+CAPTION: GGA/PCseg-1 rotational scan
+#+ATTR_LATEX: :width 0.75\textwidth
+[[./Images/FCH2CH2F-scan.png]]
 
-** Wavefunctions and charge densities
-
-** Exploring potential energy surfaces
+A quasi-NR optimization started at one of the approximate TS's will usually converge to the exact TS.  Always good practice to follow up with a frequency calculation to confirm.
+*** 1st order methods (NEB, ...)
+Later....
+*** 2nd order methods
+If one has a sufficient close guess of a transistion state structure, then standard Hessian-based optimization algorithms can converge to a saddle point.  Usually need a decent guess of the Hessian for this to work.
+** Intrinsic reaction coordinates
+** Molecular dynamics
+Basic idea is to propogate atoms forward in time using some model to compute the forces on atoms and Newton's laws to describe kinetic energy of atoms.  May be done at constant energy (/NVE/) or, by coupling kinetic energy to an appropriate reservoir, at constant temperature (/NVT/).  Details beyond this course (perhaps beyond this instructor!).  Primary point for us is that cost of electronic structure calculations is great enough that typically some adjustments must be made to make force calculations cheap and fast enough to support number of evaluations necessary to do meaningful dynamics.
+*** Cheap parameters
+Simplest trick is to back off on the precision and accuracy of calculations to reduce force evaluation cost.
+*** Car-Parrinello dynamics
+Treat wavefunction itself as a dynamical variable and propogate forward in time along with the nuclei. Ideally parallels but does not exactly follow Born-Oppenheimer energy surface.  Huge advance when originally introduced, has fallen out of favor as more conventional B-O approaches compete more effectively.
+** Biased sampling
 \newpage
-* Periodic electronic structure
-** Isolated vs. periodic systems
-** Bloch's theorem and qualitative band structure
-** Band folding
-** Multi-dimensional periodicity
-** Density of statues
-** Bravais lattices
-** Quantitative supercell calculations
-** Brillouin zone integration
-*** k-point sampling
-*** Fermi smearing
-\newpage
-* Practical supercell calculations
-\newpage
-* Surfaces
-** Surface planes
-** Slab models
-** Surface energy
-** Surface potentials and Fermi energies
-** Surface adsorption
-** Coverage-dependent adsorption
-** Reaction barriers
 
-\newpage
 * First-principles thermodynamics
 ** Connection Between QM and Thermodynamics
 We have focused to this point on the many approaches and details of calculating
@@ -2488,6 +2450,158 @@ Electronic degeneracy
 
 
 ** CO T-dependent thermo example
+\newpage
+
+* =GAMESS= Cheat Sheet
+** Specifying electronic configuration
+*** Closed shell (default)
+#+BEGIN_EXAMPLE
+ $CONTRL RHFTYP=RHF MULT=1 $END
+#+END_EXAMPLE
+
+*** Open-shell (n = spin-multiplicity = # unpaired electrons + 1)
+#+BEGIN_EXAMPLE
+ $CONTRL RHFTYP=UHF MULT=n $END
+#+END_EXAMPLE
+** Specifying electronic structure method
+*** Hartree-Fock (default)
+*** DFT
+#+BEGIN_EXAMPLE
+ $CONTRL DFTTYP=xxx $END
+#+END_EXAMPLE
+=Gamess= supports _many_ DFT functionals.  See the $DFT section of the manual for a full set.  Common DFT methods include:
+|-----------------------------+--------|
+| method                      | xxx    |
+|-----------------------------+--------|
+| Slater                      | Slater |
+| Local density approx        | SVN    |
+| Generalized gradient approx | PBE    |
+| Hybrid DFT                  | B3LYP  |
+| "Minnesota" optimized       | M06    |
+|                             | M11    |
+|-----------------------------+--------|
+
+** Specifying geometry
+Again =GAMESS= has a number of options, several of which are arcane and seldom used.  Most common are Cartesian and z-matrix.  Here I give examples ignoring any symmetry the molecule might have.
+*** Cartesian
+Specify an atom name, atomic number, and cartesian positions in \AA.  Over-specified, so code will typically center and reorient.  Following is for gauche difluoroethane, \ce{FCH2CH2F}.
+#+BEGIN_EXAMPLE
+ $CONTRL COORD=CART $END
+ $DATA
+FCH2CH2F drag calculation
+C1
+C     6.0    -3.76764     0.33879     0.03727
+C     6.0    -2.35246     0.34495     0.03689
+F     9.0    -4.72277     0.58147    -1.18012
+F     9.0    -1.59909    -0.68487    -0.83662
+H     1.0    -4.04387     1.08375     0.75395
+H     1.0    -3.92958    -0.71060     0.16941
+H     1.0    -2.03786     0.18875     1.04760
+H     1.0    -2.09983     1.28759    -0.40187
+ $END
+#+END_EXAMPLE
+
+*** Z-matrix
+Specify atom name, number of atom it is connected to, distance to that atom, number of atom it makes an angle with, value of the angle, number of the atom it makes a dihedral with, and value of the dihedral angle.  Values may be given directly or as variables, followed by list of variable specifications.  In =Gamess=, would specify z-matrix for \ce{FCH2CH2F} like this:
+#+BEGIN_EXAMPLE
+$CONTRL COORD=ZMT $END
+$DATA
+FCH2CH2F drag calculation
+C1
+C
+C   1   r1
+F   2   r2   1   A1
+H   2   r3   1   A2   3   D1
+H   2   r4   1   A3   3   D2
+F   1   r2   2   A1   3   D3
+H   1   r3   2   A2   6   D1
+H   1   r4   2   A3   6   D2
+
+r1=1.5386
+r2=1.39462
+r3=1.11456
+r4=1.12
+A1=109.54214
+A2=111.
+A3=110.
+D1=120.
+D2=-120.5
+D3=50.
+$END
+#+END_EXAMPLE
+Particularly convenient when you'd like to "scan" over the value of some coordinate.  Variable can be applied to more than one independent coordinate, if the molecule has symmetry.  In general, though, variables should not be reused.
+
+** Geometry optimization coordinate system
+By default, =GAMESS= performs optimizations in Cartesian coordinates.
+
+To use z-matrix coordinates, specify
+#+BEGIN_EXAMPLE
+ $CONTRL COORDS=ZMT NZVAR=xx $END
+#+END_EXAMPLE
+where NZVAR = 3N-6.
+
+To have =Gamess= automatically create a set of appropriate "delocalized" internal coordinates, specify
+#+BEGIN_EXAMPLE
+ $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
+#+END_EXAMPLE
+** Performing a transition state search
+Transition states are always more challenging to find than optimal geometries.  Always ~at least~ a three-step procedure:
+
+1. Guess a transition state structure and compute Hessian matrix (RUNTYP = HESSIAN).  Check to be sure there is one imaginary mode approximating desired TS.
+2. Perform the transition state search.  Must supply computed Hessian matrix, copied from .dat file, as $HESS group.  Also should specify $STATPT HESS=READ $END.
+3. Check the result!  Assuming the transition state search converges, run another frequency calculation to confirm that there is one and only one imaginary mode, and that it corresponds to desired TS.
+
+* Plane waves and core potentials
+
+** Hydrogen atom in a box
+
+** Periodic boundary conditions
+
+** Supercells - Cartesian and fractional coordinates
+
+** Gaussian vs. Vasp
+
+** Vasp POSCAR
+
+** Vasp INCAR
+
+** Core electron treatment
+
+*** OPW
+
+*** PP
+
+*** PAW
+
+** Comparing energies between calculations
+
+** Wavefunctions and charge densities
+
+** Exploring potential energy surfaces
+\newpage
+* Periodic electronic structure
+** Isolated vs. periodic systems
+** Bloch's theorem and qualitative band structure
+** Band folding
+** Multi-dimensional periodicity
+** Density of statues
+** Bravais lattices
+** Quantitative supercell calculations
+** Brillouin zone integration
+*** k-point sampling
+*** Fermi smearing
+\newpage
+* Practical supercell calculations
+\newpage
+* Surfaces
+** Surface planes
+** Slab models
+** Surface energy
+** Surface potentials and Fermi energies
+** Surface adsorption
+** Coverage-dependent adsorption
+** Reaction barriers
+
 \newpage
 * Implicit solvation
 * Density functional theory
