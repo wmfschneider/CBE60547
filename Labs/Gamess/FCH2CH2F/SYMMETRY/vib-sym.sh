@@ -1,0 +1,34 @@
+#!/bin/bash
+#$ -pe smp 4
+#$ -q debug
+#$ -N gamess
+module load gamess
+
+THISNAME=vib-sym
+MYRUNGAMESS=$HOME/CBE60547/Labs/Gamess/bin/rungms
+
+cat <<EOF > ~/.gmsrc
+set SCR=/scratch365/$USER
+set USERSCR=$PWD
+EOF
+
+cat<<'EOF' > $THISNAME.inp
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=HESSIAN COORD=ZMT NZVAR=18 ISPHER=1 $END
+ $FORCE METHOD=SEMINUM $END
+ $BASIS GBASIS=PCseg-0 $END
+ $DATA
+FCH2CH2F eclipsed TS
+CS
+
+ C   
+ C      1   1.5738348
+ F      2   1.4354089  1   108.6989571
+ H      2   1.1081347  1   111.1119623  3   119.1947424  0
+ H      2   1.1081347  1   111.1119623  3  -119.1947424  0
+ F      1   1.4342516  2   108.5968010  3     0.0000000  0
+ H      1   1.1080827  2   111.0914608  6   119.1869591  0
+ H      1   1.1080827  2   111.0914608  6  -119.1869591  0
+ $END
+EOF
+$MYRUNGAMESS $THISNAME.inp > $THISNAME.out
+

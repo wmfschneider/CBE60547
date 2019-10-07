@@ -1,0 +1,36 @@
+#!/bin/bash
+#$ -pe smp 4
+#$ -q debug
+#$ -N gamess
+module load gamess
+
+THISNAME=vib
+MYRUNGAMESS=$HOME/CBE60547/Labs/Gamess/bin/rungms
+
+cat <<EOF > ~/.gmsrc
+set SCR=/scratch365/$USER
+set USERSCR=$PWD
+EOF
+
+cat<<'EOF' > $THISNAME.inp
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=HESSIAN COORD=CART ISPHER=1 $END
+ $BASIS GBASIS=PCseg-0 $END
+ $FORCE METHOD=SEMINUM $END
+ $DATA
+FCH2CH2F cartesian optimization calculation
+C1
+ C           6.0  -0.6825859983  -0.6052590209   0.3379509790
+ C           6.0   0.6825995662  -0.6055753182  -0.3374024974
+ F           9.0   1.4628498216   0.4896405340   0.1849444048
+ H           1.0   1.2186619285  -1.5559000964  -0.1370893512
+ H           1.0   0.5547773061  -0.4649563102  -1.4280795562
+ F           9.0  -1.4628577245   0.4894871378  -0.1853877322
+ H           1.0  -1.2186896005  -1.5557398042   0.1384984228
+ H           1.0  -0.5547622072  -0.4636360628   1.4284969260
+ $END
+
+EOF
+$MYRUNGAMESS $THISNAME.inp > $THISNAME.out
+
+grep 'NSERCH:' $THISNAME.out | gawk '{print $4, $7, $9}' > $THISNAME.sum
+
