@@ -1,0 +1,33 @@
+#!/bin/bash
+#$ -pe smp 4
+#$ -q debug
+#$ -N gamess
+module load gamess
+
+THISNAME=vib-ts
+MYRUNGAMESS=$HOME/CBE60547/Labs/Gamess/bin/rungms
+
+cat <<EOF > ~/.gmsrc
+set SCR=/scratch365/$USER
+set USERSCR=$PWD
+EOF
+
+cat<<'EOF' > $THISNAME.inp
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=HESSIAN COORD=ZMT NZVAR=18 ISPHER=1 $END
+ $FORCE METHOD=SEMINUM $END
+ $BASIS GBASIS=PCseg-1 $END
+ $DATA
+FCH2CH2F  no-symmetry TS
+C1
+ C   
+ C      1   1.5266485
+ F      2   1.4016544  1   110.1827030
+ H      2   1.1063476  1   112.8189076  3   119.8849908  0
+ H      2   1.1071335  1   108.2851360  3  -118.8764316  0
+ F      1   1.4016659  2   110.2018205  3   124.3275333  0
+ H      1   1.1063231  2   112.8326799  6   119.8782364  0
+ H      1   1.1070510  2   108.2937696  6  -118.8292798  0
+ $END
+EOF
+$MYRUNGAMESS $THISNAME.inp > $THISNAME.out
+
