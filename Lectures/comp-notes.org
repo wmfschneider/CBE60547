@@ -2143,15 +2143,44 @@ Relative intensities are generally predicted with good reliability.  Model predi
 [[./Images/Methanol.png]]
 ** Transition states
 *** Symmetry
-Can exploit symmetry to force calculation to converge to a transition state. Eclipsed form of \ce{FCH2-CH2F} has mirror symmetry (\(C_s\)), if initialized in that configuration, optimization must preserve symmetry:
-#+ATTR_LATEX: :width 0.25\textwidth
-[[./Images/FCH2CH2F-eclipsed.png]]
+Can exploit symmetry to force calculation to converge to a transition state. Eclipsed form of \ce{FCH2-CH2F} has mirror symmetry (\(C_s\)), if initialized in that configuration, optimization must preserve symmetry.  
+
+#+BEGIN_EXAMPLE
+ $DATA
+  FCH2CH2F eclipsed z-matrix (Cs, or mirror, symmetry)
+CS
+
+ C   
+ C      1   1.5000000
+ F      2   1.4000000  1   109.5421400
+ H      2   1.1000000  1   109.5421400  3   120.0000000  0
+ H      2   1.1000000  1   109.5421400  3  -120.0000000  0
+ F      1   1.5000000  2   109.5421400  3     0.0000000  0
+ H      1   1.1000000  2   109.5421400  6   120.0000000  0
+ H      1   1.1000000  2   109.5421400  6  -120.0000000  0
+ $END
+#+END_EXAMPLE
+
+See results in [[../Labs/Gamess/FCH2CH2F/SYMMETRY]].
+
+#+BEGIN_EXPORT latex
+\begin{center}
+\begin{tabular}{ccc}
+\includegraphics{./Images/FCH2CH2F-gauche.png}
+ & \(\longrightarrow\) & 
+\includegraphics{./Images/FCH2CH2F-eclipsed.png} \\
+\SI{-277.9377770749}{au} &  & \SI{-277.9253478441}{au} \\
+  &  \(\Delta E =\) \SI{0.34}{eV} &  \\
+\end{tabular}
+\end{center}
+#+END_EXPORT
+
 *** Coordinate drag
 If reaction state coordinate maps closely onto some internal coordinate, then can do a series of "constrained" optimizations, fixing the coordinate of interest to a series of values and relaxing all other coordinates.  Use =IFREEZ= within =GAMESS=.  For example, define \ce{FCH2CH2F} using z-matrix and freeze \ce{F-C-C-F} dihedral angle at a series of values.
 
 #+BEGIN_EXAMPLE
  $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=OPTIMIZE COORD=ZMT NZVAR=18 ISPHER=1 $END
- $BASIS GBASIS=PCseg-0 $END
+ $BASIS GBASIS=PCseg-1 $END
  $STATPT IFREEZ(1)=12 $END
  $DATA
 FCH2CH2F eclipsed TS
@@ -2171,21 +2200,15 @@ D4=120.
  $END
 #+END_EXAMPLE
 
+See results in [[../Labs/Gamess/FCH2CH2F/SCAN][../Labs/Gamess/FCH2CH2F/SCAN]].
 
  #+BEGIN_SRC python :exports results
 import matplotlib.pyplot as plt
 import numpy as np
 
 autoeV = 27.211386
-H_atom_HF = -0.46658185
-H_atom_LDA = -0.4356702
-He_cation_HF = -1.9317484483
-He_atom_HF = -2.80778396
-He_atom_LDA = -2.771886
-
 plt.figure()
 
-baseline = H_atom_HF
 with open('./Resources/FCH2CH2F-PC1.dat', 'r') as f:
     # Reading all the lines in the file
     # Each line is stored as an element of a list
@@ -2201,6 +2224,7 @@ with open('./Resources/FCH2CH2F-PC1.dat', 'r') as f:
         angle.append(float(theta))
         GGA_energy.append(float(energy))
 
+# Fancy code to set the minimum at zero and symmetry reflect the data
 minimum = np.min(GGA_energy)
 GGA_energy = (GGA_energy - minimum) * autoeV
 GGA_energy2 = np.flip(GGA_energy)
@@ -2231,11 +2255,78 @@ plt.savefig('./Images/FCH2CH2F-scan.png')
 #+ATTR_LATEX: :width 0.75\textwidth
 [[./Images/FCH2CH2F-scan.png]]
 
-A quasi-NR optimization started at one of the approximate TS's will usually converge to the exact TS.  Always good practice to follow up with a frequency calculation to confirm.
+A quasi-NR optimization started at one of the approximate TS's will usually converge to the exact TS.  
+#+BEGIN_EXAMPLE
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=OPTIMIZE COORD=ZMT NZVAR=18 ISPHER=1 $END
+ $STATPT METHOD=NR $END
+ $BASIS GBASIS=PCseg-1 $END
+ $DATA
+FCH2CH2F zmatrix optimization near saddle point, no hessian
+C1
+ C   
+ C      1   1.5256029
+ F      2   1.4018052  1   110.3919125
+ H      2   1.1066523  1   112.5759655  3   119.5903058  0
+ H      2   1.1070172  1   108.5521191  3  -119.1579857  0
+ F      1   1.4018888  2   110.3079213  3   120.0000000  0
+ H      1   1.1065092  2   112.5372024  6   119.5247291  0
+ H      1   1.1069911  2   108.5976341  6  -119.1645584  0
+ $END
+#+END_EXAMPLE
+
+
+See results in [[../Labs/Gamess/FCH2CH2F/QNR-TS][../Labs/Gamess/FCH2CH2F/QNR-TS]].  Always good practice to follow up with a frequency calculation to confirm.  
+
+#+BEGIN_EXPORT latex
+\begin{center}
+\begin{tabular}{ccc}
+\includegraphics{./Images/FCH2CH2F-gauche.png}
+ & \(\longrightarrow\) & 
+\includegraphics{./Images/FCH2CH2F-TS.png} \\
+\SI{-277.9377770749}{au} &  & \SI{-277.9333073294}{au} \\
+  &  \(\Delta E =\) \SI{0.12}{eV} &  \\
+  &  \(\nu = 154i~\text{cm}^{-1}\) & \\
+\end{tabular}
+\end{center}
+#+END_EXPORT
+
+Coordinate dragging can fail when the reaction coordinate is non-linearly related to the multiple internal coordinates. Plus, it is relatively expensive, as it involves a lot of optimizations.
 *** 1st order methods (NEB, ...)
-Later....
+A scan is a first order method that freezes the gradient along a search direction.  A better algorithm would use the information along the search direction to find the TS and the entire MEP.  That's the spirit of a /nudged elastic band/ calculation, for instance. Also of newer methods to generate more sophisticated approximations.   Touch on that later....
 *** 2nd order methods
-If one has a sufficient close guess of a transistion state structure, then standard Hessian-based optimization algorithms can converge to a saddle point.  Usually need a decent guess of the Hessian for this to work.
+Hessian-based methods (like quasi-NR and DIIS) generally work more efficiently, assuming you can find a region reasonably close to the TS and can get a good guess of the Hessian with the appropriate (1!) number of negative eigenvalues.  These work like regular optimization methods, but search uphill along the negative eigenvector and downhill along the other directions.  The Hessian update scheme has to be appropriately modified to accommodate the negative eigenvalue.  The choice of coordinate system can become even more crucial.
+
+Algorithm:
+1. Identify and optimize structures of reactant and product states
+2. Guess a structure for the TS, interpolated either mathematically or empirically between reactant and product
+3. Compute initial TS Hessian.  Only needs to be approximately correct, so appropriate to use a less-expensive method.
+4. Confirm Hessian has desired form.
+5. Do saddle-point search with guessed Hessian
+6. Check result with final Hessian calculation
+
+#+BEGIN_EXAMPLE
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=SADPOINT COORD=CART ISPHER=1 $END
+ $BASIS GBASIS=PCseg-1 $END
+ $FORCE HESS=READ $END
+ $DATA  
+H2ON2                                                                           
+C1       1
+N           7.0      0.9405942384     -0.3241591975     -0.0156283505
+N           7.0      0.0107640781      0.6540868381      0.0152029180
+O           8.0     -0.9317086136     -0.2406652788     -0.0189127039
+H           1.0     -0.2853795803     -0.9336844866      0.3015543918
+H           1.0      1.8537652825      0.1690870887      0.0045149723
+ $END      
+ $HESS
+ENERGY IS     -184.6737814637 E(NUC) IS       74.1740447013
+ 1  1 8.31017204E-01 1.46125961E-01 7.06555414E-04-1.42105871E-01 2.88851646E-02
+ 1  2-1.06097190E-03-3.64083936E-01 2.22079857E-02-2.60487424E-03-3.19838288E-02
+.....
+ $END
+#+END_EXAMPLE
+
+*** Well climbing
+Algorithms exist that will climb out of basins and seek transition states....
 ** Intrinsic reaction coordinates
 ** Molecular dynamics
 Basic idea is to propogate atoms forward in time using some model to compute the forces on atoms and Newton's laws to describe kinetic energy of atoms.  May be done at constant energy (/NVE/) or, by coupling kinetic energy to an appropriate reservoir, at constant temperature (/NVT/).  Details beyond this course (perhaps beyond this instructor!).  Primary point for us is that cost of electronic structure calculations is great enough that typically some adjustments must be made to make force calculations cheap and fast enough to support number of evaluations necessary to do meaningful dynamics.
