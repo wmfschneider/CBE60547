@@ -2328,6 +2328,104 @@ ENERGY IS     -184.6737814637 E(NUC) IS       74.1740447013
 *** Well climbing
 Algorithms exist that will climb out of basins and seek transition states....
 ** Intrinsic reaction coordinates
+In more complicated systems, it can often be difficult to know exactly what minima a particular transition state corresponds to. The intrinsic reaction coordinate (IRC) or minimum energy path (MEP) is steepestdescent path from TS towards both basins. Starts from TS, steps forward in direction given by gradient, using second order method. Have to use care in selecting algorithm and step sizes to stay on the path. Can be useful for locating variational transition state...configuration where free energy (rather than energy) is maximized. 
+
+#+BEGIN_EXAMPLE
+ $CONTRL SCFTYP=RHF DFTTYP=PBE RUNTYP=IRC COORD=UNIQUE ISPHER=1 $END
+ $BASIS GBASIS=PCseg-1 $END
+ $IRC PACE=LINEAR STABLZ=.TRUE. NPOINT=10 SADDLE=.T. FORWRD=.T. $END
+ $FORCE HESS=READ $END
+ $DATA
+H2ON2                                                                           
+C1       1
+ N           7.0   0.9233485039  -0.2399318160   0.0736256617
+ N           7.0  -0.0272197420   0.6088503884  -0.0717581187
+ O           8.0  -1.0933769256  -0.1081391759   0.0571959479
+ H           1.0  -0.1059622027  -1.0519964547   0.2191639975
+ H           1.0   1.8912457716   0.1158820221   0.0085037392
+ $END      
+ $HESS
+ENERGY IS     -185.5854194050 E(NUC) IS       73.0033764178
+ 1  1 8.43287379E-01-4.86363743E-02 1.07610516E-04-3.07227749E-01 1.52208588E-01
+.....
+#+END_EXAMPLE
+
+ #+BEGIN_SRC python :exports results
+import matplotlib.pyplot as plt
+import numpy as np
+
+autoeV = 27.211386
+plt.figure()
+
+ETS =  -185.5854209645
+EH2NNO = -185.6307936846
+EHNNOH =  -185.6254877715
+
+STOTAL = np.array([
+0.09941,
+0.400170, 
+ 0.703330,
+ 0.996962,
+ 1.364699,
+ 1.604658,
+ 1.820806,
+ 1.971620,
+ 2.103944,
+-0.09941,
+-0.401501,
+-0.703636,
+-0.987787,
+-1.29349,
+-1.51763,
+-1.62821,
+-1.75842,
+-1.87735])
+STOTAL = - STOTAL
+
+ENERGY = np.array([
+    -185.5859104950,
+    -185.5927279255,
+    -185.6041181432,
+    -185.6146316266,
+    -185.6228151542,
+    -185.6266206293,
+    -185.6282752364,
+    -185.6284538684,
+    -185.6278730719,
+    -185.5859176431,
+    -185.5929858562,
+    -185.6047742031,
+    -185.6141814402,
+    -185.6202917534,
+    -185.6227541452,
+    -185.6228213331,
+    -185.6231201159,
+    -185.6228385824])
+
+ENERGY = (ENERGY - EH2NNO) * autoeV
+ETS = (ETS - EH2NNO) * autoeV
+EHNNOH = (EHNNOH - EH2NNO) * autoeV
+
+
+plt.plot(STOTAL, ENERGY, 'ro')
+plt.plot(0, ETS, 'rx')
+plt.plot([-2.,2.],[EHNNOH,EHNNOH],ls='--')
+
+# plt.plot([0.,4.0],[0.,0.],ls='--',color='black')
+# plt.xlim(0.4,4.0)
+
+plt.legend()
+plt.xlabel('distance (angstroms)')
+plt.ylabel('Energy (eV)')
+plt.title('Energy relative to reactants, IRC from TS)
+plt.savefig('./Images/IRC.png')
+
+ #+END_SRC
+
+ #+RESULTS:
+
+[[./Images/IRC.png]]
+
 ** Molecular dynamics
 Basic idea is to propogate atoms forward in time using some model to compute the forces on atoms and Newton's laws to describe kinetic energy of atoms.  May be done at constant energy (/NVE/) or, by coupling kinetic energy to an appropriate reservoir, at constant temperature (/NVT/).  Details beyond this course (perhaps beyond this instructor!).  Primary point for us is that cost of electronic structure calculations is great enough that typically some adjustments must be made to make force calculations cheap and fast enough to support number of evaluations necessary to do meaningful dynamics.
 *** Cheap parameters
