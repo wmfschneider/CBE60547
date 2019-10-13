@@ -2299,9 +2299,9 @@ Hessian-based methods (like quasi-NR and DIIS) generally work more efficiently, 
 Algorithm:
 1. Identify and optimize structures of reactant and product states
 2. Guess a structure for the TS, interpolated either mathematically or empirically between reactant and product
-3. Compute initial TS Hessian.  Only needs to be approximately correct, so appropriate to use a less-expensive method.
-4. Confirm Hessian has desired form.
-5. Do saddle-point search with guessed Hessian
+3. Compute initial TS Hessian (=RUNTYP = HESSIAN=).  Only needs to be approximately correct, so appropriate to use a less-expensive method.
+4. Confirm Hessian has desired number of imaginary modes, or at least an imaginary mode that maps well onto desired reaction coordinate.
+5. Do saddle-point search with guessed Hessian (=RUNTYP=SADPOINT=, =HESS=READ=).
 6. Check result with final Hessian calculation
 
 #+BEGIN_EXAMPLE
