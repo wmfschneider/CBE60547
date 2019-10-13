@@ -2284,7 +2284,7 @@ See results in [[../Labs/Gamess/FCH2CH2F/QNR-TS][../Labs/Gamess/FCH2CH2F/QNR-TS]
  & \(\longrightarrow\) & 
 \includegraphics{./Images/FCH2CH2F-TS.png} \\
 \SI{-277.9377770749}{au} &  & \SI{-277.9333073294}{au} \\
-  &  \(\Delta E =\) \SI{0.12}{eV} &  \\
+  &  \(\Delta E^\ddagger =\) \SI{0.12}{eV} &  \\
   &  \(\nu = 154i~\text{cm}^{-1}\) & \\
 \end{tabular}
 \end{center}
@@ -2324,6 +2324,21 @@ ENERGY IS     -184.6737814637 E(NUC) IS       74.1740447013
 .....
  $END
 #+END_EXAMPLE
+
+See Results in [[../Labs/Gamess/H2NNO-TS]].
+
+#+BEGIN_EXPORT latex
+\begin{center}
+\begin{tabular}{ccccc}
+\includegraphics[width=0.22\textwidth]{./Images/H2NNO.png}
+ & \(\longrightarrow\) & 
+\includegraphics[width=0.22\textwidth]{./Images/H2NNO-TS.png} & \(\longrightarrow\) & \includegraphics[width=0.22\textwidth]{./Images/HNNOH.png} \\
+\SI{-185.6307937}{au} &  & \SI{-185.5854209}{au} & & \SI{-185.6254878}{au}\\
+  &  \(\Delta E^\ddagger =\) & & \(\Delta E =\) \\
+  &  \SI{1.23}{eV} & &  \SI{0.14}{eV} \\
+\end{tabular}
+\end{center}
+#+END_EXPORT
 
 *** Well climbing
 Algorithms exist that will climb out of basins and seek transition states....
@@ -2417,7 +2432,7 @@ plt.plot([-2.,2.],[EHNNOH,EHNNOH],ls='--')
 plt.legend()
 plt.xlabel('distance (angstroms)')
 plt.ylabel('Energy (eV)')
-plt.title('Energy relative to reactants, IRC from TS)
+plt.title('Energy relative to reactants, IRC from TS')
 plt.savefig('./Images/IRC.png')
 
  #+END_SRC
@@ -2433,6 +2448,7 @@ Simplest trick is to back off on the precision and accuracy of calculations to r
 *** Car-Parrinello dynamics
 Treat wavefunction itself as a dynamical variable and propogate forward in time along with the nuclei. Ideally parallels but does not exactly follow Born-Oppenheimer energy surface.  Huge advance when originally introduced, has fallen out of favor as more conventional B-O approaches compete more effectively.
 ** Biased sampling
+Ask Whitmer.  See [[https://doi.org/10.1021/acs.jctc.8b00192]].
 \newpage
 
 * WFT Beyond Hartree-Fock
@@ -2448,14 +2464,15 @@ WFT has the advantage of offering a series of systematically improving models. S
 
 - _static correlation_ are electron correlation effects that arise from the restrictive form of the H-F wavefunction
 - _dynamic correlation_ is like it sounds, the "dance" of all electrons about one another
-- _configuration interaction_ is a variational approach to adding in dynamical correlation. Difficult to apply, rarely used any more.
-- _size consistency_ is the property that the energy model scales properly with the system size
+- _configuration interaction_ is a variational approach to adding in dynamical correlation by combining H-F determinants. Difficult to apply, rarely used any more.
+- _size consistency_ is the property that the energy model scales properly with the system size.  CI lacks this.
 - _perturbation theory_ (MPn) is non-variational, size-consistent, and user-friendly approach
-- _coupled-cluster_ (CCxxx) is an improvement on perturbation theory
+- _coupled-cluster_ (CCxxx) is a systematic, size-consistent approach to introducing H-F correlation.  Improvement on perturbation theory.
+- _quadratic configuration interaction_ (QCIxxx) is an approximate coupled cluster model.
 
 Heirarcy of models:
 #+BEGIN_CENTER
-HF < MP2 ~ MP3 ~ CCD < CCSD < MP4 < CCSD(T)
+HF < MP2 ~ MP3 ~ CCD < CCSD < MP4 < CCSD(T) ~
 #+END_CENTER
 Reliability also tied to basis set completeness.
 
