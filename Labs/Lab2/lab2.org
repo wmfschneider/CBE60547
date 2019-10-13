@@ -266,3 +266,19 @@ plt.title('HHe+ Energies vs distance, referenced to H+ and He')
 plt.savefig('./Images/HHe+.png')
 
 #+END_SRC
+*** Creating a series of snapshots
+#+BEGIN_SRC python
+import matplotlib.pyplot as plt
+import numpy as np
+
+xi = [0., -1., +1., -2., +2., -3., +3.]
+
+E = [ -430.2879609555 ,   -430.306441, -430.37153,  -430.241392,  -430.39381, -429.93685, -430.21178]
+
+plt.figure()
+plt.scatter(xi,E)
+plt.show()
+#+END_SRC
+
+#+RESULTS:
+

@@ -2435,22 +2435,63 @@ Treat wavefunction itself as a dynamical variable and propogate forward in time 
 ** Biased sampling
 \newpage
 
+* WFT Beyond Hartree-Fock
+DFT or WFT calculations of PES's are expensive.  Not uncommon to use an heirarcy of methods:
+1. Characterize PES using some low-cost model (LDA)
+2. Improve structures using some more reliable and expensive method
+3. Improve final energies using some even more reliable and expensive method
+
+WFT has the advantage of offering a series of systematically improving models. Starts with Hartree-Fock ground-state wavefunction and build in "many-body" features/electron correlation by combining with "excited" Hartree-Fock wavefunctions:
+
+#+ATTR_LATEX: :width 1.0\textwidth
+[[./Images/correlation-summary.pdf]]
+
+- _static correlation_ are electron correlation effects that arise from the restrictive form of the H-F wavefunction
+- _dynamic correlation_ is like it sounds, the "dance" of all electrons about one another
+- _configuration interaction_ is a variational approach to adding in dynamical correlation. Difficult to apply, rarely used any more.
+- _size consistency_ is the property that the energy model scales properly with the system size
+- _perturbation theory_ (MPn) is non-variational, size-consistent, and user-friendly approach
+- _coupled-cluster_ (CCxxx) is an improvement on perturbation theory
+
+Heirarcy of models:
+#+BEGIN_CENTER
+HF < MP2 ~ MP3 ~ CCD < CCSD < MP4 < CCSD(T)
+#+END_CENTER
+Reliability also tied to basis set completeness.
+
+[[./Images/model-chem.png]]
+
+"Model chemistry" some linear combination of these, often calibrated against experimental data. "G2" most venerable:
+
+|                | Hartree-Fock |       MP2 | MP4 | QCISD(T) |
+|----------------+--------------+-----------+-----+----------|
+| 6-31G(d)       | ZPE          | Structure |     |          |
+| 6-311G(d)      |              |         1 |   2 |        3 |
+| 6-311+G(d,p)   |              |         4 |   5 |          |
+| 6-311G(2df,p)  |              |         6 |   7 |          |
+| 6-311+G(3df,p) |              |         8 |     |          |
+
+\[ \text{QCISD(T)/6-311+G(3df,p)} \approx 2 + (3-2) + (5-2) + (7-2) + (8-1) - (4-1) - (6-1)\]
+\[ \Delta E(\text{HLC}) = \SI{-2.50}{mHa} * (\text{# electron pairs}) - \SI{0.19}{mHa}* (\text{# unpaired electrons}) \]
+\[ E(\text{G2}) = \text{QCISD(T)/6-311+G(3df,p)} + 0.8929 * \text{ZPE} + \Delta E(\text{HLC})\]
+
+Quality assessed using, eg, mean absolute deviation from some reliable data set. Many elaborations on this same idea in the literature.
+
+\newpage
 * First-principles thermodynamics
 ** Connection Between QM and Thermodynamics
-We have focused to this point on the many approaches and details of calculating
-the /internal electronic energy/ of a single molecule, that is, the energy
+*** Internal energy 
+The /internal electronic energy/ of a single molecule from a WFT/DFT calculation is the energy
 associated with taking infinitely separated constituent nuclei and electrons at
 rest and forming a molecule:
 \begin{equation}
 2~\mathrm{H}^+ + 8~\mathrm{O}^{8+} + 10~\mathrm{e}^- \rightarrow
 \mathrm{H_2O}\qquad E^\mathrm{elec}
 \end{equation}
-$E^\mathrm{elec}$ is typically calculated within the Born-Oppenheimer
-approximation, i.e.\ within the approximation that the nuclei are fixed in space
-at the minimum energy configuration.  Even at 0~K, by quantum mechanics the
-atoms must vibrate about this minimum, and this intrinsic vibration imparts a
-/zero-point vibrational energy/ (ZPVE) to the molecule, and the 0~K
-internal energy of a molecule is thus:
+Calculate $E^\mathrm{elec}$  within the Born-Oppenheimer
+approximation, so the nuclei are fixed in space
+at the minimum energy configuration.  
+*** Zero-point vibrational energy
 \begin{equation}
   E^0=E^\mathrm{elec} + ZPVE
 \end{equation}
@@ -2461,42 +2502,37 @@ ZPVE can be calculated reliably within the harmonic approximation, according to
 where $\nu_i$ are the harmonic vibrational frequencies, obtained from a
 vibrational frequency analysis.  $E^0$ is the minimum physically meaninfful
 energy of the molecule.
-
-Energy can be deposited in a molecule in many other ways as well, e.g.\ as
+*** Finite /T/ energy
+Energy can be deposited in a syste  as
 translational and rotational kinetic energy, in excited vibrational modes, in
 the interaction of a molecule with an external electric or magnetic or
-gravitational field, or ....  If we assume that the energy in these various
+gravitational field, or ....   If we assume that the energy in these various
 degrees of freedom are separable, we can write:
 \begin{equation}
   E_i=E^0+E^\mathrm{trans}+E^\mathrm{rot}+E^\mathrm{vib} +E^\mathrm{elec*}+E^\mathrm{ext}
 \end{equation}
-To fully describe microscopic energetic state of a molecule, would have to
+To fully describe microscopic energetic state of a system, would have to
 specify all of these.
 
-Typically, though, we are more interested in the collective properties of many
-molecules at equilibrium, like the internal energy $U$ or enthalpy $H$ or Gibbs
-energy $G$, under some external constraints like temperature $T$ or volu
-me $V$.  These thermodynamic quantities are averages over the energy states of
-an /ensemble/ of molecules.  The way this averaging is performed is the
-realm of /statistical thermodynamics/.
+Typically want collective properties at equilibrium, like the internal
+energy $U$ or enthalpy $H$ or Gibbs energy $G$, under some external
+constraints like temperature $T$ or volume $V$.  These thermodynamic
+quantities are averages over the energy states of an /ensemble/ of
+molecules.  The way this averaging is performed is the realm of
+/statistical thermodynamics/.
 
-Most important for us will be the /canonical ensemble/, in which the free
-variables are the number of molecules $N$, the total volume $V$, and the
-temperature $T$.  Offer without proof, in the canonical ensemble the
-probability for a molecule to be in some energy state $E_i$ above $E^0$ is
-given by the Boltzmann factor,
+*** Canonical ensemble
+Free variables are the number of molecules $N$, the total volume $V$,
+and the temperature $T$.  Probability for a molecule to be in some
+energy state $E_i$ above $E^0$ is given by the Boltzmann factor,
 \begin{equation}
   P(E_i) \propto e^{-E_i\beta}=e^{-E_i/k_BT},\qquad\beta=1/k_BT
 \end{equation}
 Defines an exponentially decaying probability function for a state to be
-occupied at some temperature.  In a sense, /temperature/ is the property of
+occupied at some temperature.  /Temperature/ is the characteristic of
 a system following this distribution.
-\begin{figure}[h]
-  \centering
-  \includegraphics{./Images/boltzmann}
-  \caption{Boltzmann distribution at two different temperatures}
-  \label{fig:boltzmann}
-\end{figure}
+
+[[./Images/boltzmann.pdf]]
 
 *** Averages and partition functions
 Let's use this to calculate the internal energy $U$ of a molecule at some
@@ -2514,40 +2550,60 @@ where the denominator ensures that the probability is normalized.
 The sum over energy states is evidently a special quantity, called the
 partition function:
 \begin{equation}
-  q=\sum_ie^{-E_i\beta}
+  Q=\sum_ie^{-E_i\beta}
 \end{equation}
-All thermodynamic quantities can be written in terms of the partition function!
+All thermodynamic quantities can be written in terms of the partition function.
 
-*** Harmonic oscillator example
-Harmonic oscillator is a reasonable model of a molecular vibration.  Energy
-spectrum given by
-\begin{equation}
-  E_v=(v+1/2)h\nu,\qquad v=0,1,2,...
-\end{equation}
-Let's define the energy qunatum $h\nu=\epsilon_0$ and reset the energy scale so
-that zero is at $1/2 h\nu$:
-\begin{eqnarray}
-  E_v & = & v\epsilon_0,\qquad v=0,1,2,... \\
-q(T) & = &\sum_{v=0}^\infty e^{-v\epsilon_0\beta} \\
- & = & \frac{1}{1-e^{-\epsilon_0\beta}}
-\end{eqnarray}
-where we take advantage of the fact that the sum is a geometric series to
-evaluate it in closed form.
+#+BEGIN_EXPORT latex
+\begin{table}\small
+  \begin{center}
+    \caption{Equations of the Canoncial ($NVT$) Ensemble}
+    \label{Canonical}
+    \begin{tabular}[h]{lccc}
+      \hline
+$\beta=1/k_BT$ & {\bf Full Ensemble} & {\bf Distinguishable particles} & {\bf Indistinguishable
+particles} \\
+               &               & (e.g. atoms in a lattice) & (e.g. molecules in
+               a fluid) \\
+\hline
+Single particle & & & \\partition function& & $\displaystyle q(V,T) = \sum_i
+e^{-\epsilon_i\beta} $& $\displaystyle q(V,T) = \sum_i e^{-\epsilon_i\beta} $ \\
+Full partition & & & \\function & $\displaystyle Q(N,V,T) = \sum_j e^{-U_j\beta} $ &
+$\displaystyle Q = q(V,T)^N $ & $\displaystyle Q = q(V,T)^N/N! $ \\
+Log partition &  $\ln Q$ & $N\log q$ & $ N\ln q - \ln N! $\\
+function & & & $\approx N(\ln Q - \ln N +1)$ \\ & & & \\
+Helmholtz energy & $\displaystyle -\frac{\ln Q}{\beta}$ & $\displaystyle
+-\frac{N\ln q}{\beta}$ & $\displaystyle -\frac{N}{\beta}\left (\ln\frac{q}{N} +
+  1 \right ) $ \\
+($A=U-TS$) & & & \\ & & &  \\
+Internal energy ($U$)& $\displaystyle -\left (\frac{\partial\ln
+    Q}{\partial\beta}\right )_{NV}$ & $\displaystyle -N\left (\frac{\partial\ln
+    q}{\partial\beta}\right )_{V}$ &  $\displaystyle -N\left (\frac{\partial\ln
+    q}{\partial\beta}\right )_{V}$ \\ & & & \\
+Pressure ($P$) & $\displaystyle  \frac{1}{\beta}\left (\frac{\partial\ln
+    Q}{\partial V}\right )_{N\beta}$ & $\displaystyle \frac{N}{\beta}\left (\frac{\partial\ln
+    q}{\partial V}\right )_{\beta}$ &  $\displaystyle \frac{N}{\beta}\left (\frac{\partial\ln
+    q}{\partial V}\right )_{\beta}$ \\ & & & \\
 
-Plot partition function vs $T$, increasing function.
+Entropy ($S/k_B$) & $ \beta U + \ln Q$ & $\beta U + N \ln q$ & $\beta U +
+N\left ( \ln(q/N) + 1\right )$ \\ & & & \\
+Chemical potential ($\mu$) & $\displaystyle -\frac{1}{\beta}\left ( \frac{\partial \ln
+    Q}{\partial N}\right )_{VT} $& $\displaystyle -\frac{\ln q}{\beta}$ & $\displaystyle
+-\frac{\ln (q/N)}{\beta}$ \\ & & & \\
+\hline
+    \end{tabular}
+{\bf NOTE!} All energies are referenced to their values at 0~K.  Enthalpy $H=U+PV$, Gibb's
+Energy $G=A+PV$.
+  \end{center}
+\end{table}
+#+END_EXPORT
 
-\noindent Internal energy:
-\begin{eqnarray}
-  U(T) &=&-\frac{\partial \ln q}{\partial \beta}\\
-   & = & \frac{\epsilon_0}{e^{\epsilon_0\beta}-1}
-\end{eqnarray}
 
-\noindent Heat capacity:
+** Stat Mech applied to stuff
+[[./Images/gls.pdf]]
 
-\noindent Entropy
+*** Separability 
 
-** Molecular Ideal Gas
-Nice example above for a simple model.  To get thermodynamics of an ideal gas,
 in principle need to sum over all the types of energy states (translational,
 rotational, vibrational, ...) of every molecule.  Seemingly impossible task.
 One simplification is if we can write energy as sum of energies of individual
@@ -2573,7 +2629,7 @@ elements (molecules) of system:
     \begin{equation}
       Q(N,V,T)=q^N/N!
     \end{equation}
- Sidebar: ``Correct'' factoring depends on whether individual elements
+ Sidebar: "Correct" factoring depends on whether individual elements
       are fermions or bosons, leads to funny things like superconductivity and
       superfluidity.
 
@@ -2601,13 +2657,44 @@ freedom.
 Have to somehow /model/ these motions and have to use our quantum
 mechanical results to parameterize the models.
 
-*** Translational partition function
-Need a model molecules freely translating about in a box.  How about the
-/particle in a box/?
+** Ideal gas
+*** Ideal gas of molecules
+Assume molecules are /indistinguishable/ and that internal energy is /seperable/
+\[  Q_{ig}(N,V,T) = \frac{(q_\mathrm{trans}q_\mathrm{rot}q_\mathrm{vib}q_\mathrm{elec})^N}{N!} \]
+\[ F(N,V,T) = F_\mathrm{trans}+ F_\mathrm{rot} + F_\mathrm{vib}+F_\mathrm{elec}\]
+for any thermodynamic function \(F\).
+*** Electronic partition functions $\rightarrow$ spin multiplicity
+Governed by Fermi-Dirac distribution. Electronic degeneracy at normal /T/.
+*** Vibrational thermodynamics: harmonic oscillator
+Energy spectrum above ZPE given
+\begin{equation}
+  E_v=hv\nu,\qquad v=0,1,2,...
+\end{equation}
+Define characteristic temperature \(\Theta =h \nu/k_B\).
+\begin{eqnarray}
+q(T) & = &\sum_{v=0}^\infty e^{-v(\Theta/T)} \\
+ & = & \frac{1}{1-e^{-\Theta/T}}
+\end{eqnarray}
+(geometric series). Partition function increasing function of /T/.  Look at limits.
+
+\noindent Internal energy:
+\begin{eqnarray}
+  U(T) &=&-\frac{\partial \ln q}{\partial \beta}\\
+   & = & \frac{\epsilon_0}{e^{\epsilon_0\beta}-1}
+\end{eqnarray}
+Need vibrational spectrum to get these contributions.
+
+/Results only as good as H-O model!/ For low frequency modes, errors can be substantial, esp for entropy.  Can apply more sophisticated models.
+
+*** Rotational thermodynamics: rigid  rotor
+Characteristic temperature $\Theta_\mathrm{rot} = \hbar^2/2 I k_B$.  Moment of intertia /I/ only depends on shape or molecule---geometry optimzation. 
+
+"High" T $q_\mathrm{rot}(T) \approx \sigma \Theta_\mathrm{rot}/T$, most often true
+*** Translational states: particle-in-a-box
 \begin{equation}
   E_n=\frac{n^2\pi^2\hbar^2}{2 m L^2},~~~~~n=1,2,3,...
 \end{equation}
-Have to construct partition function for one molecule.  For gas molecules at
+Have to construct partition function for one molecule.  $\Theta_\mathrm{trans} = \epsilon_0/k_B$.  For gas molecules at
 normal conditions, energy spacing is tiny.  Spare the details, but find that
 $q_\mathrm{trans}$ can be written in terms of a /thermal wavelength/
 $\Lambda$:
@@ -2621,24 +2708,291 @@ box dimensions at which quantization is evident.  Typically a tiny number
 $q_\mathrm{trans}$ is, on the other hand, enormous: lots of translational
 freedom.  $V^\circ$ defines the standard state volume.
 
-Given this, can find all translational contributions to thermodynamics.
-$S_\mathrm{trans}$ gives the Sackur-Tetrode equation, the absolute entropy of a
-monatomic gas:
+$q_\mathrm{trans}\rightarrow$ integral approximation
+            \begin{eqnarray*}
+              q_\mathrm{trans,1D} \approx \int_0^\infty e^{-x^2\beta\epsilon_0}dx =
+              L/\Lambda \\
+              \Lambda = \left ( \frac{h^2\beta}{2\pi m} \right )^{1/2}\
+              \mathrm{thermal\ wavelength} \\
+              q_\mathrm{trans,3D} = V/\Lambda^3
+            \end{eqnarray*}
+
+#+BEGIN_EXPORT latex
+\begin{table}
+\begin{center}
+    \caption{\large{Statistical Thermodynamics of an Ideal Gas}}
+   \begin{description}
+    \item[\underline{Translational DOFs}] {3-D particle in a box model}
+
+$\displaystyle \theta_\mathrm{trans}= \frac{\pi^2\hbar^2}{2 m
+  L^2 k_B}$,
+$\displaystyle \Lambda=h\left( \frac{\beta}{2\pi m}\right )^{1/2}$
+
+For $ T >> \Theta_\mathrm{trans}$, $\Lambda << L$, $\displaystyle
+q_\mathrm{trans}=V/\Lambda^3$ (essentially always true)
+
+\begin{tabular}{ccc}
+$\displaystyle U_\mathrm{trans}=\frac{3}{2}RT$ & $\displaystyle C_\mathrm{v,trans} =
+\frac{3}{2}R $ & $\displaystyle S^\circ_\mathrm{trans}=R \ln \left (
+  \frac{e^{5/2}V^\circ}{N^\circ \Lambda^3}\right ) = R \ln \left (
+  \frac{e^{5/2}k_BT}{P^\circ \Lambda^3}\right ) $ \\
+\end{tabular}
+
+  \item[\underline{Rotational DOFs}] {Rigid rotor model}
+\begin{description}
+\item[Linear molecule]{}
+$\theta_\mathrm{rot} =hcB/k_B$
+
+\begin{equation*}
+q_\mathrm{rot}=\frac{1}{\sigma}\sum_{l=0}^\infty (2l+1)e^{-l(l+1)\theta_\mathrm{rot}/T},
+\approx \frac{1}{\sigma}\frac{T}{\theta_\mathrm{rot}},\ \ T>>\theta_\mathrm{rot}\ \ \ \sigma = \left \{
+        \begin{array}{rl}
+          1, & \text{unsymmetric} \\
+          2, & \text{symmetric}
+        \end{array} \right .
+\end{equation*}
+\begin{tabular}{ccc}
+$\displaystyle U_\mathrm{rot}=RT$ & $\displaystyle C_\mathrm{v,rot} =
+R $ & $\displaystyle S^\circ_\mathrm{rot}=R (1-\ln(\sigma\theta_\mathrm{rot}/T)) $ \\
+\end{tabular}
 
 
-*** Rotational partition function
-Model molecule as a rigidly rotating body.  Body has three orthogonal moments
-of inertia $I$ determined by the molecular structure.
+\item[Non-linear molecule]{} $\theta_{\mathrm{rot},\alpha}=hcB_\alpha/k_B$
+\begin{equation*}
+q_\mathrm{rot} 
+\approx \frac{1}{\sigma}\left ( \frac{\pi
+    T^3}{\theta_{\mathrm{rot},\alpha}\theta_{\mathrm{rot},\beta}\theta_{\mathrm{rot},\gamma}}
+  \right )^{1/2},\ \ T>>\theta_{\mathrm{rot},\alpha,\beta,\gamma}\ \ \ \sigma =
+  \text{rotational symmetry number}
+\end{equation*}
+\begin{tabular}{ccc}
+$\displaystyle U_\mathrm{rot}=\frac{3}{2}RT$ & $\displaystyle C_\mathrm{v,rot} = \frac{3}{2}
+R $ & $\displaystyle S^\circ_\mathrm{rot}=\frac{R}{2}
+\left ( 3-\ln\frac{\sigma\theta_{\mathrm{rot},\alpha}\theta_{\mathrm{rot},\beta}\theta_{\mathrm{rot},\gamma}}{\pi
+  T^3} \right ) $ \\
+\end{tabular}
 
-*** Vibrational partition function
-See harmonic oscillator above
+\end{description}
 
-*** Electronic partition function
-Governed by Fermi-Dirac distribution
-Electronic degeneracy
+\item[\underline{Vibrational DOFs}] {Harmonic oscillator model}
+\begin{description}
+\item[Single harmonic mode] {$\theta_\mathrm{vib}=h\nu/k_B $}
+  \begin{equation*}
+    q_\mathrm{vib}=\frac{1}{1-e^{-\theta_\mathrm{vib}/T}} \approx
+      \frac{T}{\theta_\mathrm{vib}}, \ \ \ T>>\theta_\mathrm{vib}
+  \end{equation*}
+
+\begin{tabular}{ccc}
+$ U_\mathrm{vib}= $ & $  C_\mathrm{v,vib} = $ & $S^\circ_{\mathrm{vib},i}=$ \\
+$\displaystyle
+R\frac{\theta_\mathrm{vib}}{e^{\theta_\mathrm{vib}/T}-1}$ &
+$\displaystyle R\left (
+  \frac{\theta_\mathrm{vib}}{T}\frac{e^{\theta_\mathrm{vib}/2T}}{e^{\theta_\mathrm{vib}/T}-1}
+\right )^2 $ & $\displaystyle R \left ( \frac{\theta_\mathrm{vib}/T}{e^{\theta_\mathrm{vib}/T}-1}
+-\ln(1-e^{-\theta_\mathrm{vib}/T})\right ) $ \\
+\end{tabular}
+
+\item[Multiple harmonic modes] {$\theta_{\mathrm{vib},i}=h\nu_i/k_B $}
+
+  \begin{equation*}
+    q_\mathrm{vib}=\prod_i\frac{1}{1-e^{-\theta_{\mathrm{vib},i}/T}} 
+  \end{equation*}
+
+\begin{tabular}{ccc}
+$ U_\mathrm{vib}= $ & $  C_\mathrm{v,vib} = $ & $S^\circ_{\mathrm{vib},i}=$ \\
+$\displaystyle
+R\sum_i\frac{\theta_{\mathrm{vib},i}}{e^{\theta_{\mathrm{vib},i}/T}-1}$ &
+$\displaystyle R \sum_i \left (
+  \frac{\theta_{\mathrm{vib},i}}{T}\frac{e^{\theta_{\mathrm{vib},i}/2T}}{e^{\theta_{\mathrm{vib},i}/T}-1}
+\right )^2 $ & $\displaystyle R \left ( \frac{\theta_{\mathrm{vib},i}/T}{e^{\theta_{\mathrm{vib},i}/T}-1}
+-\ln(1-e^{-\theta_{\mathrm{vib},i}/T})\right ) $ \\
+\end{tabular}
+
+\end{description}
+\item[\underline{Electronic DOFs}] {}
+$q_\mathrm{elec} = \text{spin multiplicity}$
 
 
-** CO T-dependent thermo example
+\end{description}
+\end{center}
+\end{table}
+#+END_EXPORT
+
+#+CAPTION: Contributions to ideal gas thermodynamics
+|---------------+------------------------------------+------------------+-------------+-----------------|
+|               | Characteristic                     | Characteristic   | States @ RT |                 |
+|               | Energy (cm^{-1})                   | Temperature (K)  |             |                 |
+|---------------+------------------------------------+------------------+-------------+-----------------|
+| translational | $\hbar^2/2 m L^2 \approx 10^{-21}$ | $10^{-21}$       | $10^{30}$   | classical limit |
+|               |                                    |                  |             |                 |
+| rotational    | $\approx 1$                        | $\approx 1$      | 100's       | semi-classical  |
+|               |                                    |                  |             |                 |
+| vibrational   | $\approx 1000$                     | $\approx 1000$   | 1           | non-classical   |
+|               |                                    |                  |             |                 |
+| electronic    | $\approx 10,000$                   | $\approx 10,000$ | 1           | non-classical   |
+|---------------+------------------------------------+------------------+-------------+-----------------|
+
+#+BEGIN_SRC python :exports results 
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+
+k = 8.61733e-5      # eV /K
+h = 4.13566766e-15  # eV s
+eVtokJ = 96.485332
+autoeV= 27.212      # eV
+Nav = 6.022e23      # Avogadro's number 
+amutoeVc2 = 931494095.17 # convert amu to eV/c^2
+R0 = k * eVtokJ * 1000.       # gas constant in J/mol K
+c = 299792458 # m / s
+
+class Molecule(object):
+    def __init__(self, name, mass, energy, rot, vib, helmholtz):
+        self.name = name
+        self.mass = mass
+        self.energy = energy
+        self.rot = rot
+        self.vib = vib
+        self.helmholtz = helmholtz
+
+    def Hello(self):
+        return "Hello {}".format(self.name)
+
+    def Lambda(self, T):
+        m = self.mass * amutoeVc2
+        return h/np.sqrt(2*np.pi*m*k*T)*c
+
+    def qtrans(self,T):  #  mole/m^3
+        m = self.mass * amutoeVc2
+        l = h/np.sqrt(2*np.pi*m*k*T)*c
+        return (1./Nav)*(1./l)**3
+
+    def qrot(self,T):
+        if self.rot[1] > 0:
+            return np.sqrt((np.pi*(T/self.rot[0])*(T/self.rot[1])*(T/self.rot[2])))
+        else:
+            return T/self.rot[0]
+
+    def qvib(self,T):
+        qvib = 1
+        for mode in self.vib:
+            qvib = qvib*(1.-np.exp(-mode/T))**-1
+        return qvib
+
+    def ZPE(self):
+        ZPE=0.
+        for mode in self.vib:
+            ZPE = ZPE + mode
+        return ZPE * (0.5)*k
+
+    def Utrans(self,T):
+        return 1.5*k*T
+
+    def Urot(self,T):
+        return 1.5*k*T
+
+    def Uvib(self,T):
+        Uvib=0.
+        for mode in self.vib:
+            Uvib=Uvib+k*(mode/(np.exp(mode/T)-1.0))
+        return Uvib
+
+# Fundamental relationships
+def A(q):
+   return -k*T*np.log(q)
+
+def S(A,U,T):
+   return (U - A)/T
+
+def Delta(nu,A):
+    return np.dot(nu,A)
+
+Ethane = Molecule("Ethane", 30.04695, -79.8304174812, [3.84821, 0.95472, 0.95472], [450.15,  1196.99,  1196.99,  1453.24,  1777.11, 1777.12,  2060.75,  2091.81,  2204.14,  2204.14, 2212.26,  2212.26,  4385.10,  4386.31,  4459.07, 4459.07,  4494.15,  4494.15],[])
+
+Ethylene = Molecule("Ethylene", 28.0313, -78.5874582996, [7.05282, 1.44180, 1.19708], [1201.68,  1375.63,  1403.93,  1539.30,  1795.67, 2008.40,  2150.27,  2475.38,  4535.29,  4557.52, 4636.49,  4673.24], [])
+
+VA = Molecule("Vinyl alcohol", 44., -153.802227784, [3.06869, 0.49808, 0.42852],[342.12,   692.39,  1032.15,  1198.36,  1386.62, 1411.99,  1670.11,  1880.98,  1967.27,  2101.01, 2532.91,  4541.20,  4591.62,  4716.63,  5454.14],[])
+
+Ac = Molecule("Acetaldehyde", 44., -153.830119460, [2.72923, 0.48351, 0.43371], [222.94,  729.92,  1121.87,  1285.63,  1636.17, 1646.79,  2018.97,  2080.76, 2143.85,  2157.44,  2651.18,  4169.12,  4379.22,  4459.71,  4553.14],[])
+
+Hydrogen = Molecule("Hydrogen", 2.01565, -1.17548235778, [87.18829, 0., 0.], [6402.62], [])
+
+T = np.linspace(500,1500,500)
+
+#
+# Ethane thermochemistry
+# 
+
+plt.figure()
+plt.plot(T,np.log(Ethane.qtrans(T)),label="trans")
+plt.plot(T,np.log(Ethane.qrot(T)),label="rot")
+plt.plot(T,np.log(Ethane.qvib(T)),label="vib")
+plt.xlabel('Temperature (K)')
+plt.ylabel('ln q')
+plt.title('Partition functions vs temperature (1 mol/m3)')
+plt.legend()
+plt.savefig('./Images/ethane-partition.png')
+
+AtransEthane = A(Ethane.qtrans(T))
+ArotEthane = A(Ethane.qrot(T))
+AvibEthane = A(Ethane.qvib(T))
+
+plt.figure()
+plt.plot(T,AtransEthane*eVtokJ,label="trans")
+plt.plot(T,ArotEthane*eVtokJ,label="rot")
+plt.plot(T,AvibEthane*eVtokJ,label="vib")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Helmholtz (kJ/mol)')
+plt.title('Helmholtz contributions vs temperature (1 mol/m3)')
+plt.legend()
+plt.savefig('./Images/ethane-helmholtz.png')
+
+UtransEthane = Ethane.Utrans(T)
+UrotEthane = Ethane.Urot(T)
+UvibEthane = Ethane.Uvib(T)
+
+plt.figure()
+plt.plot(T,UtransEthane*eVtokJ,label="trans")
+plt.plot(T,UrotEthane*eVtokJ,label="rot")
+plt.plot(T,UvibEthane*eVtokJ,label="vib")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Internal Energy (kJ/mol)')
+plt.title('Internal energy contributions vs temperature')
+plt.legend()
+plt.savefig('./Images/ethane-energy.png')
+
+StransEthane=S(AtransEthane,UtransEthane,T)
+SrotEthane=S(ArotEthane,UrotEthane,T)
+SvibEthane=S(AvibEthane,UvibEthane,T)
+
+plt.figure()
+plt.plot(T,StransEthane*eVtokJ*1000.,label="trans")
+plt.plot(T,SrotEthane*eVtokJ*1000.,label="rot")
+plt.plot(T,SvibEthane*eVtokJ*1000.,label="vib")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Entropy (J/mol K)')
+plt.title('Entropy contributions vs temperature (1 mol/m3)')
+plt.legend()
+plt.savefig('./Images/ethane-entropy.png')
+
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_EXPORT latex
+\begin{table}
+   \caption{Ethane thermodynamics}
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{./Images/ethane-partition.png} & \includegraphics[scale=0.5]{./Images/ethane-helmholtz.png} \\
+\includegraphics[scale=0.5]{./Images/ethane-energy.png} & 
+\includegraphics[scale=0.5]{./Images/ethane-entropy.png}
+\end{tabular}
+\end{table}
+#+END_EXPORT
+
+** Chemical reactions
+
+** Reaction rates
 \newpage
 
 * =GAMESS= Cheat Sheet
