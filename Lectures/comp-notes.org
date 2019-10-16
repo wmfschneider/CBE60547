@@ -1377,7 +1377,7 @@ applying these methods.  Determined from experience and need.
 
 Specification in =GAMESS= ([[https://www.msg.chem.iastate.edu/GAMESS/GAMESS.html]]) is a bit arcane.  Default is Hartree-Fock. To specify DFT model, use
 #+BEGIN_EXAMPLE
- $CONTRL DFTTYP =   Slater (HFS), SVWN (LDA), PBE (GGA), B3LYP (Hybrid)
+ $CONTRL DFTTYP =   Slater (HFS), SVWN (LDA), PBE (GGA), B3LYP (Hybrid), M06 (Minnesota optimized)
 #+END_EXAMPLE
 *** Beyond Hartree-Fock
 Many methods available.  See manual for full description.  Most common is second-order perturbation theory, "MP2":
@@ -2615,7 +2615,6 @@ Energy $G=A+PV$.
 \end{table}
 #+END_EXPORT
 
-
 ** Stat Mech applied to stuff
 [[./Images/gls.pdf]]
 
@@ -2708,31 +2707,23 @@ Characteristic temperature $\Theta_\mathrm{rot} = \hbar^2/2 I k_B$.  Moment of i
 
 "High" T $q_\mathrm{rot}(T) \approx \sigma \Theta_\mathrm{rot}/T$, most often true
 *** Translational states: particle-in-a-box
-\begin{equation}
-  E_n=\frac{n^2\pi^2\hbar^2}{2 m L^2},~~~~~n=1,2,3,...
-\end{equation}
-Have to construct partition function for one molecule.  $\Theta_\mathrm{trans} = \epsilon_0/k_B$.  For gas molecules at
-normal conditions, energy spacing is tiny.  Spare the details, but find that
-$q_\mathrm{trans}$ can be written in terms of a /thermal wavelength/
-$\Lambda$:
-\begin{eqnarray}
-  \Lambda=\frac{h}{\sqrt{2\pi m k_B T}} \\
-q_\mathrm{trans}=\frac{V^\circ}{\Lambda^3}
-\end{eqnarray}
-$\Lambda$ depends only a molecule mass (that's easy!) and is of the order the
-box dimensions at which quantization is evident.  Typically a tiny number
-(e.g. $1.7\times 10^{-11}$~m for Ar in a 1 liter volume at 298 K.
-$q_\mathrm{trans}$ is, on the other hand, enormous: lots of translational
-freedom.  $V^\circ$ defines the standard state volume.
-
-$q_\mathrm{trans}\rightarrow$ integral approximation
-            \begin{eqnarray*}
-              q_\mathrm{trans,1D} \approx \int_0^\infty e^{-x^2\beta\epsilon_0}dx =
+\[
+  E_n=\frac{n^2\pi^2\hbar^2}{2 m L^2} = \epsilon_0n^2,\qquad n=1,2,3,\ldots
+\]
+$\Theta_\mathrm{trans} = \epsilon_0/k_B$ is typically tiny, allows partition function sum to be approximated by integral:
+ \begin{eqnarray*}
+ q_\mathrm{trans,1D} \approx \int_0^\infty e^{-x^2\beta\epsilon_0}dx =
               L/\Lambda \\
-              \Lambda = \left ( \frac{h^2\beta}{2\pi m} \right )^{1/2}\
+              \Lambda = \frac{h}{\sqrt{2\pi m k_B T}} \qquad
               \mathrm{thermal\ wavelength} \\
               q_\mathrm{trans,3D} = V/\Lambda^3
             \end{eqnarray*}
+
+Thermal wavelength $\Lambda$ depends only a molecule mass and is of the order the box
+dimensions at which quantization is evident.  Typically a tiny number
+(eg \SI{1.7e-11}{m} for Ar in a \SI{1}{\liter} volume at \SI{298}{K}.
+$q_\mathrm{trans}$ is thus enormous: lots of translational freedom.  \(q\) depends on volume, introduces volume/concentration/pressure dependence into thermo functions.  Conventional to define a /standard state/ $V^\circ$ volume, or corresponding pressure.
+
 
 #+BEGIN_EXPORT latex
 \begin{table}
@@ -3007,12 +2998,498 @@ plt.savefig('./Images/ethane-entropy.png')
 \end{table}
 #+END_EXPORT
 
-** Chemical reactions
+** Chemical reactions and equilibria
+*** Chemical reaction
+1. General chemical reaction \(\sum_i \nu_i A_i = 0\), \(\nu_i\) stoichiometric coefficients
+2. Thermodynamic change \(\Delta W^\circ(T) = \sum_i \nu_i W^\circ_i(T)\), where \(W = A, U, S, G, \ldots \)
+3. "Standard state" derives from concentration dependence of entropy
+4. "Standard state" corresponds to some standard choice, $(N/V)^\circ = c^\circ$, e.g. \SI{1}{mol/l} (T-independent), or $(N/V)^\circ = P^\circ/RT$, e.g. \SI{1}{bar} (T-dependent)
+5. Permits functions to be easily computed at other concentrations, e.g.
+     \begin{displaymath}
+     A(T,N/V)  = A^\circ(T) + k T \ln\left ( (N/V)/(N/V)^\circ \right ) =A^\circ(T) + k T \ln \left ( c/c^\circ \right )
+     \end{displaymath}
+6. Example: ethane dehydrogenation, \ce{C2H6 -> C2H4 + H2}, 1 bar standard state
+7. Reaction entropy captures contributions of all degrees of freedom
+8. Reaction energy (internal, Helmholtz, ...) must /also/ capture difference
+   in \SI{0}{K} electronic energy
+   \begin{displaymath}
+ \Delta U^\circ (T) = U^\circ_\mathrm{B}(T)-U^\circ_\mathrm{A}(T)+\Delta E(0)
+    \end{displaymath}
+#+BEGIN_SRC python :exports results 
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+
+k = 8.61733e-5      # eV /K
+h = 4.13566766e-15  # eV s
+eVtokJ = 96.485332
+autoeV= 27.212      # eV
+Nav = 6.022e23      # Avogadro's number 
+amutoeVc2 = 931494095.17 # convert amu to eV/c^2
+R0 = k * eVtokJ * 1000.       # gas constant in J/mol K
+c = 299792458 # m / s
+
+class Molecule(object):
+    def __init__(self, name, mass, energy, rot, vib, helmholtz):
+        self.name = name
+        self.mass = mass
+        self.energy = energy
+        self.rot = rot
+        self.vib = vib
+        self.helmholtz = helmholtz
+
+    def Hello(self):
+        return "Hello {}".format(self.name)
+
+    def Lambda(self, T):
+        m = self.mass * amutoeVc2
+        return h/np.sqrt(2*np.pi*m*k*T)*c
+
+    def qtrans(self,T):  #  mole/m^3
+        m = self.mass * amutoeVc2
+        l = h/np.sqrt(2*np.pi*m*k*T)*c
+        return (1./Nav)*(1./l)**3
+
+    def qrot(self,T):
+        if self.rot[1] > 0:
+            return np.sqrt((np.pi*(T/self.rot[0])*(T/self.rot[1])*(T/self.rot[2])))
+        else:
+            return T/self.rot[0]
+
+    def qvib(self,T):
+        qvib = 1
+        for mode in self.vib:
+            qvib = qvib*(1.-np.exp(-mode/T))**-1
+        return qvib
+
+    def ZPE(self):
+        ZPE=0.
+        for mode in self.vib:
+            ZPE = ZPE + mode
+        return ZPE * (0.5)*k
+
+    def Utrans(self,T):
+        return 1.5*k*T
+
+    def Urot(self,T):
+        return 1.5*k*T
+
+    def Uvib(self,T):
+        Uvib=0.
+        for mode in self.vib:
+            Uvib=Uvib+k*(mode/(np.exp(mode/T)-1.0))
+        return Uvib
+
+# Fundamental relationships
+def A(q):
+   return -k*T*np.log(q) - k*T
+
+def S(A,U,T):
+   return (U - A)/T
+
+def Delta(nu,A):
+    return np.dot(nu,A)
+
+Ethane = Molecule("Ethane", 30.04695, -79.8304174812, [3.84821, 0.95472, 0.95472], [450.15,  1196.99,  1196.99,  1453.24,  1777.11, 1777.12,  2060.75,  2091.81,  2204.14,  2204.14, 2212.26,  2212.26,  4385.10,  4386.31,  4459.07, 4459.07,  4494.15,  4494.15],[])
+
+Ethylene = Molecule("Ethylene", 28.0313, -78.5874582996, [7.05282, 1.44180, 1.19708], [1201.68,  1375.63,  1403.93,  1539.30,  1795.67, 2008.40,  2150.27,  2475.38,  4535.29,  4557.52, 4636.49,  4673.24], [])
+
+VA = Molecule("Vinyl alcohol", 44., -153.802227784, [3.06869, 0.49808, 0.42852],[342.12,   692.39,  1032.15,  1198.36,  1386.62, 1411.99,  1670.11,  1880.98,  1967.27,  2101.01, 2532.91,  4541.20,  4591.62,  4716.63,  5454.14],[])
+
+Ac = Molecule("Acetaldehyde", 44., -153.830119460, [2.72923, 0.48351, 0.43371], [222.94,  729.92,  1121.87,  1285.63,  1636.17, 1646.79,  2018.97,  2080.76, 2143.85,  2157.44,  2651.18,  4169.12,  4379.22,  4459.71,  4553.14],[])
+
+Hydrogen = Molecule("Hydrogen", 2.01565, -1.17548235778, [87.18829, 0., 0.], [6402.62], [])
+
+T = np.linspace(500,1500,500)
+
+#
+# Ethane dehydrogenation at 1 bar
+#
+stdconc = (1e5/(R0*T)) # (1 bar/ R T) = mol/m3
+
+nu = np.array([-1,1,1])
+
+dUtrans = Delta(nu,np.array([Ethane.Utrans(T),Ethylene.Utrans(T),Hydrogen.Utrans(T)]))
+dUrot =   Delta(nu,np.array([Ethane.Urot(T),Ethylene.Urot(T),Hydrogen.Urot(T)]))
+dUvib =   Delta(nu,np.array([Ethane.Uvib(T),Ethylene.Uvib(T),Hydrogen.Uvib(T)]))
+deltaE0 = Delta(nu,np.array([Ethane.energy,Ethylene.energy,Hydrogen.energy]))*autoeV
+deltaZPE = Delta(nu,np.array([Ethane.ZPE(),Ethylene.ZPE(),Hydrogen.ZPE()]))
+deltaU = dUtrans + dUrot + dUvib + deltaE0 + deltaZPE
+
+plt.figure()
+plt.plot(T,dUtrans*eVtokJ,label="Utrans")
+plt.plot(T,dUrot*eVtokJ,label="Urot")
+plt.plot(T,dUvib*eVtokJ,label="Uvib")
+plt.plot([500,1500],[deltaZPE*eVtokJ,deltaZPE*eVtokJ],label="ZPE")
+plt.plot([500,1500],[deltaE0*eVtokJ,deltaE0*eVtokJ],label="E0")
+plt.plot(T,deltaU*eVtokJ,label="Utotal")
+# plt.plot(T,deltaA*eVtokJ,label="Atotal")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Energy (kJ/mol)')
+plt.title('Ethane Dehydrogenation Reaction Energy Contributions')
+plt.legend()
+plt.savefig('./Images/dehydro-energy.png')
+
+Atransethane = A(Ethane.qtrans(T)) + k * T * np.log(stdconc/1.)   # 1 bar standard state
+Arotethane = A(Ethane.qrot(T))
+Avibethane = A(Ethane.qvib(T))
+Aethane = Atransethane + Arotethane + Avibethane - k*T
+Stransethane = S(Atransethane,Ethane.Utrans(T),T)
+Srotethane =   S(Arotethane,Ethane.Urot(T),T)
+Svibethane =   S(Avibethane,Ethane.Uvib(T),T)
+Uethane = Ethane.Utrans(T) + Ethane.Urot(T) + Ethane.Uvib(T)
+Sethane = S(Aethane,Uethane,T)
+Gethane = Aethane + k * T 
+
+Atransethylene = A(Ethylene.qtrans(T)) + k * T * np.log(stdconc/1.)   # 1 bar standard state
+Arotethylene = A(Ethylene.qrot(T))
+Avibethylene = A(Ethylene.qvib(T))
+Aethylene = Atransethylene + Arotethylene + Avibethylene - k*T
+Stransethylene = S(Atransethylene,Ethylene.Utrans(T),T)
+Srotethylene =   S(Arotethylene,Ethylene.Urot(T),T)
+Svibethylene =   S(Avibethylene,Ethylene.Uvib(T),T)
+Uethylene = Ethylene.Utrans(T) + Ethylene.Urot(T) + Ethylene.Uvib(T)
+Sethylene = S(Aethylene,Uethylene,T)
+Gethylene = Aethylene + k * T 
+
+Atranshydrogen = A(Hydrogen.qtrans(T)) + k * T * np.log(stdconc/1.)   # 1 bar standard state
+Arothydrogen = A(Hydrogen.qrot(T))
+Avibhydrogen = A(Hydrogen.qvib(T))
+Ahydrogen = Atranshydrogen + Arothydrogen + Avibhydrogen - k*T
+Stranshydrogen = S(Atranshydrogen,Hydrogen.Utrans(T),T)
+Srothydrogen =   S(Arothydrogen,Hydrogen.Urot(T),T)
+Svibhydrogen =   S(Avibhydrogen,Hydrogen.Uvib(T),T)
+Uhydrogen = Hydrogen.Utrans(T) + Hydrogen.Urot(T) + Hydrogen.Uvib(T)
+Shydrogen = S(Ahydrogen,Uhydrogen,T)
+Ghydrogen = Ahydrogen + k * T 
+
+dStrans = Delta(nu,np.array([Stransethane,Stransethylene,Stranshydrogen]))
+dSrot   = Delta(nu,np.array([Srotethane,Srotethylene,Srothydrogen]))
+dSvib = Delta(nu,np.array([Svibethane,Svibethylene,Svibhydrogen]))
+deltaS = dStrans + dSrot + dSvib
+
+plt.figure()
+plt.plot(T,dStrans*eVtokJ*1000.,label="trans")
+plt.plot(T,dSrot*eVtokJ*1000.,label="rot")
+plt.plot(T,dSvib*eVtokJ*1000.,label="vib")
+plt.plot(T,deltaS*eVtokJ*1000.,label="total")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Entropy (J/K)')
+plt.title('Ethane Dehydrogenation Reaction Entropy Contributions')
+plt.legend()
+plt.savefig('./Images/dehydro-entropy.png')
+
+deltaE0 = (Ethylene.energy + Hydrogen.energy - Ethane.energy)*autoeV + (Ethylene.ZPE() + Hydrogen.ZPE() - Ethane.ZPE())
+deltaU = (Uethylene + Uhydrogen - Uethane) + deltaE0
+deltaS = (Sethylene + Shydrogen - Sethane)
+deltaA = (Aethylene + Ahydrogen - Aethane) + deltaE0
+deltaG = (Gethylene + Ghydrogen - Gethane) + deltaE0
+
+plt.figure()
+plt.plot(T,deltaU*eVtokJ,label="delta U")
+plt.plot(T,T*deltaS*eVtokJ,label="T delta S")
+plt.plot(T,k*T*eVtokJ,label="delta PV")
+plt.plot(T,deltaG*eVtokJ,label="delta G")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Energy (kJ/mol)')
+plt.title('Ethane to Ethylene Plus Hydrogen Free Energy Contributions')
+plt.legend()
+plt.savefig('./Images/dehydro.png')
+
+xi = np.linspace(0.01,0.99,50)
+yi = xi/(1.+xi)
+plt.figure() 
+
+for T0 in [800,1000,1200]:
+    sc = (1e5/(R0*T0)) # (1 bar/ R T) = mol/m3
+
+    muethane0 = Ethane.energy*autoeV + Ethane.ZPE() - k * T0 * (np.log(Ethane.qtrans(T0) + np.log(sc/1.)) + np.log(Ethane.qrot(T0)) + np.log(Ethane.qvib(T0))) 
+    muethylene0 = Ethylene.energy*autoeV + Ethylene.ZPE() - k * T0 * (np.log(Ethylene.qtrans(T0) + np.log(sc/1.)) + np.log(Ethylene.qrot(T0)) + np.log(Ethylene.qvib(T0)))
+    muhydrogen0 = Hydrogen.energy*autoeV + Hydrogen.ZPE() - k * T0 * (np.log(Hydrogen.qtrans(T0) + np.log(sc/1.)) + np.log(Hydrogen.qrot(T0)) + np.log(Hydrogen.qvib(T0)))
+
+    dmu = muethylene0+muhydrogen0-muethane0
+    G = xi * (dmu  + k * T0 * ((2 * np.log(yi)) - np.log(1 - yi)))
+
+    plt.plot(xi,G*eVtokJ,label='{} K'.format(T0))
+
+
+plt.xlabel('Conversion')
+plt.ylabel('Free Energy (kJ/mol)')
+plt.title('Ethane to Ethylene Plus Hydrogen Gibbs Energy vs Conversion')
+plt.legend()
+plt.savefig('./Images/dehydroG.png')
+
+
+Kp = np.exp(-deltaG/(k*T))
+
+def equil1(y):      # 1 bar
+    return y * y - K*(1-y)
+
+def equil100(y):    # 100 bar
+    return 100*y * 100*y - K*100*(1-y)
+
+old1 = 0.5
+old100 = 0.5
+x1 = []
+x100 = []
+for K in Kp: 
+    xi1 = fsolve(equil1,old1)
+    xi100 = fsolve(equil100,old100)
+    old1 = xi1
+    old100 = xi100
+    x1.append(xi1)
+    x100.append(xi100)
+
+eq1=np.array(x1)
+eq100 = np.array(x100)
+
+plt.figure()
+plt.plot(T,eq1/(1+eq1),label="Ethylene, Hydrogen, 1 bar")
+plt.plot(T,(1.-eq1)/(1.+eq1),label="Ethane, 1 bar")
+plt.plot(T,eq100/(1+eq100),label="Ethylene, Hydrogen, 100 bar")
+plt.plot(T,(1.-eq100)/(1.+eq100),label="Ethane, 100 bar")
+plt.title("Equilibrium mole fractions at 1 and 100 bar")
+plt.xlabel('Temperature (K)')
+plt.ylabel('Mole fraction')
+plt.legend()
+
+plt.savefig('./Images/equilibrium.png')
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_EXPORT latex
+\begin{table}
+   \caption{Ethane to ethylene plus hydrogen standard state (1 bar) thermodynamcs}
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{./Images/dehydro-entropy.png} & \includegraphics[scale=0.5]{./Images/dehydro-energy.png} \\ \includegraphics[scale=0.5]{./Images/dehydro.png} & \includegraphics[scale=0.5]{./Images/dehydroG.png} \\
+\includegraphics[scale=0.5]{./Images/equilibrium.png} 
+\end{tabular}
+\end{table}
+#+END_EXPORT
+
+*** Chemical equilibrium
+1. At chemical equilbrium, total free energy minimized with respect to reaction advancement \(\xi\)
+    \[G(T,\xi) = \xi  (\Delta G^\circ + k T \sum_i \nu_i \ln P_i/P^\circ) \]
+2. Equilibrium condition---equate chemical potentials
+     \begin{eqnarray*}
+    \mu_A(N,V,T) & = & \mu_B(N,V,T) \\
+    E_A(0) - k T \ln (q_A/N_A) & = & E_B(0) - k T \ln (q_B/N_B) \\
+   \frac{N_B}{N_A} =  \frac{N_B/V}{N_A/V} & = &\frac{q_B(T,V)/V}{q_A(T,V)/V} e^{-\Delta E(0)/kT}
+     \end{eqnarray*}
+3. \(q/V = 1/\Lambda^3\) has units of number/volume, or concentration
+4. Equilibrium constant---convert units to some standard concentration \(c^\circ\) or pressure \(P^\circ\)
+    \begin{eqnarray*}
+     q_A^\circ(T) & = & (q_A(T,V)/V) (1/c^\circ) \\
+     q_A^\circ(T) & = & (q_A(T,V)/V)(RT/P^\circ) \\ 
+   K_{eq}(T) & = &\frac{q_B^\circ(T)}{q_A^\circ(T)} e^{-\Delta E(0)/kT} = e^{-\Delta G^\circ(T)/kT} 
+    \end{eqnarray*}
 
 ** Reaction rates
+Rate: number per unit time per unit something (volume, area, ...).  Reactions hypothesized to occur through sequence of elementary steps.
+
+For example, ozone decomposition, rate second-order at high \(P_{\ce{O2}}\), first-order at low \(P_{\ce{O2}}\)
+   | \ce{2 O3 -> 3 O2}        |
+   |--------------------------|
+   | \ce{O3 ->[k_1] O2 + O}   |
+   | \ce{O2 + O ->[k_-1] O3}     |
+   | \ce{O + O3 ->[k_2] 2 O2} |
+
+
+See two compute rates of individual steps.
+
+*** Transition state theory (TST)
+1. Assumptions
+   1. Existence of reaction coordinate (PES)
+   2. Existence of dividing surface
+   3. Equilibrium between reactants and "transition state"
+   4. Harmonic approximation for transition state
+2. rate proportional to concentration of "activated complex" over reactants times crossing frequency
+   \begin{eqnarray*}
+      r & = & k C_AC_B \\
+        & = & k^\ddagger C_{AB}^\ddagger \\
+        & = & \nu^\ddagger K^\ddagger C_A C_ B \\
+        & = & \nu^\ddagger \frac{k_BT}{h\nu^\ddagger}\bar{K}^\ddagger(T) C_A C_B \\
+        & = & \frac{k_B T}{h} \frac{q^\ddagger(T)}{q_A(T) q_B(T)}  e^{-{\Delta E(0)/k_BT}} C_A C_B
+   \end{eqnarray*}
+3. application to two molecules - vinyl alcohol to acetaldehyde
+4. microscopic reversibility
+5. equilibrium requirement \(K_{eq}(T) = k_f(T)/k_r(T)\)
+#+ATTR_LATEX: :width 0.6\textwidth
+[[./Images/PES2.png]]
+*** Thermodynamic connection
+1. Relate activated complex equilibrium constant to activation free energy
+   \[ \(\bar{K}^\ddagger(T) = e^{-\Delta G^{\circ \ddagger}(T)/kT} = e^{-\Delta H^{\circ \ddagger}(T)/k_BT}e^{\Delta S^{\circ \ddagger}(T)/k_B} \] 
+2. Compare to Arrhenius expression 
+   \[E_a = \Delta H^{\circ \ddagger}(T) + kT, A = \frac{k_B T}{h}e^1e^{\Delta S^{\circ \ddagger}(T)/k_B}\]
+
+#+BEGIN_SRC python :exports results 
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
+
+kB = 8.61733e-5      # eV /K
+h = 4.13566766e-15  # eV s
+eVtokJ = 96.485332
+autoeV= 27.212      # eV
+Nav = 6.022e23      # Avogadro's number 
+amutoeVc2 = 931494095.17 # convert amu to eV/c^2
+R0 = kB * eVtokJ * 1000.       # gas constant in J/mol K
+c = 299792458 # m / s
+
+class Molecule(object):
+    def __init__(self, name, mass, energy, rot, vib, helmholtz):
+        self.name = name
+        self.mass = mass
+        self.energy = energy
+        self.rot = rot
+        self.vib = vib
+        self.helmholtz = helmholtz
+
+    def Hello(self):
+        return "Hello {}".format(self.name)
+
+    def Lambda(self, T):
+        m = self.mass * amutoeVc2
+        return h/np.sqrt(2*np.pi*m*kB*T)*c
+
+    def qtrans(self,T):  #  mole/m^3
+        m = self.mass * amutoeVc2
+        l = h/np.sqrt(2*np.pi*m*kB*T)*c
+        return (1./Nav)*(1./l)**3
+
+    def qrot(self,T):
+        if self.rot[1] > 0:
+            return np.sqrt((np.pi*(T/self.rot[0])*(T/self.rot[1])*(T/self.rot[2])))
+        else:
+            return T/self.rot[0]
+
+    def qvib(self,T):
+        qvib = 1
+        for mode in self.vib:
+            qvib = qvib*(1.-np.exp(-mode/T))**-1
+        return qvib
+
+    def qtot(self,T):
+        return self.qtrans(T)*self.qrot(T)*self.qvib(T)
+
+    def ZPE(self):
+        ZPE=0.
+        for mode in self.vib:
+            ZPE = ZPE + mode
+        return ZPE * (0.5)*kB
+
+    def Utrans(self,T):
+        return 1.5*kB*T
+
+    def Urot(self,T):
+        return 1.5*kB*T
+
+    def Uvib(self,T):
+        Uvib=0.
+        for mode in self.vib:
+            Uvib=Uvib+kB*(mode/(np.exp(mode/T)-1.0))
+        return Uvib
+
+    def Utot(self,T):
+        return self.Utrans(T)+self.Urot(T)+self.Uvib(T)
+
+# Fundamental relationships
+def A(q):
+   return -kB*T*np.log(q)
+
+def S(A,U,T):
+   return (U - A)/T
+
+def Delta(nu,A):
+    return np.dot(nu,A)
+
+VA = Molecule("Vinyl alcohol", 44., -153.802227784, [3.06869, 0.49808, 0.42852],[342.12,   692.39,  1032.15,  1198.36,  1386.62, 1411.99,  1670.11,  1880.98,  1967.27,  2101.01, 2532.91,  4541.20,  4591.62,  4716.63,  5454.14],[])
+
+Ac = Molecule("Acetaldehyde", 44., -153.830119460, [2.72923, 0.48351, 0.43371], [222.94,  729.92,  1121.87,  1285.63,  1636.17, 1646.79,  2018.97,  2080.76, 2143.85,  2157.44,  2651.18,  4169.12,  4379.22,  4459.71,  4553.14],[])
+
+TS = Molecule("TS", 44., -153.714172988, [2.33148, 0.58652, 0.48832], [857.94,   939.84,  1148.55,  1395.88,  1536.40, 1678.69,  1744.34,  1877.98,  2155.56,  2261.86, 2665.34,  4471.92,  4522.04,  4596.48], [])
+
+T = np.linspace(600,1500,500)
+
+#
+# Ethane dehydrogenation at 1 bar
+#
+stdconc = (1e5/(R0*T)) # (1 bar/ R T) = mol/m3
+
+Ea0 = (TS.energy-VA.energy)*autoeV + (TS.ZPE() - VA.ZPE())
+
+# print(Ea0*eVtokJ)
+
+kTh = (kB/h) * T 
+qratio = (TS.qtot(T)/VA.qtot(T))
+Exp = np.exp(-Ea0/(kB*T))
+k  = kTh * qratio * Exp
+
+thalf = np.log(2)/k
+
+plt.figure()
+plt.plot(T,kTh,label="kB T/h")
+plt.xlabel("Temperature (K)")
+plt.ylabel("1/s")
+plt.legend()
+plt.savefig("./Images/kTh.png")
+
+plt.figure()
+plt.title("q TS/q vinyl acetate")
+plt.plot(T,qratio,label="qratio")
+plt.xlabel("Temperature (K)")
+plt.legend()
+plt.savefig("./Images/qratio.png")
+
+plt.figure()
+plt.title("Exp(-Ea(0)/kT")
+plt.plot(T,Exp,label="exp(-Ea/kT")
+plt.xlabel("Temperature (K)")
+plt.legend()
+plt.savefig("./Images/expEa.png")
+
+plt.figure()
+plt.title("Half life")
+plt.plot(T,thalf,label="half life")
+plt.xlabel("Temperature (K)")
+plt.ylabel("s")
+plt.legend()
+plt.savefig("./Images/halflife.png")
+
+plt.figure()
+plt.title("Arrhenius plot")
+plt.plot(1./T,np.log(k),label="ln(k)")
+plt.xlabel("1/Temperature (1/K)")
+plt.ylabel("s")
+plt.legend()
+plt.savefig("./Images/arrhenius.png")
+
+
+deltaUd = TS.Utot(T) - VA.Utot(T)
+deltaHd = deltaUd + kB*T
+
+deltaAd = A(TS.qtot(T)) - A(VA.qtot(T))
+deltaSd = S(deltaAd,deltaUd,T)
+
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_EXPORT latex
+\begin{table}
+   \caption{Vinyl alcohol to acetaldehyde}
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{./Images/kTh.png} & \includegraphics[scale=0.5]{./Images/qratio.png} \\ \includegraphics[scale=0.5]{./Images/expEa.png} & \includegraphics[scale=0.5]{./Images/halflife.png} \\
+\includegraphics[scale=0.5]{./Images/arrhenius.png} & 
+\includegraphics[scale=0.3]{./Images/Path.png} 
+\end{tabular}
+\end{table}
+#+END_EXPORT
+
 \newpage
 
-* =GAMESS= Cheat Sheet
+* COMMENT =GAMESS= Cheat Sheet
 ** Specifying electronic configuration
 *** Closed shell (default)
 #+BEGIN_EXAMPLE
@@ -3104,13 +3581,7 @@ To have =Gamess= automatically create a set of appropriate "delocalized" interna
 #+BEGIN_EXAMPLE
  $ZMAT DLC=.TRUE.  AUTO=.TRUE. $END
 #+END_EXAMPLE
-** Performing a transition state search
-Transition states are always more challenging to find than optimal geometries.  Always ~at least~ a three-step procedure:
-
-1. Guess a transition state structure and compute Hessian matrix (RUNTYP = HESSIAN).  Check to be sure there is one imaginary mode approximating desired TS.
-2. Perform the transition state search.  Must supply computed Hessian matrix, copied from .dat file, as $HESS group.  Also should specify $STATPT HESS=READ $END.
-3. Check the result!  Assuming the transition state search converges, run another frequency calculation to confirm that there is one and only one imaginary mode, and that it corresponds to desired TS.
-
+\newpage
 * Plane waves and core potentials
 
 ** Hydrogen atom in a box
