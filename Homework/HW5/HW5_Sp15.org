@@ -42,14 +42,9 @@ D. Identify the orbitals. What are their occupancies and energies? Which orbital
 
 E. How many basis functions are in the calculation? (VASP doesn't always print this for bigger systems, as such there is no in-built function in ase. Look in the OUTCAR file to figure this out).
 
-
 * Sensitivity to Planewave cutoff 
-
 We will now study the effect of choosing different planewave cutoffs. Perform the calculation in problem ref:sec:Ar for different values of encut (100, 200, 300, 400, 500 eV) and plot out the potential energy. At what cutoff is the energy converged to 0.005 eV? How does the computational cost scale with the cutoff?
-
-
 * Spin polarized Calculations
-
 Now let’s try a spin-polarized atom. Create the calculation above for an O atom in the same-sized box. To turn on spin-polarization set ~ispin=2~. The POTCAR recommends a cutoff of 400 eV, so use that as your value for ~encut~. Answer the following questions:
 
 #+ATTR_LATEX: :options [(a)]
@@ -62,7 +57,6 @@ c. Identify the orbitals, their occupancies and energies? Do the occupancies mak
 Hint: Use ~calc.get_eigenvalues(spin=n)~, ~calc.get_occupation_numbers(spin=n)~, where n=0,1, to get the spin up and spin down orbitals.
   
 * Geometry Optimization
-
 Now let’s do an O2 molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
 
 #+ATTR_LATEX: :options [(a)]
@@ -77,7 +71,6 @@ d. What is the magnetic moment? Does this make sense for an O_{2} molecule?
 e. What are the final orbital identities, energies and occupancies?
   
 * Vibrational Frequencies and Zero Point Energies
-
 Vasp can also calculate vibrational frequencies. Set ~ibrion=6~ to turn on a finite-differences frequency calculation, ~nfree=2~ to do a step in the positive and negative direction, and ~potim=0.010~ for the step size in \AA.
 
 #+ATTR_LATEX: :options [(a)]

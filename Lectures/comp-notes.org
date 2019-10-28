@@ -3583,13 +3583,101 @@ To have =Gamess= automatically create a set of appropriate "delocalized" interna
 #+END_EXAMPLE
 \newpage
 * Plane waves and core potentials
+** Periodic boundary conditions
+Free particle moving in one dimension
+\[\phi_G(x) = e^{i G x} \]
+/G/ can take any value. Eigenfunction of momentum and kinetic energy operators.  In particular,
+\[E_G = \frac{\hbar^2}{2m}G^2\]
+
+Suppose we impose /periodic boundary conditions/, so that \(\phi_G(x) = \phi_G(x+na), n=\pm 1, \ldots\).  /a/ is a _lattice vector_.
+\[e^{i G x} = e^{i G (x + a)} \rightarrow e^{i G a} = 1\]
+Places constraints on /G/:
+\[ G = \frac{2\pi}{a} n, n = \pm 1, \ldots\]
+\(2\pi/a\) is a _reciprocal lattice vector_.
+
+Normalized on domain /a/,
+\[\phi_G(x) = \frac{1}{\sqrt{a}}e^{i G x}\]
+
+Properties of these _plane wave_ functions:
+1. Periodic, \(\lambda_G = a/n\)
+2. Orthonormal, \(\langle \phi_G | \phi_{G^\prime}\rangle = \delta_{G,G^\prime} \)
+3. Definite kinetic energy
+4. Complete
+  \begin{eqnarray}
+    \psi(x) &=& \sum_G \phi_G(x) \langle \phi_G | \psi \rangle \\
+            & = & \sum_G \phi_G(x) \psi(G)
+  \end{eqnarray}
+
+\(\psi(G)\) is Fourier transform of \(\psi(x)\).  Both contain exactly the same information. Can take advantage of Fourier transform machinery to transform between two representations.  For general function \(\psi(x)\), represent on some grid of size /N/.  Size of grid determined by maximum frequency/minimum wavelength included.  \(N\log(N)\) operations to transform back and forth.
+
+Integrals can be evaluated in either /x/ or /G/ space:
+\begin{eqnarray}
+I & = & \int_a A^*(x) B(x) d x \\
+  & = & \sum_{G,G^\prime} A^*(G) B(G) \int e^{-iGx}e^{iG^\prime x} dx \\
+  & = & \sum_{G,G^\prime} A^*(G) B(G) \delta_{G,G^\prime} \\
+  & = & a \sum_G A^*(G) B(G)
+\end{eqnarray}
+Can leverage to simplify solving any problems that are periodic.
 
 ** Hydrogen atom in a box
+Suppose we place an atom at some point /R/ in each box.  In principle, can  represent solutions as linear combinations of plane waves.  Plane waves become basis functions. 
 
-** Periodic boundary conditions
+Does where we put the atom matter to the answer? No. Alway related by _structure factor_.
 
-** Supercells - Cartesian and fractional coordinates
+In principle, would have to let /G/ run to infinity to have complete basis. In practice, would have to cut off at some point, defined by
+\[ \frac{\hbar^2}{2 m_e} G^2 < \frac{\hbar^2}{2 m_e} G_\text{cut}^2 = E_\text{cutoff} \]
+Sets minimum wavelength retained in basis, and thus size of basis. For fixed \(E_\text{cutoff}\), larger /a/ implies larger basis.  Basis size has to be a whole number, so changes discontinuously with \(E_\text{cutoff}\).
 
+Recall our basic equation
+\begin{equation}
+\left \{ \hat{h} +v_{\text{Coulomb}}[\rho] + v_\text{exchange}[\psi_{i}] + v_\text{correlation}[\psi_{i}]\right\}\psi_i(\mathbf{r}) =\epsilon_i \psi_i(\mathbf{r})
+\end{equation} 
+Contains kinetic and potential energy terms.
+
+_Kinetic energy_ is diagonal in plane wave basis...easy!
+\[ \langle \phi_G | -\frac{1}{2}\frac{d^2}{dx^2} | \phi_{G^\prime} \rangle = \frac{1}{2}G^2 \delta_{G,G^\prime} \]
+
+_Potential energy terms_ can take advantage of Fourier transforms.
+\begin{eqnarray}
+v(x) & = & \sum_{G^{''}} v(G'') e^{i G'' x}  \\
+\langle \phi_G | v(x) | \phi_{G'}\rangle & = & \sum_{G^{''}} v(G'') \langle \phi_G | \phi_{G''} |  \phi_{G'} \rangle \\
+ & = & v(G'-G) 
+\end{eqnarray}
+How many Fourier components to include in the sums? Turns out for a basis of dimension /m/ you need /2m/ components to specify the potential exactly, but you can generally get away with smaller. The cost and accuracy of the calculation scale with this choice.
+
+Solutions given by \(\psi_i(x) = \sum_G c_i(G) \phi_G(x) \).
+
+One key thing we would need to evaluate potentials is _electron density_, \(\rho(x)\).  Let \(f_i\) be occupancy of each orbital.
+\begin{eqnarray}
+ \rho(x) & = & \sum_i f_i |\psi_i(x)|^2 \\
+         & = & \frac{1}{a}\sum_i f_i \sum_{G,G'} c_i^*(G)c_i(G') e^{i(G-G')x} \\
+	 & = & \sum_{-2 G_\mathrm{max}}^{2 G_\mathrm{max}} n(G) e^{i G x} 
+\end{eqnarray}
+Electron density exactly represented in plane wave basis with cutoff four times that of the basis set cutoff.
+
+** Three-dimensional periodicity
+Same ideas generalize to three dimensional periodicity.
+
+_Lattice constants_ of periodic cell become three vectors, \(\bm{a}_1\), \(\bm{a}_2\), \(\bm{a}_3\).  As we'll discuss a little bit later, these vectors will be from one of the Bravais lattices.  Every point \bm{R} is equivalent to any other point \(\bm{R}'=\bm{R} + n_1 \bm{a}_1+ n_2 \bm{a}_2+ n_3 \bm{a}_3\).
+
+Periodic box matrix \(\bm{h} = [\bm{a}_1, \bm{a}_2,\bm{a}_3]\).  Periodic box volume \(\Omega = \text{det} \bm{h}\).
+
+_Reciprocal lattice_ defined such that \(\bm{b}_i\cdot\bm{a}_j = 2 \pi \delta_{ij}\).  Given by
+\[2\pi(\bm{h}^t)^{-1} = [\bm{b}_1,\bm{b}_2,\bm{b}_3]\]
+
+_Reciprocal lattice vectors_ become \(\bm{G} = i \bm{b}_1 + j \bm{b}_2 + k \bm{b}_3\).  Basis functions become \(\phi(\bm{r}) = \frac{1}{\Omega}e^{i \bm{G}\cdot\bm{r}} \).
+
+Locations of atoms \(\bm{R}_\alpha\) within this periodic cell can be specified in Cartesians or as fractional coordinates of the lattice vectors.  Related by \(\bm{R}_\alpha = \bm{h}\bm{f}\).
+
+In general, can use this periodic representation to describe atoms, molecules, whatever.  If we want to describe isolated things, box dimensions must be large enough to avoid artificial interactions between periodic images. 
+
+In particular, Coulomb potentials decay like \(1/r\) and are thus long-ranged.  Have to use special tricks (Ewald sums) to evaluate these sums, and have to carefully group electrostatic terms to avoid non-convergent sums.
+
+Key limitations:
+1. Periodic cell must be charge-neutral.  The electrostatic energy of an infinite, charged system diverges.
+2. Supercell must not have a net electric field.
+3. The absolute electrostatic potential is not well-defined (there is no "vacuum" to reference the energy of an electron to).
+These limitations can be overcome to some extent by applying artificial backgrounds.
 ** Gaussian vs. Vasp
 
 ** Vasp POSCAR
