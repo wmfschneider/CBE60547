@@ -1,4 +1,4 @@
-% Created 2019-10-30 Wed 17:05
+% Created 2019-10-30 Wed 17:15
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -43,7 +43,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 
 
 \section{A review of what we know}
-\label{sec:orgf806459}
+\label{sec:orgca3ecfe}
 
 So far we have learned how to:
 
@@ -61,24 +61,24 @@ It might make sense to go back and read the lecture notes and notes from Lab 1 a
 
 
 \section{Required Software}
-\label{sec:org8802e8b}
+\label{sec:org71c4077}
 \subsection{Python}
-\label{sec:org2c870be}
+\label{sec:org386bf34}
 Acquired through Anaconda.
 \subsection{ASE}
-\label{sec:org8dd72ec}
+\label{sec:orge5f699f}
 Provides packages for handling atoms and VASP calculations as objects in Python. 
 \subsection{John Kitchin's vasp wrapper}
-\label{sec:orgac02815}
+\label{sec:org44d4bc7}
 Adds extra features to ASE, enhancing the usability of VASP in python.
 \subsection{bashrc, vasprc}
-\label{sec:orge8491ba}
+\label{sec:org105bb0c}
 Required run command files to assign default settings. 
 \subsection{Guide}
-\label{sec:org23a38ce}
-An in depth guide to installing all the required software on the CRC can be found here.
+\label{sec:orga25ccc2}
+An in depth guide to installing all the required software on the CRC can be found \href{./ASE.org}{Install-Guide}.
 \section{Simple SCF calculations}
-\label{sec:org966ab3b}
+\label{sec:org602087f}
 
 We will now perform a simple calculation on our CO molecule. This is done by creating a \texttt{vasp} calculator, which is an extension of the default Vasp calculator in ase (\texttt{ase.calculators.vasp}). The two properties that we will calculate in this example are the energy and the forces on the atoms. 
 
@@ -166,7 +166,7 @@ We can also look at the files created by \texttt{VASP} to see if everything went
 
 
 \section{Geometry Optimizations}
-\label{sec:orge48b77d}
+\label{sec:org877ec66}
 
 Now let us try to do a geometry optimization. For this \texttt{VASP} needs two additional keywords (at least) - \texttt{IBRION} and \texttt{NSW}. \texttt{IBRION} controls the relaxation algorithm and \texttt{NSW} specifies the total number of steps.
 
@@ -212,7 +212,7 @@ We might also want to visualize the relaxation trajectory. Using the terminal, c
 
 
 \section{Effect of Unit Cell Size}
-\label{sec:orgf26b129}
+\label{sec:org03c3e26}
 
 Let us consider a more complicated example. Here we will vary the size of the unit cell, to see how interactions between periodic images affect the energy.
 
@@ -286,10 +286,10 @@ We can see the computational cost went up by a factor of 15! Perhaps you can now
 
 
 \section{Miscellaneous}
-\label{sec:org28ef789}
+\label{sec:orgfa5d127}
 
 \subsection{Building pdfs from org files}
-\label{sec:orgcd43721}
+\label{sec:org7d577d4}
 
 Using the software you loaded at the beginning of lab, you should be able to build a pdf from your .org files. Let us try that, click on the Org menu and click Export/Publish. Then press 'l' and 'o'. This let's you build a pdf and open it.
 
@@ -297,7 +297,7 @@ Alternately, you can type, \texttt{C-c C-e l o}
 
 
 \subsection{Viewing latex equations in org documents}
-\label{sec:orga935170}
+\label{sec:org6beb967}
 
 Click on \url{org-toggle-latex-overlays}. You should be able to see the Schrodinger equation below.
 
