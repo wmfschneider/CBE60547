@@ -3619,6 +3619,68 @@ I & = & \int_a A^*(x) B(x) d x \\
 \end{eqnarray}
 Can leverage to simplify solving any problems that are periodic.
 
+** Example
+#+BEGIN_SRC python :exports results
+import numpy as np
+import matplotlib.pyplot as plt
+
+def gaussian(x,alpha):
+    return np.exp(-alpha*x*x)
+
+def exponential(x,alpha):
+    return np.exp(-alpha*np.abs(x))
+
+def crazy(x):
+    return np.exp(-100*x*x)+np.sin(10*x)
+
+xall = np.linspace(-0.5,0.5,101)
+xsample = np.linspace(-0.5,0.5,11)
+alpha = 20.0
+
+psiall=exponential(xall+0.05,alpha)
+#psiall=np.cos(xall*20.+8.)
+#psiall=crazy(xall)
+psisample=exponential(xsample+0.05,alpha)
+#psisample=np.cos(xsample*20.+8.)
+#psisample=crazy(xsample)
+fftpsi = np.fft.fft(psisample)
+G = np.fft.fftfreq(xsample.shape[-1])
+psirecover = np.fft.ifft(fftpsi)
+
+plt.figure()
+plt.plot(xall,psiall,label="offset exponential")
+#plt.scatter(xsample,psisample,label="sample")
+plt.plot(xsample,psirecover,label="10 sample inverse")
+
+plt.title("Psi (Gaussian)")
+plt.xlabel("Real space x")
+plt.ylabel("Real space psi")
+plt.legend()
+plt.savefig("./Images/real.png")
+
+plt.figure()
+plt.scatter(G,fftpsi.real, label="Real part of FFT")
+plt.scatter(G,fftpsi.imag, label="Imaginary part of FFT")
+plt.title("Discrete Fourier transform")
+plt.xlabel("Reciprocal space G")
+plt.ylabel("FFT psi")
+plt.legend()
+plt.savefig("./Images/fft.png")
+
+
+
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_EXPORT latex
+\begin{table}
+   \caption{Discrete Fourier Transform}
+\begin{tabular}{cc}
+\includegraphics[scale=0.5]{./Images/real.png} & \includegraphics[scale=0.5]{./Images/fft.png} \\ \end{tabular}
+\end{table}
+#+END_EXPORT
+
 ** Hydrogen atom in a box
 Suppose we place an atom at some point /R/ in each box.  In principle, can  represent solutions as linear combinations of plane waves.  Plane waves become basis functions. 
 
@@ -3678,7 +3740,9 @@ Key limitations:
 2. Supercell must not have a net electric field.
 3. The absolute electrostatic potential is not well-defined (there is no "vacuum" to reference the energy of an electron to).
 These limitations can be overcome to some extent by applying artificial backgrounds.
-** Gaussian vs. Vasp
+** SCF
+Same essential idea. Guess initial charge density and set of orbital coefficients. Iterate to self-consistency.
+** GAMESS vs. Vasp
 
 ** Vasp POSCAR
 
