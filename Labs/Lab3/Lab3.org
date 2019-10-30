@@ -31,55 +31,7 @@ So far we have learned how to:
 It might make sense to go back and read the lecture notes and notes from Lab 1 and Lab 2 if you feel the need to re-familiarize yourself with these things. In this lab, we will combine some of the things we learned and to perform DFT calculations with a powerful software package, =VASP=. 
 
 
-* Loading the required software
-
-Before we can actually proceed, we will need to tell our computer how it can find all the tools we need. We will store this information so that the software is already loaded for us every time we login in the future. Depending on your unix shell, the things we need to do will be a little different. You can see which shell you are using with the command ~echo $0~. 
-
-The software we need is dependent on the bash shell and thus we (all users) need to add a few commands to our ~.bashrc~ file. Go to your home directory and open the =.bashrc= file, i.e., run the following two commands. 
-
-#+BEGIN_SRC sh
-cd
-emacs .bashrc
-#+END_SRC
-
-Once there, add the following line at the bottom of the file and save it (Make sure there are no typos!).
-
-#+BEGIN_EXAMPLE
-source /afs/crc.nd.edu/user/w/wschnei1/Group/People/jcrum/CBE60547/course_bashrc.sh
-#+END_EXAMPLE
-
-If there is a line that says ~module load ase~ in your file, remove it.
-
-For tsch users, there is an additional step. Go to the terminal and run,
-
-#+BEGIN_SRC sh
-cd
-emacs .cshrc
-#+END_SRC
-
-Once there, add the following line at the bottom of the file and save it (Make sure there are no typos!). 
-
-#+BEGIN_EXAMPLE
-source /afs/crc.nd.edu/user/w/wschnei1/Gorup/People/jcrum/CBE60547/course_bashrc.sh
-#+END_EXAMPLE
-
-If there is a line that says ~module load ase~ in your file, remove it.
-
-*Now logout and log back in*. Once this is done, go to computational-chemistry/Lab3/ and open it Lab3.org in emacs.
-
-
-* Introduction to Software
-
-=VASP= or the Vienna ab-inito Simulation Package is a density functional theory (DFT) package that utilizes periodic boundary conditions and planewave basis sets. It was developed at the Theoretical Physics Department at the Institute for Materials Physics in Vienna, Austria. More information about =VASP= can be obtained at http://cms.mpi.univie.ac.at/vasp/vasp/vasp.html. We will use a combination of the =ASE= (https://wiki.fysik.dtu.dk/ase/index.html) and =vasp= (https://github.com/jkitchin/vasp) packages to help prepare input files, manage job submission to the queue system, and analysis of results.  
-
-*Note: The original =vasp= code has been slightly modified to work with the Notre Dame queue system.*
-
-Prof. J. R. Kitchin wrote a book to accompany =vasp= (http://kitchingroup.cheme.cmu.edu/dft-book/). It contains 100s of examples of using =vasp= for almost every kind of calculation that can be performed using =VASP=. Most of the examples in this document were from that book!
-
-*Note: This is not the most recent version of the book, so some of the functionality might be different to reflect the most recent version of =ase=. For the most recent version go to, https://github.com/jkitchin/dft-book.*
-
-
-* Creating Molecules
+* COMMENT Creating Molecules
 
 Molecules are defined in =ase= using something called Atoms objects, which are a combination of Atom objects (obviously!). There are various ways to create Atoms objects - by hand, reading them from files, databases, etc.
 
@@ -210,6 +162,17 @@ print(atoms)
 
 
 
+* Required Software
+** Python
+Acquired through Anaconda.
+** ASE
+Provides packages for handling atoms and VASP calculations as objects in Python. 
+** John Kitchin's vasp wrapper
+Adds extra features to ASE, enhancing the usability of VASP in python.
+** bashrc, vasprc
+Required run command files to assign default settings. 
+** Guide
+An in depth guide to installing all the required software on the CRC can be found here.
 * Simple SCF calculations
 
 We will now perform a simple calculation on our CO molecule. This is done by creating a =vasp= calculator, which is an extension of the default Vasp calculator in ase (~ase.calculators.vasp~). The two properties that we will calculate in this example are the energy and the forces on the atoms. 
