@@ -1,0 +1,163 @@
+#+TITLE: Atomic Simulation Environment (ASE) INSTALLATION
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [12pt]
+#+OPTIONS: toc:nil ^:{}
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+SUBTITLE: for new students...
+
+# here is where you include the relevant packages. These are pretty
+# common ones. You may add additional ones. Note that the order of the
+# packages is significant. If you are not careful, your file will not
+# build into a pdf.
+#+LATEX_HEADER: \usepackage[top=1in, bottom=1.in, left=1in, right=1in]{geometry}
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage{fixltx2e}
+#+LATEX_HEADER: \usepackage{natbib}
+#+LATEX_HEADER: \usepackage{url}
+#+LATEX_HEADER: \usepackage{minted}  % for source code
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{textcomp}
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{pdfpages}
+#+LATEX_HEADER: \usepackage[version=3]{mhchem}
+#+LATEX_HEADER: \usepackage{setspace}
+#+LATEX_HEADER: \usepackage[linktocpage, pdfstartview=FitH, colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue,  filecolor=blue,  menucolor=blue,  urlcolor=blue]{hyperref}
+#+LATEX_HEADER: \usepackage{mdframed}
+\doublespace
+
+
+#+AUTHOR: Jeonghyun Ko, Jerry Crum
+\maketitle
+
+* Requirements
+** Python 2.7, 3.4-3.7 
+Install Anaconda 3.7 version in your system.
+#+BEGIN SRC sh
+$ wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
+$ sh <filename.sh>
+#+END SRC
+
+* ASE
+Install ASE using PIP
+#+BEGIN_SRC sh
+$ pip install --upgrade --user ase
+#+END_SRC 
+
+* Environment variables
+** bashrc
+Add PATH and PYTHONPATH for ASE in your bashrc.\\
+Modify your bashrc via text editor such as vi or emacs.\\
+In your home directory, type this command. Here I use emacs.
+#+BEGIN_SRC sh
+emacs ~/.bashrc
+#+END_SRC
+This is an example of bashrc from Prateek. If you want to use this bashrc file, you have to replace user information with yours. Also it has some aliases for your convenience.
+#+BEGIN_SRC sh
+#Check http://crc.nd.edu/wiki for login problems
+#Contact crcsupport@nd.edu if further problems
+
+if [ -r /opt/crc/Modules/current/init/bash ]; then
+        source /opt/crc/Modules/current/init/bash
+fi
+
+PS1="[\u@\h:\W]$ "
+
+#Additional aliases
+
+#Additional modules
+
+module load texlive
+module load vasp/5.3.5
+module load emacs
+
+#ASE
+export PYTHONPATH=/afs/crc.nd.edu/user/j/jcrum/.local/lib/python3.7/site-packages/:$PYTHONPATH
+export PATH=/afs/crc.nd.edu/user/j/jcrum/.local/lib/python3.7/site-packages/ase/tools:$PATH
+
+# VASP
+export VASP_PP_PATH=/afs/crc.nd.edu/user/w/wschnei1/Group/new_POTCARs/
+export PYTHONPATH=/afs/crc.nd.edu/user/j/jcrum/vasp:$PYTHONPATH
+export PATH=/afs/crc.nd.edu/user/j/jcrum/vasp/bin:$PATH
+
+#Anaconda
+export PATH=/afs/crc.nd.edu/user/j/jko1/anaconda2/bin:$PATH
+#+END_SRC
+
+
+* VASP
+** downlaod vasp
+You can download vasp thrugh Prateek's github page. It is similar to John's original vasp wrapper, but patched to work with the Notre Dame job submission engine. You should compare John's version and this version to see how they are different.
+
+#+BEGIN_SRC sh
+$ git clone https://github.com/jtcrum/vasp.git
+#+END_SRC
+go to the vasp folder, then switch to SLURM-py3 branch.
+#+BEGIN_SRC sh
+$ git checkout SLURM-py3
+#+END_SRC
+You can see this message.
+#+BEGIN_SRC sh
+Branch SGE-py3 set up to track remote branch SGE-py3 from origin.
+Switched to a new branch 'SGE-py3'
+#+END_SRC
+ 
+** vasprc
+Like bashrc, we need a configuration file for submitting a job to server.\\
+In your home directory, type this to make the vasprc
+#+BEGIN_SRC sh
+emacs -nw ~/.vasprc
+#+END_SRC
+Then copy and paste this content.\\
+Note that you need to change user name and email! 
+#+BEGIN_SRC sh
+# adjust these for the your system
+
+vasp.executable.serial = vasp
+vasp.executable.parallel = vasp
+
+user.name = jcrum
+user.email = jcrum@nd.edu
+
+
+mode = queue   # run|queue|None
+
+multiprocessing.cores_per_process = None
+
+
+# these are only needed if you run in a queue. Setting a few defaults here. SGE needs nprocs, q, pe.
+
+scheduler = SGE
+queue.shell= bash
+queue.command = qsub
+queue.options = -j y
+queue.time = 168:00:00
+queue.nodes = 1
+queue.ppn = 1
+queue.nprocs = 4
+queue.mem = 2G
+queue.jobname = None
+queue.q = *long
+queue.pe = smp
+vdw_kernel.bindat = /afs/crc.nd.edu/x86_64_linux/vasp/5.3.5/ompi1.6.3/vdw_kernel.bindat
+module=vasp/5.4.1[jcrum@crcfe01:vasp]$
+#+END_SRC
+
+* Scimax
+Scimax is really helpful for us to use ASE as well as write some documents.\\
+I put Dr. Kitchin's (CMU) description of scimax.
+\begin{mdframed}
+Scimax is an Emacs starterkit designed for people interested in reproducible research and publishing. Scimax is just Emacs that has been configured extensively to make it act like we need it to for research documentation and publication.
+\end{mdframed}
+You can download scimax from Dr. Kitchin's github
+#+BEGIN_SRC sh
+git clone https://github.com/jkitchin/scimax.git
+#+END_SRC
+
+* Miscellaneous
+- A good guidebook for DFT calculations with ASE \\
+  https://github.com/jkitchin/dft-book
+
+- A basic information about ASE \\
+  https://wiki.fysik.dtu.dk/ase/index.html
+
