@@ -43,7 +43,7 @@ Install ASE using PIP
 #+BEGIN_SRC sh
 $ pip install --upgrade --user ase
 #+END_SRC 
-
+If you receive 'pip command not found', do the next step (updating your .bashrc) and then return to this to step. 
 * Environment variables
 ** bashrc
 Add PATH and PYTHONPATH for ASE in your bashrc.\\
@@ -68,12 +68,13 @@ PS1="[\u@\h:\W]$ "
 #Additional modules
 
 module load texlive
-module load vasp/5.3.5
+module load vasp
 module load emacs
 
 #ASE
 export PYTHONPATH=/afs/crc.nd.edu/user/j/jcrum/.local/lib/python3.7/site-packages/:$PYTHONPATH
 export PATH=/afs/crc.nd.edu/user/j/jcrum/.local/lib/python3.7/site-packages/ase/tools:$PATH
+export PATH=/afs/crc.nd.edu/user/j/jcrum/.local/bin:$PATH
 
 # VASP
 export VASP_PP_PATH=/afs/crc.nd.edu/user/w/wschnei1/Group/new_POTCARs/
@@ -116,7 +117,7 @@ Note that you need to change user name and email!
 vasp.executable.serial = vasp
 vasp.executable.parallel = vasp
 
-user.name = jcrum
+user.name = jcrum           #put your user info here
 user.email = jcrum@nd.edu
 
 
@@ -140,7 +141,7 @@ queue.jobname = None
 queue.q = *long
 queue.pe = smp
 vdw_kernel.bindat = /afs/crc.nd.edu/x86_64_linux/vasp/5.3.5/ompi1.6.3/vdw_kernel.bindat
-module=vasp/5.4.1[jcrum@crcfe01:vasp]$
+module=vasp/5.4.1[jcrum@crcfe01:vasp]$. #put your user name here
 #+END_SRC
 
 * Scimax
