@@ -3866,12 +3866,76 @@ potentials is not for the casual user (just as the case for making
 Gaussian basis sets). The great strength of =Vasp= is a very complete
 and reliable library of PAW models for the whole periodic table and
 for several exchange-correlation functional. Stored in =POTCAR=.
-** Comparing energies between calculations
 
 ** Wavefunctions and charge densities
+Primary outputs of =Vasp= calculation are wavefunction, density, energy, and forces.
 
+- ~LCHARGE=.TRUE.~ :: turns on creation of the =CHGCAR= file, which contains the total charge and spin (up-down) densities, evaluated on \(NGX \times NGY \times NGZ \) grid.  Not so useful by itself, but can be used to construct charge density differences.
+- ~LWAVE=.TRUE.~ :: turns on creation of the =WAVECAR= file, which contains the final wavefunctions, useful for restarts
+- ~LORBIT~ :: controls output of =DOSCAR= and =PROCAR=, which contain analysis of total density of states and of each band.  Controlled with ~RWIGS~, ~EMIN~, and ~EMAX~
+
+Bader charges can be extracted from =CHGCAR=.
 ** Exploring potential energy surfaces
+A nice feature of plane-wave methods is that the forces on the atoms are gotten essentially for free.  No Pulay forces, because ions and basis functions are decoupled.
+
+Generally limited to Cartesian coordinates in PBC calculations. No z-matrix, internals, or redundant coordinates.  The cartesian locations of atoms can be fixed.  Perhaps =ASE= offers more options.
+
+*** Geometry optimizations
+Again, same idea as in =GAMESS=.  Use some algorithm to move atoms in response to forces.
+
+- ~EDIFFG=-0.03~ :: convergence criterion, in eV/\AA.  \SI{-0.05}{eV/\angstrom} for routine, \SI{-0.01}{eV/\angstrom} for more precise.
+- ~IBRION=2~ :: conjugate-gradient optimizaiton
+- ~IBRION=1~ :: Quasi-Newton-Raphson with DIIS algorithm.  Uses a digonal Hessian guess that gets updated.  Works well when initial geometry is pretty good, poorly otherwise
+- ~NFREE=xx~ :: number of previous steps to include in the DIIS update.
+- ~IBRION=3~ :: damped molecular dynamics optimization
+- ~NSW~ :: maximum number of geometry steps
+- ~POTIM=0.5~ :: tunes scaling of forces to optimize optimization algorithm.
+- ~ISW=1~ :: only move the atoms in the optimization
+
+*** Harmonic frequency calculation
+- ~IBRION=5~ :: numerical Hessian and frequency evaluation, moving all atoms
+- ~IBRION=6~ :: take advantage of symmetry to reduce number of unique geometries to evaluate forces
+- ~NFREE=2~ :: two-sided differentiation
+- ~POTIM=0.01~ :: specifies step-size for finite difference calculation
+
+- ~IBRION=7,8~ :: alternative, analytical perturbation-theory-based evaluation of Hessian matrix
+
+*** Transition states
+Commonly found using either a "nudged elastic band" (NEB) method or "dimer" method.  NEB requires definition of a "string" of structures, will address later.  "Dimer" needs an initial guess of transition state and a (good) guess of the reaction coordinate.
+
+- ~IBRION=44~ :: specifies dimer calculation.  See sample input below.  Get trial direction from prior Hessian calculation.
+#+BEGIN_EXAMPLE
+ammonia flipping
+1.
+6. 0. 0.
+0. 7. 0.
+0. 0. 8.
+H N
+3 1
+cart
+       -0.872954        0.000000       -0.504000        ! coordinates for atom 1
+        0.000000        0.000000        1.008000
+        0.872954        0.000000       -0.504000
+        0.000000        0.000000        0.000000        ! coordinates for atom N
+       ! here we define trial unstable direction:
+        0.000001    0.522103   -0.000009        ! components for atom 1
+       -0.000006    0.530068    0.000000
+       -0.000005    0.522067   -0.000007
+        0.000001   -0.111442    0.000001        ! components for atom N
+#+END_EXAMPLE
+
+- ~IMAGES~ :: turns on nudged elastic band
+*** Molecular dynamics
+- ~IBRION=0~ :: molecular dynamics, propogating atomic positions forward in time according to forces.  Typically combine with ~PREC=LOW~.
+- ~NSW~ :: number of MD steps
+- ~POTIM=0.5~ :: step size, in fs
+- ~SMASS=-3~ :: /NVE/ dynamics, which (should) conserve energy
+- ~SMASS=-1~ :: scaled velocity MD, eg for simulated annealling
+- ~SMASS>0~ :: /NVT/ dynamics, ~SMASS~ specifies the thermostat mass
+- ~TEBEG~ :: initial temperature, in K
+- ~TEEND~ :: final temperature, if temperature is to be scaled
 \newpage
+
 * Periodic electronic structure
 ** Isolated vs. periodic systems
 ** Bloch's theorem and qualitative band structure
