@@ -1,6 +1,6 @@
 #+TITLE:
 #+AUTHOR:
-#+DATE: Due: <2015-03-19 Thu>
+#+DATE: Due: <2019-11-08>
 #+LATEX_CLASS: article
 #+LATEX_CLASS_OPTIONS: [11pt]
 #+OPTIONS: ^:{} # make super/subscripts only when wrapped in {}
@@ -44,7 +44,7 @@ E. How many basis functions are in the calculation? (VASP doesn't always print t
 
 * Sensitivity to Planewave cutoff 
 We will now study the effect of choosing different planewave cutoffs. Perform the calculation in problem ref:sec:Ar for different values of encut (100, 200, 300, 400, 500 eV) and plot out the potential energy. At what cutoff is the energy converged to 0.005 eV? How does the computational cost scale with the cutoff?
-* Spin polarized Calculations
+* Spin-polarized Calculations
 Now let’s try a spin-polarized atom. Create the calculation above for an O atom in the same-sized box. To turn on spin-polarization set ~ispin=2~. The POTCAR recommends a cutoff of 400 eV, so use that as your value for ~encut~. Answer the following questions:
 
 #+ATTR_LATEX: :options [(a)]
@@ -54,19 +54,19 @@ b. What is the number of spin-up minus spin-down electrons? Does it make sense f
 
 c. Identify the orbitals, their occupancies and energies? Do the occupancies make sense? (For the expert users, MAGMOM, FERWE, and FERDO can be used to adjust all these. You could also break the symmetry of the box to converge to the lower symmetry solution).
 
-Hint: Use ~calc.get_eigenvalues(spin=n)~, ~calc.get_occupation_numbers(spin=n)~, where n=0,1, to get the spin up and spin down orbitals.
+Hint: Use ~calc.get_eigenvalues(spin=n)~, ~calc.get_occupation_numbers(spin=n)~, where \(n=0,1\), to get the spin up and spin down orbitals.
   
 * Geometry Optimization
-Now let’s do an O2 molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
+Now let’s do an \ce{O2} molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
 
 #+ATTR_LATEX: :options [(a)]
 a. Did the geometry converge? (~calc.read_convergence()~)
 
 b. How many relaxation steps were taken? (~calc.get_number_of_ionic_steps()~)
 
-c. What is the final O_{2} energy?
+c. What is the final \ce{O2} energy?
 
-d. What is the magnetic moment? Does this make sense for an O_{2} molecule?
+d. What is the magnetic moment? Does this make sense for an \ce{O2} molecule?
 
 e. What are the final orbital identities, energies and occupancies?
   
@@ -74,8 +74,8 @@ e. What are the final orbital identities, energies and occupancies?
 Vasp can also calculate vibrational frequencies. Set ~ibrion=6~ to turn on a finite-differences frequency calculation, ~nfree=2~ to do a step in the positive and negative direction, and ~potim=0.010~ for the step size in \AA.
 
 #+ATTR_LATEX: :options [(a)]
-a. What is the computed O_{2} frequency, in wavenumbers? (Hint: ~calc.get_vibrational_frequencies()~)
+a. What is the computed \ce{O2} frequency, in wavenumbers? (Hint: ~calc.get_vibrational_frequencies()~)
 
 b. What is its zero-point energy?
 
-c. Calculate the zero-point corrected bond energy of O_{2}. How does your answer compare to experiment?
+c. Calculate the zero-point corrected bond energy of \ce{O2}. How does your answer compare to experiment?

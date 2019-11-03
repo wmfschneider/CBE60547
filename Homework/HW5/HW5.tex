@@ -1,4 +1,5 @@
-% Created 2015-03-19 Thu 18:26
+% Created 2019-11-03 Sun 09:42
+% Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -16,12 +17,13 @@
 \usepackage{wasysym}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage[theorems, skins]{tcolorbox}
 \usepackage[version=3]{mhchem}
 \usepackage[numbers,super,sort&compress]{natbib}
 \usepackage{natmove}
 \usepackage{url}
 \usepackage{minted}
-\usepackage{underscore}
+\usepackage[strings]{underscore}
 \usepackage[linktocpage,pdfstartview=FitH,colorlinks,
 linkcolor=blue,anchorcolor=blue,
 citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
@@ -35,7 +37,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
 \usepackage[version=3]{mhchem}
-\date{Due: \textit{<2015-03-19 Thu>}}
+\date{Due: \textit{<2019-11-08 Fri>}}
 \title{}
 \begin{document}
 
@@ -47,74 +49,66 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 In this homework, we will use \texttt{VASP} to perform plane wave density functional theory calculations. If you are having trouble, refer to the notes for Lab 3, or the \texttt{ase} website (\url{https://wiki.fysik.dtu.dk/ase/index.html}) or dft-book (\url{http://kitchingroup.cheme.cmu.edu/dft-book/dft.html}).
 
 \section{Not Ar again! \label{sec:Ar}}
-\label{sec-1}
+\label{sec:orgae7d58b}
 
 As they say, there are many ways to skin a cat! You have computed the wavefunctions of Ar several different ways in homework already — using \texttt{FDA}, the descendent of Hartree’s first calculations, and using the molecular orbital \texttt{GAMESS} code — so it is only natural to do the same using \texttt{VASP}. 
 
 Create an atoms object for Ar centered in a 12 \texttimes{} 12 \texttimes{} 12 \AA{} unit cell. Perform a \texttt{VASP} calculation using the PBE exchange correlation functional, Gaussian smearing, and a small sigma value (0.01). Answer the following questions.
 
 \begin{enumerate}[(a)]
-\item What are the total number of electrons in the calculation? (Hint: \verb~calc.get_number_of_electrons()~)
+\item What are the total number of electrons in the calculation? (Hint: \texttt{calc.get\_number\_of\_electrons()})
 
 \item What is the potential energy of the Ar atom?
 
 \item How many SCF iterations does it take to converge?
 
-\item Identify the orbitals. What are their occupancies and energies? Which orbitals are kept in the core? (Hint: \verb~calc.get_eigenvalues()~, \verb~calc.get_occupation_numbers()~)
+\item Identify the orbitals. What are their occupancies and energies? Which orbitals are kept in the core? (Hint: \texttt{calc.get\_eigenvalues()}, \texttt{calc.get\_occupation\_numbers()})
 
 \item How many basis functions are in the calculation? (VASP doesn't always print this for bigger systems, as such there is no in-built function in ase. Look in the OUTCAR file to figure this out).
 \end{enumerate}
 
-
 \section{Sensitivity to Planewave cutoff}
-\label{sec-2}
-
+\label{sec:orgf657017}
 We will now study the effect of choosing different planewave cutoffs. Perform the calculation in problem \ref{sec:Ar} for different values of encut (100, 200, 300, 400, 500 eV) and plot out the potential energy. At what cutoff is the energy converged to 0.005 eV? How does the computational cost scale with the cutoff?
-
-
-\section{Spin polarized Calculations}
-\label{sec-3}
-
-Now let’s try a spin-polarized atom. Create the calculation above for an O atom in the same-sized box. To turn on spin-polarization set \verb~ispin=2~. The POTCAR recommends a cutoff of 400 eV, so use that as your value for \verb~encut~. Answer the following questions:
+\section{Spin-polarized Calculations}
+\label{sec:orgdb93237}
+Now let’s try a spin-polarized atom. Create the calculation above for an O atom in the same-sized box. To turn on spin-polarization set \texttt{ispin=2}. The POTCAR recommends a cutoff of 400 eV, so use that as your value for \texttt{encut}. Answer the following questions:
 
 \begin{enumerate}[(a)]
 \item What is the final potential energy of the O atom?
 
-\item What is the number of spin-up minus spin-down electrons? Does it make sense for an O atom? (Hint: \verb~atoms.get_magnetic_moment()~)
+\item What is the number of spin-up minus spin-down electrons? Does it make sense for an O atom? (Hint: \texttt{atoms.get\_magnetic\_moment()})
 
 \item Identify the orbitals, their occupancies and energies? Do the occupancies make sense? (For the expert users, MAGMOM, FERWE, and FERDO can be used to adjust all these. You could also break the symmetry of the box to converge to the lower symmetry solution).
 \end{enumerate}
 
-Hint: Use \verb~calc.get_eigenvalues(spin=n)~, \verb~calc.get_occupation_numbers(spin=n)~, where n=0,1, to get the spin up and spin down orbitals.
+Hint: Use \texttt{calc.get\_eigenvalues(spin=n)}, \texttt{calc.get\_occupation\_numbers(spin=n)}, where \(n=0,1\), to get the spin up and spin down orbitals.
 
 \section{Geometry Optimization}
-\label{sec-4}
-
-Now let’s do an O2 molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
+\label{sec:orge235eac}
+Now let’s do an \ce{O2} molecule. Create an atoms object with the two atoms an appropriate distance apart. Turn on spin-polarization and set up the calculation to perform at most 20 ionic relaxation steps using the quasi-newton relaxation algorithm. Use a small sigma value and the PBE functional. Answer the following questions.
 
 \begin{enumerate}[(a)]
-\item Did the geometry converge? (\verb~calc.read_convergence()~)
+\item Did the geometry converge? (\texttt{calc.read\_convergence()})
 
-\item How many relaxation steps were taken? (\verb~calc.get_number_of_ionic_steps()~)
+\item How many relaxation steps were taken? (\texttt{calc.get\_number\_of\_ionic\_steps()})
 
-\item What is the final O$_{\text{2}}$ energy?
+\item What is the final \ce{O2} energy?
 
-\item What is the magnetic moment? Does this make sense for an O$_{\text{2}}$ molecule?
+\item What is the magnetic moment? Does this make sense for an \ce{O2} molecule?
 
 \item What are the final orbital identities, energies and occupancies?
 \end{enumerate}
 
 \section{Vibrational Frequencies and Zero Point Energies}
-\label{sec-5}
-
-Vasp can also calculate vibrational frequencies. Set \verb~ibrion=6~ to turn on a finite-differences frequency calculation, \verb~nfree=2~ to do a step in the positive and negative direction, and \verb~potim=0.010~ for the step size in \AA{}.
+\label{sec:orgf15662e}
+Vasp can also calculate vibrational frequencies. Set \texttt{ibrion=6} to turn on a finite-differences frequency calculation, \texttt{nfree=2} to do a step in the positive and negative direction, and \texttt{potim=0.010} for the step size in \AA{}.
 
 \begin{enumerate}[(a)]
-\item What is the computed O$_{\text{2}}$ frequency, in wavenumbers? (Hint: \verb~calc.get_vibrational_frequencies()~)
+\item What is the computed \ce{O2} frequency, in wavenumbers? (Hint: \texttt{calc.get\_vibrational\_frequencies()})
 
 \item What is its zero-point energy?
 
-\item Calculate the zero-point corrected bond energy of O$_{\text{2}}$. How does your answer compare to experiment?
+\item Calculate the zero-point corrected bond energy of \ce{O2}. How does your answer compare to experiment?
 \end{enumerate}
-% Emacs 24.4.3 (Org mode 8.2.10)
 \end{document}
