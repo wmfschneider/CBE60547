@@ -1,0 +1,50 @@
+ running on    8 total cores
+ distrk:  each k-point on    8 cores,    1 groups
+ distr:  one band on    1 cores,    8 groups
+ using from now: INCAR     
+ vasp.5.4.1 05Feb16 (build Feb 08 2018 09:21:51) complex                        
+  
+ POSCAR found :  2 types and       2 ions
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend to set                            |
+|        NCORE= 4 - approx SQRT( number of cores)                             |
+|      NCORE specifies how many cores store one orbital (NPAR=cpu/NCORE).     |
+|      This setting can  greatly improve the performance of VASP for DFT.     |
+|      The default, NPAR=number of cores might be grossly inefficient         |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing !!!!                                               |
+|      Unfortunately you need to use the default for GW and RPA calculations. |
+|      (for HF NCORE is supported but not extensively tested yet)             |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ LDA part: xc-table for Pade appr. of Perdew
+ POSCAR, INCAR and KPOINTS ok, starting setup
+ WARNING: small aliasing (wrap around) errors must be expected
+ FFT: planning ...
+ WAVECAR not read
+ entering main loop
+       N       E                     dE             d eps       ncg     rms          rms(c)
+DAV:   1     0.446203027888E+02    0.44620E+02   -0.33378E+03    32   0.337E+02
+DAV:   2    -0.109748263767E+02   -0.55595E+02   -0.53719E+02    40   0.106E+02
+DAV:   3    -0.154014354882E+02   -0.44266E+01   -0.44162E+01    40   0.353E+01
+DAV:   4    -0.154359735434E+02   -0.34538E-01   -0.34536E-01    48   0.367E+00
+DAV:   5    -0.154362914963E+02   -0.31795E-03   -0.31795E-03    48   0.352E-01    0.608E+00
+DAV:   6    -0.149921718680E+02    0.44412E+00   -0.35841E+00    48   0.703E+00    0.350E+00
+DAV:   7    -0.148891364648E+02    0.10304E+00   -0.63616E-01    48   0.272E+00    0.188E+00
+DAV:   8    -0.148549727423E+02    0.34164E-01   -0.89975E-02    40   0.144E+00    0.400E-01
+DAV:   9    -0.148542033552E+02    0.76939E-03   -0.11648E-02    32   0.416E-01    0.145E-01
+DAV:  10    -0.148542995572E+02   -0.96202E-04   -0.17823E-03    48   0.191E-01    0.330E-02
+DAV:  11    -0.148544423661E+02   -0.14281E-03   -0.12270E-04    40   0.513E-02    0.207E-02
+DAV:  12    -0.148544861597E+02   -0.43794E-04   -0.17903E-05    40   0.227E-02
+   1 F= -.14854486E+02 E0= -.14856419E+02  d E =0.579791E-02
+Running "mpirun -np 8 vasp"
