@@ -1,4 +1,5 @@
-% Created 2015-03-23 Mon 14:34
+% Created 2019-11-12 Tue 10:25
+% Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -41,66 +42,32 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \maketitle
 
 
-\section{Common sources of error from the last homework!}
-\label{sec-1}
-
-Mostly everyone did a good job on the last homework. There were a few common mistakes, listed below.
-
-\begin{itemize}
-\item Not checking if results make sense
-\begin{itemize}
-\item e.g. if the calculation took only one relaxation step, the geometry is probably not converged
-\item always a good idea to check with your input files and output files
-\end{itemize}
-
-\item Bond energies 
-\begin{itemize}
-\item e.g. for oxygen, bond energy is $E_{O_{2}} + E_{ZPE} - 2E_{O}$
-\item absolute DFT energies are meaningless!
-\end{itemize}
-
-\item Use consistent planewave cutoffs when comparing different calculations.
-
-\item Typos, spelling mistakes, forgetting to change directory names
-
-\item \texttt{jasp} is built for continuation runs
-\begin{itemize}
-\item reads the input parameters from the files in the directory
-\item jobs are resubmitted if parameters are added or updated
-\item If parameters are removed, the original parameters written in your directory \textbf{will stay!}
-\item Changing atoms objects after running the code is a bad idea! (\texttt{jasp} got updated to raise errors if you do this)
-\end{itemize}
-
-\item Those not submitting org generated pdfs, make sure you inculde enough information (incar parameters, pseudopotentials used, etc.) to make your calculations reproducible
-\end{itemize}
-
-
 \section{Bulk Systems}
-\label{sec-2}
+\label{sec:org4bd13a9}
 
 \subsection{Creating a bulk system}
-\label{sec-2-1}
+\label{sec:orgc57fa20}
 
-There are a few different functions built into ase that let's you create simple bulk systems. The one we will use is \href{ase.lattice.bulk}{ase.lattice.bulk}. Let us consider how to construct an fcc structure. You can either create the primitive cell (default), a orthorhombic cell, or a cubic cell. Note these will have different unit cell sizes and different number of atoms, which will affect the computational cost of your simulation. 
+There are a few different functions built into ase that let's you create simple bulk systems. The one we will use is ase.build.bulk. Let us consider how to construct an fcc structure. You can either create the primitive cell (default), a orthorhombic cell, or a cubic cell. Note these will have different unit cell sizes and different number of atoms, which will affect the computational cost of your simulation. 
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from ase.lattice import bulk
-from jasp import *
+from ase.build import bulk
+from vasp import *
 import matplotlib.pyplot as plt
 from ase.visualize import view
 
 # a is the lattice constant in Angstroms
-Pd_cubic = bulk('Pd', 'fcc', a=3.89, cubic=True) 
+Pd_cubic = bulk('Pd', 'fcc', a = 3.89, cubic = True)
 view(Pd_cubic)
-print Pd_cubic
+print(Pd_cubic)
 
-Pd_ortho = bulk('Pd', 'fcc', a=3.89, orthorhombic=True)
+Pd_ortho = bulk('Pd', 'fcc', a = 3.89, orthorhombic = True)
 view(Pd_ortho)
-print Pd_ortho
+print(Pd_ortho)
 
 Pd_primitive = bulk('Pd', 'fcc') # if a is not specified, default experimental value is used.
 view(Pd_primitive)
-print Pd_primitive
+print(Pd_primitive)
 \end{minted}
 
 \begin{verbatim}
@@ -115,7 +82,7 @@ Atoms(symbols='Pd', positions=..., cell=[[0.0, 1.945, 1.945], [1.945,
 Calculations can be done in a similar way to what we performed in the last lab and homework, with a few additional parameters. The most important of these is the \emph{k}-point grid.
 
 \subsection{A little bit about \emph{k}-points}
-\label{sec-2-2}
+\label{sec:orgc6193d4}
 
 For modeling bulk systems/surfaces, we need to specify a \emph{k}-point mesh. A few things to note:
 
@@ -126,94 +93,82 @@ For modeling bulk systems/surfaces, we need to specify a \emph{k}-point mesh. A 
 
 \item The number of \emph{k}-points required scales inversely with the size of the unit cell.
 
-\item We will usually specify a parameter \verb~kpts=(k1,k2,k3)~ in \texttt{jasp}, which creates a \texttt{KPOINTS} file that tells \texttt{VASP} to \href{http://cms.mpi.univie.ac.at/vasp/vasp/Automatic_k_mesh_generation.html}{automatically create a Monkhorst-Pack k-mesh.}
+\item We will usually specify a parameter \texttt{kpts=(k1,k2,k3)} in \texttt{vasp}, which creates a \texttt{KPOINTS} file that tells \texttt{VASP} to \href{http://cms.mpi.univie.ac.at/vasp/vasp/Automatic\_k\_mesh\_generation.html}{automatically create a Monkhorst-Pack k-mesh.}
 
 \item Metals (conductors) generally require more \emph{k}-points than insulators to reach the same level of convergence.
 \end{itemize}
 
 \subsection{Optimizing lattice constants - Equations of State}
-\label{sec-2-3}
+\label{sec:org48e7e1b}
 
 \subsubsection{Energies vs. Lattice Constants}
-\label{sec-2-3-1}
+\label{sec:org66d6f3b}
 
 \texttt{ase} by default uses the experimental lattice constants (if known). Our computationally calculated lattice constants will usually be slightly different, depending on the exchange-correlation functional used. Let us consider a series of lattice constants, to find out which one minimizes the total energy.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from ase.lattice import bulk
-from jasp import *
 import numpy as np
-import matplotlib.pyplot as plt
 from ase.utils.eos import EquationOfState
+from vasp.vasprc import VASPRC
+
+VASPRC['queue.q'] = '*long'
+VASPRC['queue.nprocs'] = 24
+VASPRC['queue.pe'] = 'mpi-24'
 
 # Generate an array of 7 points 10% around 3.89 angstroms
-A = np.linspace(3.89 * 0.9, 3.89 * 1.1, 7) 
-
-energies = []
-
-ready = True
-for a in A:
-    # We will use the cubic cell for simplicity
-    Pd_cubic = bulk('Pd', 'fcc', a=a, cubic=True)
-    
-    with jasp('EOS/Pd-a-{0:1.2f}'.format(a),
-              xc='PBE',
-              encut=400,
-              ismear=1, # Use MP smearing for metals
-              kpts=(8,8,8), #A much larger grid is reqd to be accurate!
-              atoms=Pd_cubic) as calc:
-        try:
-            calc.calculate()
-            energies.append(Pd_cubic.get_potential_energy())
-                                       
-        except(VaspSubmitted, VaspQueued):
-            ready = False
-
-if not ready:
-    import sys; sys.exit()              
-
-plt.plot(A, energies, 'bo-')
-plt.xlabel('Lattice constant ($\AA$)')
-plt.ylabel('Total energy (eV)')
-plt.savefig('images/Pd-fcc-lattice.png')
-plt.show()
-\end{minted}
-
-\includegraphics[width=.9\linewidth]{./images/Pd-fcc-lattice.png}
-
-
-\subsubsection{Fitting to an Equation of State}
-\label{sec-2-3-2}
-
-To find the 'optimal' lattice constant we need to fit our data to an \href{http://gilgamesh.cheme.cmu.edu/doc/software/jacapo/appendices/appendix-eos.html}{equation of state}, which describes the energy as a function of volume. The Murnaghan or Birch-Murnaghan EOS is commonly used. Let us use \href{ase.utils.eos}{ase.utils.eos} to fit the data we calculated above to the Birch-Murnaghan EOS.
-
-\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from jasp import *
-import numpy as np
-import matplotlib.pyplot as plt
-from ase.utils.eos import EquationOfState
-
-# Generate an array of 7 points 10% around 3.89
-A = np.linspace(3.89 * 0.9, 3.89 * 1.1, 7) 
+A = np.linspace(3.89 * 0.9, 3.89 * 1.1, 7)
 
 energies = []
 volumes = []
 
-for a in A:
+ready = True
+for a in A: 
+    # We will use the cubic cell for simplicity
+    Pd_cubic = bulk('Pd', 'fcc', a = a, cubic = True)
+    
+    calc = Vasp('EOS/Pd-a-{0:1.2f}'.format(a),
+               xc = 'PBE',
+               encut = 400,
+               ismear = 1, # Use MP smearing for metlas
+               kpts = [8,8,8],
+               atoms = Pd_cubic)
+    
 
-    with jasp('EOS/Pd-a-{0:1.2f}'.format(a)) as calc:
-        atoms = calc.get_atoms()
-        energies.append(atoms.get_potential_energy())
-        volumes.append(atoms.get_volume())
+    calc.calculate()
+    energies.append(Pd_cubic.get_potential_energy())
+    volumes.append(Pd_cubic.get_volume())
+if None in energies:
+    ready = False
+    
+if ready == True:
+    plt.plot(A, energies, 'bo-')
+    plt.xlabel('Lattice constant ($\AA$)')
+    plt.ylabel('Total energy (eV)')
+    plt.savefig('images/Pd-fcc-lattice.png')
+    plt.show()
+\end{minted}
+
+\begin{center}
+\includegraphics[width=.9\linewidth]{./images/Pd-fcc-lattice.png}
+\end{center}
+
+
+\subsubsection{Fitting to an Equation of State}
+\label{sec:org5d39fc3}
+
+To find the 'optimal' lattice constant we need to fit our data to an \href{https://wiki.fysik.dtu.dk/ase/tutorials/eos/eos.html?highlight=equation\%20state}{equation of state}, which describes the energy as a function of volume. The Murnaghan or Birch-Murnaghan EOS is commonly used. Let us use ase.eos.EquationOfState to fit the data we calculated above to the Birch-Murnaghan EOS.
+
+\begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
+# Lets fit this to an equation of state
 
 eos = EquationOfState(volumes, energies, eos='birchmurnaghan')
 v0, e0, b = eos.fit()
-a0 = v0 ** (1/3.)
+a0 = v0 **(1/3)
 eos.plot(filename='images/Pd-EOS.png', show=True)
 
-print 'Minimum Energy = {0:1.3f} eV'.format(e0)
-print 'Optimal Volume = {0:1.3f} cubic angstroms'.format(v0)
-print 'Optimal lattice constant = {0:1.3f} angstroms'.format(a0)
+print('Minimum Energy = {0:1.3f} eV'.format(e0))
+print('Optimal Volume = {0:1.3f} cubic angstroms'.format(v0))
+print('Optimal lattice constant = {0:1.3f} angstroms'.format(a0))
 \end{minted}
 
 \begin{verbatim}
@@ -222,22 +177,23 @@ Optimal Volume = 60.782 cubic angstroms
 Optimal lattice constant = 3.932 angstroms
 \end{verbatim}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Pd-EOS.png}
+\end{center}
 
 
 \section{Surfaces}
-\label{sec-3}
+\label{sec:orgf6e02e0}
 
 \subsection{Creating a surface}
-\label{sec-3-1}
+\label{sec:org4702d43}
 
 \texttt{ase} provides functions to create surfaces too. Surfaces are layers of atoms formed by cleaving the bulk structure in a given direction. In our models, we add vacuum in the direction perpendicular to the surface. Thus, the atoms are finite in the direction perpendicular to the surface, but infinite in the other two directions. Here is an example of how to make a surface.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from ase.lattice.surface import fcc111
-from jasp import *
-from ase.visualize import view
+from ase.build.surface import fcc111
 from ase.constraints import FixAtoms
+from ase.io import write
 
 a = 3.932 # Optimal lattice constant from EOS
 
@@ -246,7 +202,7 @@ a = 3.932 # Optimal lattice constant from EOS
 atoms = fcc111('Pd', size=(2,2,3), vacuum=10.0, a=a)
 view(atoms)
 for atom in atoms:
-    print atom
+    print(atom.symbol, atom.tag)
 write('images/Pd-slab.png', atoms, rotation='90x', show_unit_cell=2)
 \end{minted}
 
@@ -267,7 +223,9 @@ Atom('Pd', [4.1705157954382575, 2.4078484171558636, 14.540282516907219], tag=1, 
 
 The tag on the atom indicates which layer of the surface it is in.
 
+\begin{center}
 \includegraphics[width=205bp]{./images/Pd-slab.png}
+\end{center}
 
 We can see that there are actually two surfaces, one in the top layer and one at the bottom layer. Surface atoms will tend to contract toward the bulk due to decreased coordination. 
 
@@ -281,35 +239,28 @@ To simulate bulk like behavior in regions away from the surface, we can do two t
 
 
 \subsection{Surface calculations}
-\label{sec-3-2}
+\label{sec:orgc1e7db6}
 
 Let us now optimize the geometry of our surface. \textbf{Note that only one \emph{k}-point is required in the direction perpendicular to the surface.}
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
 from ase.lattice.surface import fcc111
-from jasp import *
-from ase.visualize import view
-from ase.constraints import FixAtoms
+a = 3.9322 # Optimal lattice constat from EOS
+atoms = fcc111('Pd', size = (2,2,3), vacuum = 10.0, a=a)
 
-JASPRC['queue.nprocs'] = 8
-JASPRC['queue.q'] = 'short'
-
-a = 3.932 # Optimal lattice constant from EOS
-atoms = fcc111('Pd', size=(2,2,3), vacuum=10.0, a=a)
-
-constraint = FixAtoms(mask=[atom.tag >= 3 for atom in atoms])
+constraint = FixAtoms(mask = [atom.tag >= 3 for atom in atoms])
 atoms.set_constraint(constraint)
 
-with jasp('surfaces/Pd-slab-relaxed',
-          xc='PBE',
-          ismear=1,
-          kpts=(8, 8, 1),
-          encut=400,
-          ibrion=2, # Conjugate Gradient
-          nsw=20, # relaxation steps
-          atoms=atoms) as calc:
-    calc.calculate()
-    print calc
+calc = Vasp('surfaces/Pd-slab-relaxed',
+           xc = 'PBE',
+           ismear = 1,
+           kpts = [8,8,1],
+           encut = 400,
+           ibrion = 2,
+           nsw = 20,
+           atoms = atoms)
+calc.calculate()
+print(calc)
 \end{minted}
 
 \begin{verbatim}
@@ -363,26 +314,25 @@ Pd: potpaw_PBE/Pd/POTCAR (git-hash: 04426435b178dfad58ed91b470847d50ff70b858)
 
 Note that Vasp is a little unintuitive. The constraint 'F' means frozen.
 
-We can go back to the calculation directory and see how our surface relaxed with \verb~jaspsum -t~.
+We can go back to the calculation directory and see how our surface relaxed with \texttt{jaspsum -t}.
 
 
 
 \subsection{Adding an Adsorbate}
-\label{sec-3-3}
+\label{sec:org754c198}
 
 Now let us add an adsorbate on our surface. There are multiple places where it could adsorb. Here is a picture of a fcc(111) gold surface, showing the possible adsorption sites. 
 
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Au-slab-sites.png}
+\end{center}
 
 
 Let's go back to our Pd surface and perform a calculation with an Oxygen adsorbate at the fcc site.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from ase.lattice.surface import fcc111, add_adsorbate
-from jasp import *
-from ase.visualize import view
-from ase.constraints import FixAtoms
+from ase.build.surface import fcc111, add_adsorbate
 
 a = 3.932 # Optimal lattice constant from EOS
 atoms = fcc111('Pd', size=(2,2,3), vacuum=10.0)
@@ -393,19 +343,19 @@ add_adsorbate(atoms, 'O', height=1.2, position='fcc')
 constraint = FixAtoms(mask=[atom.tag >= 3 for atom in atoms])
 atoms.set_constraint(constraint)
 
-# view(atoms)
-with jasp('surfaces/O-on-Pd-fcc',
+view(atoms)
+calc = Vasp('surfaces/O-on-Pd-fcc',
           xc='PBE',
           ismear=1,
-          kpts=(8, 8, 1),
+          kpts=[8, 8, 1],
           encut=400,
           ibrion=2, # Conjugate Gradient
           nsw=20, # relaxation steps
-          atoms=atoms) as calc:
-    calc.calculate()
-    print calc
+          atoms=atoms)
+calc.calculate()
+print(calc)
     
-write('images/Pd-slab-O-fcc.png', atoms, show_unit_cell=2)
+write('images/Pd-slab-O-fcc.png', atoms, show_unit_cell=2)    
 \end{minted}
 
 \begin{verbatim}
@@ -459,23 +409,25 @@ O: potpaw_PBE/O/POTCAR (git-hash: 592f34096943a6f30db8749d13efca516d75ec55)
 Pd: potpaw_PBE/Pd/POTCAR (git-hash: 04426435b178dfad58ed91b470847d50ff70b858)
 \end{verbatim}
 
+\begin{center}
 \includegraphics[width=2in]{./images/Pd-slab-O-fcc.png}
+\end{center}
 
 
 
 \subsection{Calculating adsorption energies}
-\label{sec-3-4}
+\label{sec:org51c12fe}
 
-The adsorption energy is given by $E_{ads} = E_{surface+O} - E_{surface} - 0.5 E_{O_{2}}$. This can easily be calculated from the two calculations we performed and the O$_{\text{2}}$ calculation from the last homework.
+The adsorption energy is given by \(E_{ads} = E_{surface+O} - E_{surface} - 0.5 E_{O_{2}}\). This can easily be calculated from the two calculations we performed and the O\(_{\text{2}}\) calculation from the last homework.
 
 
 \section{Density of States}
-\label{sec-4}
+\label{sec:orgb34bf42}
 
 It is possible to plot out the density of states (DOS) from \texttt{VASP} calculations. The density of states describes the number of states per interval of energy at each energy level that are available to be occupied (Wikipedia). 
 
 \subsection{Total density of States}
-\label{sec-4-1}
+\label{sec:org662f757}
 
 We can get the total density of states from an old DFT calculation without having to run a new calculation (Though the \texttt{VASP} manual recommends an additional run at ismear=-5). The DOS depends on the \emph{k}-point grid you choose.
 
@@ -483,70 +435,66 @@ We can get the total density of states from an old DFT calculation without havin
 Let's read in our calculation from our bulk Pd lattice constant studies.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from jasp import *
-from ase.calculators.vasp import VaspDos
-import matplotlib.pyplot as plt
+from ase.dft.dos import DOS
 
-with jasp('EOS/Pd-a-3.89') as calc:
-    # Get the dos referenced at the fermi level
-    dos = VaspDos(efermi=calc.get_fermi_level())
-  
-energies = dos.energy
-dos = dos.dos
+calc = Vasp('./EOS/Pd-a-3.89')
 
-plt.plot(energies, dos, linewidth=2)
+dos = DOS(calc, width = 0.2)
+
+energies = dos.get_energies()
+dos = dos.get_dos()
+
+plt.plot(energies, dos, linewidth = 2)
 # Add a vertical line at the fermi level
-plt.axvline(x=0, color='r', linestyle='--', linewidth=2)
+plt.axvline(x=0, color = 'r', linestyle='--', linewidth = 2)
 plt.ylim(0,12)
+plt.xlim(-10,10)
 plt.xlabel('energy (eV)')
 plt.ylabel('DOS (arb. units)')
 plt.savefig('images/Pd-bulk-dos.png')
 plt.show()
 \end{minted}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Pd-bulk-dos.png}
+\end{center}
 
 States to the left of the fermi level (indicated by the red line) are the occupied states.
 
 
 \subsection{Atom-projected density of states}
-\label{sec-4-2}
+\label{sec:org39fcc69}
 
 To figure out which density of states belong to which atoms in a molecule, we need to perform an additional calculation. We can compute the atom-projected density of states (ADOS), which is done by projecting the wave function onto localized atomic orbitals. These are only a qualitative representation of the orbitals, because the atoms will often form molecular orbitals, hybridize, etc. 
 
-In \texttt{VASP} we can specify an \href{http://cms.mpi.univie.ac.at/wiki/index.php/RWIGS}{RWIGS} parameter, which is radius around the atom at which to cutoff the projection. The choice of RWIGS is somewhat arbitrary, one can choose the ionic radius of an atom, or a value that minimizes overlap of neighboring spheres. Another way to calculate the ADOS is by specifying the \href{http://cms.mpi.univie.ac.at/vasp/vasp/LORBIT.html}{LORBIT} parameter to be 10 or 11, but this only works for PAW potentials (this is what we will use).
+In \texttt{VASP} we can specify an RWIGS parameter, which is the radius around the atom at which to cutoff the projection. The choice of RWIGS is somewhat arbitrary, one can choose the ionic radius of an atom, or a value that minimizes overlap of neighboring spheres. Another way to calculate the ADOS is by specifying the \href{http://cms.mpi.univie.ac.at/vasp/vasp/LORBIT.html}{LORBIT} parameter to be 10 or 11, but this only works for PAW potentials (this is what we will use).
 
 In transition metals, the s and p states are dispersed, and the only states that matter in terms of bonding are the d-states. Here is an example to plot the DOS projected on to the d states for clean Pd surface atoms.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from jasp import *
-from ase.calculators.vasp import VaspDos
-import matplotlib.pyplot as plt
-
 # get the geometry the previous calculation
-with jasp('surfaces/Pd-slab-relaxed') as calc:
-    atoms = calc.get_atoms()
+calc = Vasp('surfaces/Pd-slab-relaxed')
+atoms = calc.get_atoms()
 
 #Now submit a calculation for the ados
-with jasp('surfaces/Pd-ados',
+calc = Vasp('surfaces/Pd-ados',
           xc='PBE',
           ismear=1,
-          kpts=(8, 8, 1),
+          kpts=[8, 8, 1],
           encut=400,
           lorbit=10,
-          atoms=atoms) as calc:
-    calc.calculate()
+          atoms=atoms)
+calc.calculate()
 
-    ados = VaspDos(efermi=calc.get_fermi_level())
-    energies = ados.energy
-    # Atom index 10 is a surface atom (tag=1)
-    print atoms[10]
-    d_dos = ados.site_dos(10, 'd')
 
-    plt.plot(energies, d_dos, lw=2)
+
+# Atom index 10 is a surface atom (tag=1)
+print(atoms[10])
+energies, d_dos = calc.get_ados(10, 'd')
+
+plt.plot(energies, d_dos, lw=2)
 
 plt.axvline(lw=2, ls='--', color='r')
-plt.ylim(0, 3.5)
 plt.xlabel('energy (eV)')
 plt.ylabel('DOS (arb. units)')
 plt.savefig('images/Pd-ados.png')
@@ -557,64 +505,54 @@ plt.show()
 Atom('Pd', [1.3901719318127526, 2.4078484171558636, 14.548402978407839], tag=1, index=10)
 \end{verbatim}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/Pd-ados.png}
+\end{center}
 
 
 
 
 \subsection{Adsorbate density of states}
-\label{sec-4-3}
+\label{sec:org4a61df7}
 
 Now let us plot the density of states for the adsorbed O atom.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,linenos]{python}
-from jasp import *
-import matplotlib.pyplot as plt
+calc = Vasp('surfaces/O-on-Pd-fcc')
+atoms = calc.get_atoms()
 
-# get the geometry the previous calculation
-with jasp('surfaces/O-on-Pd-fcc') as calc:
-    atoms = calc.get_atoms()
+calc = Vasp('surfaces/O-on-Pd-fcc-ados',
+           xc = 'PBE',
+           ismear = 1,
+           kpts = [8,8,1],
+           encut = 400,
+           lorbit = 10,
+           atoms = atoms)
+calc.calculate()
 
-JASPRC['queue.q'] = 'short'
-
-#Now submit a calculation for the ados
-with jasp('surfaces/O-on-Pd-fcc-ados',
-          xc='PBE',
-          ismear=1,
-          kpts=(8, 8, 1),
-          encut=400,
-          lorbit=10,
-          atoms=atoms) as calc:
-    calc.calculate()
-
-    O_ados = VaspDos(efermi=calc.get_fermi_level())
-    energies = O_ados.energy
-    # Plot the O ados
-    # 12 is the index of the O atom
-    s_dos = O_ados.site_dos(12, 's') 
-    p_dos = O_ados.site_dos(12, 'p')
-    plt.plot(energies, s_dos, label='O$_{s}$', lw=2)
-    plt.plot(energies, p_dos, label='O$_{p}$', lw=2)    
+s_energies, s_dos = calc.get_ados(12,'s')
+p_energies, p_dos = calc.get_ados(12,'p')
+plt.plot(s_energies, s_dos, label='O$_{s}$', lw=2)
+plt.plot(p_energies, p_dos, label='O$_{p}$', lw=2)
 
 # Now plot the clean surface ados for comparison
-with jasp('surfaces/Pd-ados') as calc:
-    ados = VaspDos(efermi=calc.get_fermi_level())
-    energies = ados.energy
-    
-    d_dos = ados.site_dos(11, 'd')
-    plt.plot(energies, d_dos, label='Pd$_{d}$', lw=2)
-plt.xlim(-20, 8)
-plt.ylim(0, 4)
+calc = Vasp('surfaces/Pd-ados')
+clean_energies, d_dos = calc.get_ados(11,'d')
+plt.plot(clean_energies, d_dos, label='Pd$_{d}$', lw=2)
+
+plt.xlim(-20,8)
+
 plt.axvline(ls='-.', color='k', lw=2)
 plt.xlabel('energy (eV)')
-plt.ylabel('DOS (arb. units)')
+plt.ylabel('DOS (arb.units)')
 plt.legend()
 plt.savefig('images/adsorbate-dos.png')
 plt.show()
 \end{minted}
 
+\begin{center}
 \includegraphics[width=.9\linewidth]{./images/adsorbate-dos.png}
+\end{center}
 
 The blue line indicates the Oxygen s-states. The two peaks of the green line left and right of the Pd d-band are the bonding and antibonding Oxygen p-states. Note that the antibonding peak is to the right of the fermi level, meaning that the antibonding states are unoccupied.
-% Emacs 24.4.3 (Org mode 8.2.10)
 \end{document}
