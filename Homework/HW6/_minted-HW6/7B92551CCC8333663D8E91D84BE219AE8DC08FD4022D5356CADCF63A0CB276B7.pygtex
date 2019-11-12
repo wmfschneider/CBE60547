@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{random}
+
+\PYG{n}{students} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}jcrum\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}cdrisko\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}rgipson2\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}agoswami\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}whearne\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}jlim6\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}dpoe\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}esunshi1\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}gtow\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}cwaitt\PYGZsq{}}\PYG{p}{,}
+            \PYG{l+s+s1}{\PYGZsq{}zxie\PYGZsq{}}\PYG{p}{]}
+
+\PYG{n}{fcc\PYGZus{}metals} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}Ni\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Cu\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Rh\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Pd\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Ag\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Ir\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Pt\PYGZsq{}}\PYG{p}{,} \PYG{l+s+s1}{\PYGZsq{}Au\PYGZsq{}}\PYG{p}{]}
+
+\PYG{k}{def} \PYG{n+nf}{random\PYGZus{}combination}\PYG{p}{(}\PYG{n}{iterable}\PYG{p}{,} \PYG{n}{r}\PYG{p}{):}
+    \PYG{l+s+s2}{\PYGZdq{}Random selection from itertools.combinations(iterable, r)\PYGZdq{}}
+    \PYG{n}{pool} \PYG{o}{=} \PYG{n+nb}{tuple}\PYG{p}{(}\PYG{n}{iterable}\PYG{p}{)}
+    \PYG{n}{n} \PYG{o}{=} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{pool}\PYG{p}{)}
+    \PYG{n}{indices} \PYG{o}{=} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{random}\PYG{o}{.}\PYG{n}{sample}\PYG{p}{(}\PYG{n+nb}{xrange}\PYG{p}{(}\PYG{n}{n}\PYG{p}{),} \PYG{n}{r}\PYG{p}{))}
+    \PYG{k}{return} \PYG{n+nb}{tuple}\PYG{p}{(}\PYG{n}{pool}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n}{indices}\PYG{p}{)}
+
+\PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}|Group|Students|Metals|\PYGZsq{}}\PYG{p}{)}
+\PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}|\PYGZhy{}\PYGZsq{}}\PYG{p}{)}
+\PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{):}
+   \PYG{n}{s1}\PYG{p}{,} \PYG{n}{s2} \PYG{o}{=} \PYG{n}{random\PYGZus{}combination}\PYG{p}{(}\PYG{n}{students}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{)}
+   \PYG{n}{m1}\PYG{p}{,} \PYG{n}{m2}\PYG{p}{,} \PYG{n}{m3} \PYG{o}{=} \PYG{n}{random\PYGZus{}combination}\PYG{p}{(}\PYG{n}{fcc\PYGZus{}metals}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{)}
+   \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}|\PYGZob{}0\PYGZcb{}|\PYGZob{}1\PYGZcb{}, \PYGZob{}2\PYGZcb{}|\PYGZob{}3\PYGZcb{}, \PYGZob{}4\PYGZcb{}, \PYGZob{}5\PYGZcb{}|\PYGZsq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{s1}\PYG{p}{,} \PYG{n}{s2}\PYG{p}{,} \PYG{n}{m1}\PYG{p}{,} \PYG{n}{m2}\PYG{p}{,} \PYG{n}{m3}\PYG{p}{))}
+   \PYG{n}{students} \PYG{o}{=} \PYG{p}{[}\PYG{n}{s} \PYG{k}{for} \PYG{n}{s} \PYG{o+ow}{in} \PYG{n}{students} \PYG{k}{if} \PYG{n}{s} \PYG{o+ow}{not} \PYG{o+ow}{in} \PYG{p}{[}\PYG{n}{s1}\PYG{p}{,} \PYG{n}{s2}\PYG{p}{]]}
+\PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}||\PYGZob{}0\PYGZcb{}||\PYGZsq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{students}\PYG{p}{))}
+\end{Verbatim}
