@@ -3938,9 +3938,43 @@ cart
 
 * Periodic electronic structure
 ** Isolated vs. periodic systems
+Power of periodic boundary condition model is ability to describe
+things that are extensive: solids, surfaces, even liquids.
+
+#+ATTR_LATEX: :width 0.8\textwidth
+[[./Images/ClusterPeriodic.pdf]]
+
+/Key difference/ is that atoms communicate across the boundary in the periodic model.  Results in discrete states \(\rightarrow\) continuum of electronic states.
 ** Bloch's theorem and qualitative band structure
+Images borrowed from [[https://doi.org/10.1002/anie.198708461]].
+
+Cyclic chain of H atoms of increasing length (Born-van Karman boundary condition):
+#+ATTR_LATEX: :width 0.4\textwidth
+[[./Images/CyclicH.pdf]]
+Energy levels increasing with chain length. Wavefunctions grow in a regular way, consistent with (and identifiable by) underlying symmetry. Nodes increase systematically. In limit, get an infinite band of levels.
+
+Infinite chain of H atoms separated by a lattice constant /a/. Electrons move in that periodic potential. Expand wavefunctions in atom-centered 1s orbitals.
+#+ATTR_LATEX: :width 0.95\textwidth
+[[./Images/Hchain.pdf]]
+
+*Bloch’s theorem* states that the wavefunctions can be written as the product of a cell-invariant part (the H 1s functions here) and a cell-periodic part.  The periodic part is indexed by the /wavevector k/.  /k/ takes as many values as there are periodic units /N/:
+\[ k = \frac{\pi}{a}\frac{n}{N},\qquad n=-\frac{N-1}{2}, \ldots, 0, \ldots, \frac{N-1}{2} \]
+If /N/ is infinite, then /k/ is a continuous and real variable. The space of unique values of /k/ is called the /first Brillouin zone/.  The periodic phases of the basis functions correspond to an underlying wavelength associated with /k/:
+\[\lambda_k = 2\pi/k\]
+By the de Broglie relationship, then, /k/ relates to the momentum of an electron in that energy level.  Each /k/ is degenerate such that \(E(k) = E(-k)\) (moving with the same momentum to the left and right gives the same energy).
+
+The continuum of energy levels in /k/ is called the /band structure/. Conventionally plotted vs \(|k|\). The width of the band is called the /dispersion/:
+#+ATTR_LATEX: :width 0.8\textwidth
+[[./Images/banddispersion.pdf]]
+
+The highest filled energy state, in this case /(k=\pi/2a\), is the /Fermi energy/. Band structure on the right would correspond to a metal, as the energy difference between different momentum states is zero.
+
+Band dispersion depends on cell overlap, dispersion depends on type and orientation of orbitals:
+
 ** Band folding
+
 ** Multi-dimensional periodicity
+
 ** Density of statues
 ** Bravais lattices
 ** Quantitative supercell calculations
